@@ -1,0 +1,118 @@
+grammar de.systemticks.c4.C4Dsl with org.eclipse.xtext.common.Terminals
+
+generate c4Dsl "http://www.systemticks.de/c4/C4Dsl"
+
+Workspace:
+	{Workspace} 'workspace' (name=ID)? (description=STRING)? '{'
+		model = Model
+		views += Views*
+	'}'
+;	
+
+// Model
+
+Model:	
+	{Model}
+	'model'  '{'
+	(	person+=Person | 
+		softwareSystems+=SoftwareSystem |
+		relationShips+=RelationShip
+	)*	
+	'}'
+;
+
+NamedElement:
+	Person | SoftwareSystem | Container | Component
+;
+
+//[<identifier> = ]person <name> [description] [tags]
+Person:
+	(name=ID '=')? 'person' label=STRING (description=STRING | description=STRING taglist=STRING)? 
+;
+
+Component:
+	(name=ID '=')? 'component' label=STRING (description=STRING | description=STRING technology=STRING taglist=STRING)? 	
+;
+
+Container:
+	(name=ID '=')? 'container' label=STRING (description=STRING | description=STRING technology=STRING taglist=STRING)? 
+	('{'
+		components+=Component+
+	'}')?
+;
+
+SoftwareSystem:
+	(name=ID '=')? 'softwareSystem' label=STRING (description=STRING | description=STRING taglist=STRING)?  
+	('{'
+		container+=Container+
+	'}')?
+;
+
+RelationShip:
+	from=[NamedElement] "->" to=[NamedElement] (description=STRING | description=STRING technology=STRING taglist=STRING)?
+;
+
+// Views
+Views:
+	{Views} 'views' '{'
+		(systemContextViews += SystemContextView |
+		containerViews += ContainerView | 
+		componentViews += ComponentView | 
+		styles += Styles )*
+	'}'
+;
+
+SystemContextView:
+	'systemContext' system=[SoftwareSystem] key=STRING description=STRING '{'
+		(includes+=Include* &
+		 excludes+=Exclude* &
+		autoLayout = 'autoLayout')
+	'}'
+;
+
+ContainerView:
+	'container' system=[SoftwareSystem] key=STRING description=STRING '{'
+		(includes += Include* &
+		 excludes += Exclude* &
+		autoLayout = 'autoLayout')
+	'}' 
+;
+
+ComponentView:
+	'component' container=[Container] key=STRING description=STRING '{'
+		(includes += Include* &
+		 excludes += Exclude* &
+		autoLayout = 'autoLayout')
+	'}' 
+;
+
+Include:
+	'include' (all?='*' | elements+=[NamedElement]+)	
+;
+
+Exclude:
+	'exclude' elements+=[NamedElement]+	
+;
+
+Styles:
+	{Styles} 'styles' '{'
+		(styledElements+=StyledElement)*
+	'}'
+;
+
+StyledElement:
+	'element' tag=STRING '{'
+		(
+			('shape' shape=StyleShape)? &
+			('background' backgroundColor=HEX_DECIMAL)? &
+			('color' color=HEX_DECIMAL)?		
+		)  
+	'}'
+;
+
+enum StyleShape:	
+	Box|RoundedBox|Circle|Ellipse|Hexagon|Cylinder|Pipe|Person|Robot|Folder|WebBrowser|MobileDevicePortrait|MobileDeviceLandscape|Component	;
+
+
+terminal HEX_DECIMAL: '#' (('0'..'9') | ('A' .. 'F') | ('a' .. 'f') )+;
+

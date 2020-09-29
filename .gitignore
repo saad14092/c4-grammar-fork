@@ -1,0 +1,8 @@
+/.gradle/
+bin/
+xtend-gen/
+src-gen/
+generated/
+*.class
+target/
+test-bin/

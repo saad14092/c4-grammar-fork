@@ -1,0 +1,3 @@
+include 'de.systemticks.c4.dsl'
+include 'de.systemticks.c4.dsl.ide'
+include 'de.systemticks.c4.dsl.tests'

@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: de.systemticks.c4.dsl
+Bundle-ManifestVersion: 2
+Bundle-Name: de.systemticks.c4.dsl
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: de.systemticks.c4.dsl; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.14.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.common,
+ org.eclipse.xtend.lib;bundle-version="2.14.0",
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.systemticks.c4.services,
+ de.systemticks.c4.c4Dsl,
+ de.systemticks.c4.parser.antlr.internal,
+ de.systemticks.c4.c4Dsl.util,
+ de.systemticks.c4.parser.antlr,
+ de.systemticks.c4.serializer,
+ de.systemticks.c4.scoping,
+ de.systemticks.c4,
+ de.systemticks.c4.validation,
+ de.systemticks.c4.generator,
+ de.systemticks.c4.c4Dsl.impl
+Import-Package: org.apache.log4j
