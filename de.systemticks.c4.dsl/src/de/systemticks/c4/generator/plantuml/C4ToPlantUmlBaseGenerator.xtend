@@ -10,19 +10,13 @@ import de.systemticks.c4.c4Dsl.SoftwareSystem
 import de.systemticks.c4.c4Dsl.StyleShape
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.Workspace
-import java.util.List
-import org.eclipse.xtext.EcoreUtil2
 
 import static extension de.systemticks.c4.utils.C4Utils.*
 
 class C4ToPlantUmlBaseGenerator {
 	
-	public final String DEFAULT_CONTAINER_TAG = "Container"
-	public final String DEFAULT_PERSON_TAG = "Person"
-	public final String DEFAULT_SOFTWARE_SYSTEM_TAG = "Software System"
-	public final String DEFAULT_COMPONENT_TAG = "Component"
 	public final String DEFAULT_SHAPE = "rectangle"
-	
+		
 	final Workspace workspace
 	
 	new (Workspace _workspace) {
@@ -36,23 +30,6 @@ class C4ToPlantUmlBaseGenerator {
 	def allRelationShips() {
 	    workspace.allRelationShips;		
 	}
-//
-//	def allStyles() {
-//	    return EcoreUtil2.getAllContentsOfType(workspace, StyledElement);		
-//	}
-//
-//	def allNamedElements() {
-//	    return EcoreUtil2.getAllContentsOfType(workspace, NamedElement);		
-//	}
-//
-//	def List<String> getTags(NamedElement e) {
-//		if(e.taglist === null) {
-//			newArrayList
-//		}
-//		else {
-//			e.taglist.split(',')			
-//		}
-//	}
 
 	def addCustomStyles()
 	{
@@ -160,16 +137,31 @@ class C4ToPlantUmlBaseGenerator {
 		]
 	}
 	
+	private def overrideDefaultStyle(StyledElement baseStyle) {
+		
+		val derivedStyle = workspace.allStyles.findFirst[tag.equals(baseStyle.tag)]
+		
+		if(derivedStyle !== null) {
+			baseStyle.overrideBaseStyle(derivedStyle)
+		}		
+		baseStyle
+		
+	}
+	
+	private def overrideBaseStyle(StyledElement baseStyle, StyledElement derivedStyle) {
+		baseStyle => [
+			tag = derivedStyle.tag
+			if(derivedStyle.shape !== null) shape = derivedStyle.shape
+			if(derivedStyle.backgroundColor !== null) backgroundColor = derivedStyle.backgroundColor
+			if(derivedStyle.color !== null) color = derivedStyle.color
+		]					
+	}
+	
 	private def createCustomStyle(StyledElement custom) {
 		
 		val base = custom.baseStyleElement
-		if(base !== null) {
-			base => [
-				tag = custom.tag
-				if(custom.shape !== null) shape = custom.shape
-				if(custom.backgroundColor !== null) backgroundColor = custom.backgroundColor
-				if(custom.color !== null) color = custom.color
-			]			
+		if(base !== null) {			
+			base.overrideBaseStyle(custom)			
 		}
 		else {
 			null
@@ -187,10 +179,10 @@ class C4ToPlantUmlBaseGenerator {
 	
 	def addBaseStyles() {
 		'''
-			«createDefaultStylePerson.toSkinParam»
-			«createDefaultStyleSoftwareSystem.toSkinParam»
-			«createDefaultStyleContainer.toSkinParam»
-			«createDefaultStyleComponent.toSkinParam»
+			«createDefaultStylePerson.overrideDefaultStyle.toSkinParam»
+			«createDefaultStyleSoftwareSystem.overrideDefaultStyle.toSkinParam»
+			«createDefaultStyleContainer.overrideDefaultStyle.toSkinParam»
+			«createDefaultStyleComponent.overrideDefaultStyle.toSkinParam»
 		'''
 	}
 	

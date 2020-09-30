@@ -5,24 +5,33 @@ generate c4Dsl "http://www.systemticks.de/c4/C4Dsl"
 Workspace:
 	{Workspace} 'workspace' (name=ID)? (description=STRING)? '{'
 		model = Model
-		views += Views*
+		viewSection = ViewSection?
 	'}'
 ;	
 
 // Model
 
-Model:	
-	{Model}
-	'model'  '{'
-	(	person+=Person | 
-		softwareSystems+=SoftwareSystem |
-		relationShips+=RelationShip
-	)*	
+Model:		
+	{Model} 'model'  '{'
+		enterprise = Enterprise?
+		(person+=Person | 
+			softwareSystems+=SoftwareSystem |
+			relationShips+=RelationShip
+		)*	
 	'}'
 ;
 
 NamedElement:
 	Person | SoftwareSystem | Container | Component
+;
+
+Enterprise:
+	'enterprise' label=STRING '{'
+		(	person+=Person | 
+			softwareSystems+=SoftwareSystem |
+			relationShips+=RelationShip
+		)*	
+	'}'
 ;
 
 //[<identifier> = ]person <name> [description] [tags]
@@ -53,37 +62,42 @@ RelationShip:
 ;
 
 // Views
-Views:
-	{Views} 'views' '{'
-		(systemContextViews += SystemContextView |
-		containerViews += ContainerView | 
-		componentViews += ComponentView | 
+ViewSection:
+	{ViewSection} 'views' '{'
+		(views += View |
 		styles += Styles )*
 	'}'
 ;
 
+View:
+	SystemContextView | ContainerView | ComponentView
+;
+
 SystemContextView:
 	'systemContext' system=[SoftwareSystem] key=STRING description=STRING '{'
-		(includes+=Include* &
-		 excludes+=Exclude* &
-		autoLayout = 'autoLayout')
+		content=CustomizedContent
+		autoLayout = 'autoLayout'?
 	'}'
 ;
 
 ContainerView:
 	'container' system=[SoftwareSystem] key=STRING description=STRING '{'
-		(includes += Include* &
-		 excludes += Exclude* &
-		autoLayout = 'autoLayout')
+		content=CustomizedContent
+		autoLayout = 'autoLayout'?
 	'}' 
 ;
 
 ComponentView:
 	'component' container=[Container] key=STRING description=STRING '{'
-		(includes += Include* &
-		 excludes += Exclude* &
-		autoLayout = 'autoLayout')
+		content=CustomizedContent
+		autoLayout = 'autoLayout'?
 	'}' 
+;
+
+CustomizedContent:
+	{CustomizedContent} 
+		(includes += Include |
+	 	excludes += Exclude)*	
 ;
 
 Include:

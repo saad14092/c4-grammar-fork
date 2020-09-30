@@ -7,6 +7,8 @@ import java.util.List
 import de.systemticks.c4.c4Dsl.ComponentView
 import de.systemticks.c4.c4Dsl.Workspace
 
+import static extension de.systemticks.c4.utils.C4Utils.*
+
 class C4ToPlantUmlComponentView extends C4ToPlantUmlBaseGenerator {
 
 	

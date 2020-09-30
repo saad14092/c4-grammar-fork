@@ -21,7 +21,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 	@Check
 	def checkTagExistForApplyStyledElement(StyledElement styledElement) {
 		if(!styledElement.eResource.allContents.filter(Workspace).head.allTags.contains(styledElement.tag)) {
-			error('Style cannot be applied, Tag <'+styledElement.tag+"> is not defined yet", 
+			error('Style cannot be applied, Tag <'+styledElement.tag+"> is nor a default tag, nor a customer tag", 
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
 					"Unknown Tag")			
 		}		

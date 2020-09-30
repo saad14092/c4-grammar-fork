@@ -10,6 +10,8 @@ import java.util.List
 import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.Workspace
 
+import static extension de.systemticks.c4.utils.C4Utils.*
+
 /* Container view: Include all containers within the software system in scope; 
  * plus all people and software systems that are directly connected to those containers.*/
 

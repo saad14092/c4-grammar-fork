@@ -11,6 +11,9 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import de.systemticks.c4.generator.plantuml.C4ToPlantUmlComponentView
 import de.systemticks.c4.generator.plantuml.C4ToPlantUmlSystemContextView
 import de.systemticks.c4.generator.plantuml.C4ToPlantUmlContainerView
+import de.systemticks.c4.c4Dsl.SystemContextView
+import de.systemticks.c4.c4Dsl.ContainerView
+import de.systemticks.c4.c4Dsl.ComponentView
 
 /**
  * Generates code from your model files on save.
@@ -23,17 +26,13 @@ class C4DslGenerator extends AbstractGenerator {
 		
 		val workspace = resource.allContents.filter(Workspace).head
 		
-		resource.allContents.filter(Workspace).head.views.forEach[
-			systemContextViews.forEach[
-				fsa.generateFile(system.name+'_systemcontext.puml', new C4ToPlantUmlSystemContextView(workspace).transform(it))
-			]
-			containerViews.forEach[
-				fsa.generateFile(system.name+'_container.puml', new C4ToPlantUmlContainerView(workspace).transform(it))				
-			]
-			componentViews.forEach[
-				fsa.generateFile(container.name+'_component.puml', new C4ToPlantUmlComponentView(workspace).transform(it))				
-			]
+		resource.allContents.filter(Workspace).head.viewSection.views.forEach[ view | 
 			
+			switch view {
+				SystemContextView: fsa.generateFile(view.key+'_systemcontext.puml', new C4ToPlantUmlSystemContextView(workspace).transform(view))
+				ContainerView: fsa.generateFile(view.key+'_container.puml', new C4ToPlantUmlContainerView(workspace).transform(view))
+				ComponentView: fsa.generateFile(view.key+'_component.puml', new C4ToPlantUmlComponentView(workspace).transform(view))
+			}						
 		]
 		
 	}

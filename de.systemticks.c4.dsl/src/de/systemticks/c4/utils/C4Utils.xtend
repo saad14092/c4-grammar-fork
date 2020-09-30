@@ -9,6 +9,12 @@ import org.eclipse.xtext.EcoreUtil2
 
 class C4Utils {
 
+	public final static String ELEMENT_TAG = "Element"
+	public final static String DEFAULT_CONTAINER_TAG = "Container"
+	public final static String DEFAULT_PERSON_TAG = "Person"
+	public final static String DEFAULT_SOFTWARE_SYSTEM_TAG = "Software System"
+	public final static String DEFAULT_COMPONENT_TAG = "Component"
+
 	def static allRelationShips(Workspace workspace) {
 	    return EcoreUtil2.getAllContentsOfType(workspace, RelationShip);		
 	}
@@ -23,13 +29,13 @@ class C4Utils {
 
 	def static allTags(Workspace workspace) {
 		
-		val allTags = newArrayList
+		val allTags = newArrayList(#[ELEMENT_TAG, DEFAULT_CONTAINER_TAG, DEFAULT_COMPONENT_TAG, DEFAULT_PERSON_TAG, DEFAULT_SOFTWARE_SYSTEM_TAG])
 			
 		workspace.allNamedElements.forEach[
 			allTags.addAll(tags)
 		]
 		
-		allTags.toSet.toList					
+		allTags.toSet.toList 					
 	}
 
 	def static List<String> getTags(NamedElement e) {
