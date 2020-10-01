@@ -29,9 +29,9 @@ class C4DslGenerator extends AbstractGenerator {
 		resource.allContents.filter(Workspace).head.viewSection.views.forEach[ view | 
 			
 			switch view {
-				SystemContextView: fsa.generateFile(view.key+'_systemcontext.puml', new C4ToPlantUmlSystemContextView(workspace).transform(view))
-				ContainerView: fsa.generateFile(view.key+'_container.puml', new C4ToPlantUmlContainerView(workspace).transform(view))
-				ComponentView: fsa.generateFile(view.key+'_component.puml', new C4ToPlantUmlComponentView(workspace).transform(view))
+				SystemContextView: fsa.generateFile(view.system.name+'_systemcontext.puml', new C4ToPlantUmlSystemContextView(workspace).transform(view))
+				ContainerView: fsa.generateFile(view.system.name+'_container.puml', new C4ToPlantUmlContainerView(workspace).transform(view))
+				ComponentView: fsa.generateFile(view.container.name+'_component.puml', new C4ToPlantUmlComponentView(workspace).transform(view))
 			}						
 		]
 		

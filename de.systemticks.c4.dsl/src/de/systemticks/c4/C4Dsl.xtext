@@ -3,7 +3,7 @@ grammar de.systemticks.c4.C4Dsl with org.eclipse.xtext.common.Terminals
 generate c4Dsl "http://www.systemticks.de/c4/C4Dsl"
 
 Workspace:
-	{Workspace} 'workspace' (name=ID)? (description=STRING)? '{'
+	{Workspace} 'workspace' name=STRING description=STRING? '{'
 		model = Model
 		viewSection = ViewSection?
 	'}'
@@ -13,11 +13,11 @@ Workspace:
 
 Model:		
 	{Model} 'model'  '{'
-		enterprise = Enterprise?
+		(enterprise=Enterprise? &		
 		(person+=Person | 
 			softwareSystems+=SoftwareSystem |
 			relationShips+=RelationShip
-		)*	
+		)*)	
 	'}'
 ;
 
@@ -40,11 +40,13 @@ Person:
 ;
 
 Component:
-	(name=ID '=')? 'component' label=STRING (description=STRING | description=STRING technology=STRING taglist=STRING)? 	
+	(name=ID '=')? 'component' label=STRING 
+		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 ;
 
 Container:
-	(name=ID '=')? 'container' label=STRING (description=STRING | description=STRING technology=STRING taglist=STRING)? 
+	(name=ID '=')? 'container' label=STRING
+		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		components+=Component+
 	'}')?
@@ -58,7 +60,8 @@ SoftwareSystem:
 ;
 
 RelationShip:
-	from=[NamedElement] "->" to=[NamedElement] (description=STRING | description=STRING technology=STRING taglist=STRING)?
+	from=[NamedElement] "->" to=[NamedElement] 
+		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 ;
 
 // Views
@@ -74,21 +77,21 @@ View:
 ;
 
 SystemContextView:
-	'systemContext' system=[SoftwareSystem] key=STRING description=STRING '{'
+	'systemContext' system=[SoftwareSystem] key=STRING description=STRING? '{'
 		content=CustomizedContent
 		autoLayout = 'autoLayout'?
 	'}'
 ;
 
 ContainerView:
-	'container' system=[SoftwareSystem] key=STRING description=STRING '{'
+	'container' system=[SoftwareSystem] key=STRING description=STRING? '{'
 		content=CustomizedContent
 		autoLayout = 'autoLayout'?
 	'}' 
 ;
 
 ComponentView:
-	'component' container=[Container] key=STRING description=STRING '{'
+	'component' container=[Container] key=STRING description=STRING? '{'
 		content=CustomizedContent
 		autoLayout = 'autoLayout'?
 	'}' 

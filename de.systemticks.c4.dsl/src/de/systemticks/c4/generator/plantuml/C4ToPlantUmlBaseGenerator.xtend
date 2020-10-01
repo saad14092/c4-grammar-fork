@@ -34,6 +34,7 @@ class C4ToPlantUmlBaseGenerator {
 	def addCustomStyles()
 	{
 		'''
+			' all custom styles
 			«FOR style: workspace.allStyles»
 				«style.createCustomStyle?.toSkinParam»
 			«ENDFOR»
@@ -96,7 +97,7 @@ class C4ToPlantUmlBaseGenerator {
 	{
 		'''
 			«defaultSkinGeneral»
-			«addBaseStyles»
+			«addBuiltInStyles»
 			«addCustomStyles»
 		'''
 	}
@@ -137,21 +138,14 @@ class C4ToPlantUmlBaseGenerator {
 		]
 	}
 	
-	private def overrideDefaultStyle(StyledElement baseStyle) {
-		
-		val derivedStyle = workspace.allStyles.findFirst[tag.equals(baseStyle.tag)]
-		
-		if(derivedStyle !== null) {
-			baseStyle.overrideBaseStyle(derivedStyle)
-		}		
-		baseStyle
-		
+	private def overrideBuiltInStyle(StyledElement baseStyle) {			
+		workspace.allStyles.findFirst[tag.equals(baseStyle.tag)]?.overrideStyle(baseStyle)?:baseStyle
 	}
 	
-	private def overrideBaseStyle(StyledElement baseStyle, StyledElement derivedStyle) {
+	private def overrideStyle(StyledElement derivedStyle, StyledElement baseStyle) {
 		baseStyle => [
 			tag = derivedStyle.tag
-			if(derivedStyle.shape !== null) shape = derivedStyle.shape
+			if(!derivedStyle.shape?.equals(StyleShape.BOX)) shape = derivedStyle.shape
 			if(derivedStyle.backgroundColor !== null) backgroundColor = derivedStyle.backgroundColor
 			if(derivedStyle.color !== null) color = derivedStyle.color
 		]					
@@ -159,9 +153,9 @@ class C4ToPlantUmlBaseGenerator {
 	
 	private def createCustomStyle(StyledElement custom) {
 		
-		val base = custom.baseStyleElement
+		val base = custom.baseStyleElement?.overrideBuiltInStyle
 		if(base !== null) {			
-			base.overrideBaseStyle(custom)			
+			custom.overrideStyle(base)			
 		}
 		else {
 			null
@@ -177,12 +171,13 @@ class C4ToPlantUmlBaseGenerator {
 		}
 	}
 	
-	def addBaseStyles() {
+	def addBuiltInStyles() {
 		'''
-			«createDefaultStylePerson.overrideDefaultStyle.toSkinParam»
-			«createDefaultStyleSoftwareSystem.overrideDefaultStyle.toSkinParam»
-			«createDefaultStyleContainer.overrideDefaultStyle.toSkinParam»
-			«createDefaultStyleComponent.overrideDefaultStyle.toSkinParam»
+			' all built-in styles
+			«createDefaultStylePerson.overrideBuiltInStyle.toSkinParam»
+			«createDefaultStyleSoftwareSystem.overrideBuiltInStyle.toSkinParam»
+			«createDefaultStyleContainer.overrideBuiltInStyle.toSkinParam»
+			«createDefaultStyleComponent.overrideBuiltInStyle.toSkinParam»
 		'''
 	}
 	
@@ -191,6 +186,7 @@ class C4ToPlantUmlBaseGenerator {
 			skinparam «style.shape.toSkinType»<<«style.tag»>> {
 			  «IF style.backgroundColor !== null»BackgroundColor «style.backgroundColor»«ENDIF»
 			  «IF style.color !== null»FontColor «style.color»«ENDIF»
+			  «IF style.shape?.equals(StyleShape.ROUNDED_BOX)»roundcorner 20«ENDIF»
 			}
 		'''
 	}	
