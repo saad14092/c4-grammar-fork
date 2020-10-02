@@ -19,12 +19,21 @@ class C4DslValidator extends AbstractC4DslValidator {
 	
 	
 	@Check
-	def checkTagExistForApplyStyledElement(StyledElement styledElement) {
+	def tagExistForApplyStyledElement(StyledElement styledElement) {
 		if(!styledElement.eResource.allContents.filter(Workspace).head.allTags.contains(styledElement.tag)) {
 			error('Style cannot be applied, Tag <'+styledElement.tag+"> is nor a default tag, nor a customer tag", 
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
 					"Unknown Tag")			
 		}		
+	}
+	
+	@Check
+	def uniqueStyledElement(StyledElement styledElement) {
+		if(styledElement.eResource.allContents.filter(StyledElement).map[tag].filter[equals(styledElement.tag)].size > 1) {
+			error('Style element is already defined', 
+					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
+					"Already Defined Style")						
+		}
 	}
 	
 }

@@ -41,8 +41,12 @@ class C4ToPlantUmlBaseGenerator {
 		'''
 	}
 	
+	def getStyleForShape(NamedElement e) {
+		workspace.allStyles.findFirst[e.tags.contains( tag ) ]
+	}
+
 	def getApplicableStyle(NamedElement e) {
-		workspace.allStyles.filter[ e.tags.contains( tag ) ].head
+		workspace.allStyles.findFirst[e.customTags.contains( tag ) ]
 	}
 	
 	def getShape(NamedElement e) 
@@ -58,25 +62,25 @@ class C4ToPlantUmlBaseGenerator {
 		
 	def dispatch transformElement(Person p) {
 		'''
-			«p.applicableStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«p.label»\n<size:10>[«DEFAULT_PERSON_TAG»]</size>\n«p.addDescription»" <<«p.applicableStyle?.tag?:DEFAULT_PERSON_TAG»>> as «p.name»
+			«p.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«p.label»\n<size:10>[«DEFAULT_PERSON_TAG»]</size>\n«p.addDescription»" <<«p.applicableStyle?.tag?:DEFAULT_PERSON_TAG»>> as «p.name»
 		'''
 	}
 
 	def dispatch transformElement(SoftwareSystem s) {
 		'''
-			«s.applicableStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«s.label»\n<size:10>[«DEFAULT_SOFTWARE_SYSTEM_TAG»]</size>\n«s.addDescription»" <<«s.applicableStyle?.tag?:DEFAULT_SOFTWARE_SYSTEM_TAG»>> as «s.name»
+			«s.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«s.label»\n<size:10>[«DEFAULT_SOFTWARE_SYSTEM_TAG»]</size>\n«s.addDescription»" <<«s.applicableStyle?.tag?:DEFAULT_SOFTWARE_SYSTEM_TAG»>> as «s.name»
 		'''
 	}
 
 	def dispatch transformElement(Container c) {
 		'''
-			«c.applicableStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_CONTAINER_TAG»]</size>\n«c.addDescription»" <<«c.applicableStyle?.tag?:DEFAULT_CONTAINER_TAG»>> as «c.name»
+			«c.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_CONTAINER_TAG»]</size>\n«c.addDescription»" <<«c.applicableStyle?.tag?:DEFAULT_CONTAINER_TAG»>> as «c.name»
 		'''
 	}
 
 	def dispatch transformElement(Component c) {
 		'''
-			«c.applicableStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_COMPONENT_TAG»]</size>\n«c.addDescription»" <<«c.applicableStyle?.tag?:DEFAULT_COMPONENT_TAG»>> as «c.name»
+			«c.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_COMPONENT_TAG»]</size>\n«c.addDescription»" <<«c.applicableStyle?.tag?:DEFAULT_COMPONENT_TAG»>> as «c.name»
 		'''
 	}
 
@@ -163,7 +167,7 @@ class C4ToPlantUmlBaseGenerator {
 	}
 	
 	private def getBaseStyleElement(StyledElement custom) {
-		switch workspace.allNamedElements.findFirst[tags.contains(custom.tag)] {
+		switch workspace.allNamedElements.findFirst[customTags.contains(custom.tag)] {
 			Person : createDefaultStylePerson
 			SoftwareSystem : createDefaultStyleSoftwareSystem
 			Container : createDefaultStyleContainer
