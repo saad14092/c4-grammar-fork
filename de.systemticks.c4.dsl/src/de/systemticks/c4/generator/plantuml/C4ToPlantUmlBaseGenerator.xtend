@@ -41,17 +41,8 @@ class C4ToPlantUmlBaseGenerator {
 		'''
 	}
 	
-	def getStyleForShape(NamedElement e) {
-		workspace.allStyles.findFirst[e.tags.contains( tag ) ]
-	}
-
-	def getApplicableStyle(NamedElement e) {
-		workspace.allStyles.findFirst[e.customTags.contains( tag ) ]
-	}
-	
-	def getShape(NamedElement e) 
-	{
-		e.applicableStyle?.toSkinParam?:DEFAULT_SHAPE
+	def findStyle(NamedElement e) {	
+		e.tags.map[ tag | workspace.allStyles.findFirst[ s | s.tag.equals(tag)]].head		
 	}
 				
 	def dispatch transformElement(NamedElement e) {
@@ -62,25 +53,25 @@ class C4ToPlantUmlBaseGenerator {
 		
 	def dispatch transformElement(Person p) {
 		'''
-			«p.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«p.label»\n<size:10>[«DEFAULT_PERSON_TAG»]</size>\n«p.addDescription»" <<«p.applicableStyle?.tag?:DEFAULT_PERSON_TAG»>> as «p.name»
+			«p.findStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«p.label»\n<size:10>[«DEFAULT_PERSON_TAG»]</size>\n«p.addDescription»" <<«p.findStyle?.tag?:DEFAULT_PERSON_TAG»>> as «p.name»
 		'''
 	}
 
 	def dispatch transformElement(SoftwareSystem s) {
 		'''
-			«s.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«s.label»\n<size:10>[«DEFAULT_SOFTWARE_SYSTEM_TAG»]</size>\n«s.addDescription»" <<«s.applicableStyle?.tag?:DEFAULT_SOFTWARE_SYSTEM_TAG»>> as «s.name»
+			«s.findStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«s.label»\n<size:10>[«DEFAULT_SOFTWARE_SYSTEM_TAG»]</size>\n«s.addDescription»" <<«s.findStyle?.tag?:DEFAULT_SOFTWARE_SYSTEM_TAG»>> as «s.name»
 		'''
 	}
 
 	def dispatch transformElement(Container c) {
 		'''
-			«c.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_CONTAINER_TAG»]</size>\n«c.addDescription»" <<«c.applicableStyle?.tag?:DEFAULT_CONTAINER_TAG»>> as «c.name»
+			«c.findStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_CONTAINER_TAG»]</size>\n«c.addDescription»" <<«c.findStyle?.tag?:DEFAULT_CONTAINER_TAG»>> as «c.name»
 		'''
 	}
 
 	def dispatch transformElement(Component c) {
 		'''
-			«c.styleForShape?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_COMPONENT_TAG»]</size>\n«c.addDescription»" <<«c.applicableStyle?.tag?:DEFAULT_COMPONENT_TAG»>> as «c.name»
+			«c.findStyle?.shape.toSkinType?:DEFAULT_SHAPE» "==«c.label»\n<size:10>[«DEFAULT_COMPONENT_TAG»]</size>\n«c.addDescription»" <<«c.findStyle?.tag?:DEFAULT_COMPONENT_TAG»>> as «c.name»
 		'''
 	}
 

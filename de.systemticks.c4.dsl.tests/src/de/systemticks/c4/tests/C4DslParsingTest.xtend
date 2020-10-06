@@ -12,6 +12,10 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
 
+import static extension de.systemticks.c4.utils.C4Utils.*
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertArrayEquals
+
 @ExtendWith(InjectionExtension)
 @InjectWith(C4DslInjectorProvider)
 class C4DslParsingTest {
@@ -28,6 +32,24 @@ class C4DslParsingTest {
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors
-		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')		
 	}
+	
+	@Test
+	def void testCustomTag() {
+		
+		val result = parseHelper.parse('''
+			workspace "My Workspace "{
+				model {
+					financialRiskSystem = softwareSystem "Financial Risk System" "Calculates the bank's exposure to risk for product X." "Financial Risk System"
+				}
+		''')
+		
+		val tags = result.model.softwareSystems.head.tags
+		
+		assertEquals(3, tags.size)
+		assertArrayEquals(#['Financial Risk System', DEFAULT_SOFTWARE_SYSTEM_TAG, ELEMENT_TAG], tags)		
+		
+	}
+	
 }

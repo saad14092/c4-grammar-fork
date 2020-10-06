@@ -43,23 +43,19 @@ class C4Utils {
 	}
 	
 	def static dispatch List<String> getTags(Person p) {
-		val builtIn = newArrayList(#[DEFAULT_PERSON_TAG, ELEMENT_TAG])
-		(p.taglist === null) ? builtIn : (p.taglist.split(',') + builtIn).toList									
+		(p.customTags + newArrayList(#[DEFAULT_PERSON_TAG, ELEMENT_TAG])).toList
 	}
 
 	def static dispatch List<String> getTags(SoftwareSystem sys) {
-		val builtIn = newArrayList(#[DEFAULT_SOFTWARE_SYSTEM_TAG, ELEMENT_TAG])
-		(sys.taglist === null) ? builtIn : (sys.taglist.split(',')+builtIn).toList									
+		(sys.customTags + newArrayList(#[DEFAULT_SOFTWARE_SYSTEM_TAG, ELEMENT_TAG])).toList
 	}
 
 	def static dispatch List<String> getTags(Container c) {
-		val builtIn = newArrayList(#[DEFAULT_CONTAINER_TAG, ELEMENT_TAG])
-		(c.taglist === null) ? builtIn : (c.taglist.split(',')+builtIn).toList									
+		(c.customTags + newArrayList(#[DEFAULT_CONTAINER_TAG, ELEMENT_TAG])).toList
 	}
 
 	def static dispatch List<String> getTags(Component cmp) {
-		val builtIn = newArrayList(#[DEFAULT_COMPONENT_TAG, ELEMENT_TAG])
-		(cmp.taglist === null) ? builtIn : (cmp.taglist.split(',')+builtIn).toList									
+		(cmp.customTags + newArrayList(#[DEFAULT_COMPONENT_TAG, ELEMENT_TAG])).toList
 	}
 
 	def static List<String> getCustomTags(NamedElement e) {

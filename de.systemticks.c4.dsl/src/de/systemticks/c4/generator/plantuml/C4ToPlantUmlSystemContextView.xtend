@@ -6,6 +6,7 @@ import de.systemticks.c4.c4Dsl.SoftwareSystem
 import de.systemticks.c4.c4Dsl.SystemContextView
 import de.systemticks.c4.c4Dsl.Workspace
 import java.util.List
+import de.systemticks.c4.c4Dsl.Enterprise
 
 class C4ToPlantUmlSystemContextView extends C4ToPlantUmlBaseGenerator {
 		
@@ -22,9 +23,18 @@ class C4ToPlantUmlSystemContextView extends C4ToPlantUmlBaseGenerator {
 			«addSkins»
 			
 			«val elements=view.system.allConnectedElements.filter[isNotExcluded(view)].toList»
-			«FOR e: elements»
+			«val group = elements.groupBy[ eContainer instanceof Enterprise]»
+			
+			«IF group.get(Boolean.TRUE)?.size > 0»
+			package "Big Bank plc" {
+			«FOR e: group.get(Boolean.TRUE)»
 				«e.transformElement»
 			«ENDFOR»
+			}
+			«ENDIF»
+			«FOR e: group.get(Boolean.FALSE)»
+				«e.transformElement»
+			«ENDFOR»			
 			«FOR r: allRelationShips.filter[elements.contains(from) && elements.contains(to)]»
 				«r.transformRelationShip»
 			«ENDFOR»
