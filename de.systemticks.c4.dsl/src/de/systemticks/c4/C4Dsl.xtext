@@ -2,6 +2,8 @@ grammar de.systemticks.c4.C4Dsl with org.eclipse.xtext.common.Terminals
 
 generate c4Dsl "http://www.systemticks.de/c4/C4Dsl"
 
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
 Workspace:
 	{Workspace} 'workspace' name=STRING description=STRING? '{'
 		model = Model
@@ -113,7 +115,8 @@ Exclude:
 
 Styles:
 	{Styles} 'styles' '{'
-		(styledElements+=StyledElement)*
+		(styledElements+=StyledElement |
+		styledRelationShips+=StyledRelationShip)*
 	'}'
 ;
 
@@ -124,6 +127,15 @@ StyledElement:
 			('background' backgroundColor=HEX_DECIMAL)? &
 			('color' color=HEX_DECIMAL)?		
 		)  
+	'}'
+;
+
+StyledRelationShip:
+	'relationship' tag=STRING '{'
+		(
+			('dashed' dashed=("true" | "false"))? &
+			('color' color=HEX_DECIMAL)?
+		)
 	'}'
 ;
 

@@ -1,15 +1,18 @@
 package de.systemticks.c4.utils
 
+import de.systemticks.c4.c4Dsl.C4DslFactory
 import de.systemticks.c4.c4Dsl.Component
 import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.NamedElement
 import de.systemticks.c4.c4Dsl.Person
 import de.systemticks.c4.c4Dsl.RelationShip
 import de.systemticks.c4.c4Dsl.SoftwareSystem
+import de.systemticks.c4.c4Dsl.StyleShape
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.Workspace
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
+import de.systemticks.c4.c4Dsl.StyledRelationShip
 
 class C4Utils {
 
@@ -23,8 +26,12 @@ class C4Utils {
 	    return EcoreUtil2.getAllContentsOfType(workspace, RelationShip);		
 	}
 
-	def static allStyles(Workspace workspace) {
+	def static allStyledElements(Workspace workspace) {
 	    return EcoreUtil2.getAllContentsOfType(workspace, StyledElement);		
+	}
+	
+	def static allStyledRelationships(Workspace workspace) {
+	    return EcoreUtil2.getAllContentsOfType(workspace, StyledRelationShip);		
 	}
 
 	def static allNamedElements(Workspace workspace) {
@@ -59,8 +66,57 @@ class C4Utils {
 	}
 
 	def static List<String> getCustomTags(NamedElement e) {
-		(e.taglist === null) ? newArrayList : e.taglist.split(',')			
+		(e.taglist === null) ? newArrayList : e.taglist.split(',').map[trim]			
 	}
 
+	def static List<String> getCustomTags(RelationShip r) {
+		(r.taglist === null) ? newArrayList : r.taglist.split(',').map[trim]			
+	}
+
+	def static createDefaultStyleContainer() {
+		C4DslFactory.eINSTANCE.createStyledElement => [
+			backgroundColor = "#438dd5"
+			color = "#ffffff"
+			shape = StyleShape.BOX		
+			tag = DEFAULT_CONTAINER_TAG					
+		]
+	}
+
+	def static createDefaultStyleSoftwareSystem() {
+		C4DslFactory.eINSTANCE.createStyledElement => [
+			backgroundColor = "#1168bd"
+			color = "#ffffff"
+			shape = StyleShape.BOX
+			tag = DEFAULT_SOFTWARE_SYSTEM_TAG			
+		]
+	}
+
+	def static createDefaultStylePerson() {
+		C4DslFactory.eINSTANCE.createStyledElement => [
+			backgroundColor = "#08427b"
+			color = "#ffffff"
+			shape = StyleShape.BOX	
+			tag = DEFAULT_PERSON_TAG								
+		]
+	}
+
+	def static createDefaultStyleComponent() {
+		C4DslFactory.eINSTANCE.createStyledElement => [
+			backgroundColor = "#85bbf0"
+			color = "#000000"
+			shape = StyleShape.BOX
+			tag = DEFAULT_COMPONENT_TAG						
+		]
+	}
 	
+	def static createDefaultStyleRelationship() {
+		C4DslFactory.eINSTANCE.createStyledRelationShip => [
+			color = "#707070"
+			dashed = "false"
+		]		
+	}
+	
+	def static isDashed(StyledRelationShip r) {
+		r.dashed !== null  && r.dashed.equals("true")
+	}
 }

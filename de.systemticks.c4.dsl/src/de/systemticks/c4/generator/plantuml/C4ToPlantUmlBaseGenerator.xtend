@@ -12,6 +12,7 @@ import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.Workspace
 
 import static extension de.systemticks.c4.utils.C4Utils.*
+import de.systemticks.c4.c4Dsl.StyledRelationShip
 
 class C4ToPlantUmlBaseGenerator {
 	
@@ -35,14 +36,14 @@ class C4ToPlantUmlBaseGenerator {
 	{
 		'''
 			' all custom styles
-			«FOR style: workspace.allStyles»
+			«FOR style: workspace.allStyledElements»
 				«style.createCustomStyle?.toSkinParam»
 			«ENDFOR»
 		'''
 	}
 	
 	def findStyle(NamedElement e) {	
-		e.tags.map[ tag | workspace.allStyles.findFirst[ s | s.tag.equals(tag)]].head		
+		e.tags.map[ tag | workspace.allStyledElements.findFirst[ s | s.tag.equals(tag)]].head		
 	}
 				
 	def dispatch transformElement(NamedElement e) {
@@ -77,7 +78,7 @@ class C4ToPlantUmlBaseGenerator {
 
 	def transformRelationShip(RelationShip r) {
 		'''
-			«r.from.name» .[#707070].> «r.to.name» : "«r.description»"«IF r.technology!==null»\n<size:8>[«r.technology»]</size>«ENDIF»
+			«r.from.name» «r.transformStyle.toArrow» «r.to.name» : "«r.description»"«IF r.technology!==null»\n<size:8>[«r.technology»]</size>«ENDIF»
 		'''
 	}
 	
@@ -96,45 +97,9 @@ class C4ToPlantUmlBaseGenerator {
 			«addCustomStyles»
 		'''
 	}
-	
-	private def createDefaultStyleContainer() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#438dd5"
-			color = "#ffffff"
-			shape = StyleShape.BOX		
-			tag = DEFAULT_CONTAINER_TAG					
-		]
-	}
-
-	private def createDefaultStyleSoftwareSystem() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#1168bd"
-			color = "#ffffff"
-			shape = StyleShape.BOX
-			tag = DEFAULT_SOFTWARE_SYSTEM_TAG			
-		]
-	}
-
-	private def createDefaultStylePerson() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#08427b"
-			color = "#ffffff"
-			shape = StyleShape.BOX	
-			tag = DEFAULT_PERSON_TAG								
-		]
-	}
-
-	private def createDefaultStyleComponent() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#85bbf0"
-			color = "#000000"
-			shape = StyleShape.BOX
-			tag = DEFAULT_COMPONENT_TAG						
-		]
-	}
-	
+		
 	private def overrideBuiltInStyle(StyledElement baseStyle) {			
-		workspace.allStyles.findFirst[tag.equals(baseStyle.tag)]?.overrideStyle(baseStyle)?:baseStyle
+		workspace.allStyledElements.findFirst[tag.equals(baseStyle.tag)]?.overrideStyle(baseStyle)?:baseStyle
 	}
 	
 	private def overrideStyle(StyledElement derivedStyle, StyledElement baseStyle) {
@@ -208,5 +173,40 @@ class C4ToPlantUmlBaseGenerator {
 		'''
 	}
 	
+	private def transformStyle(RelationShip r) {
+		
+		val style = createDefaultStyleRelationship
+		val allStyles = workspace.allStyledRelationships
+		
+		if(allStyles.size > 0) {
+			r.customTags.forEach[ t |
+//				val derived = allStyles.findFirst[tag.equals(t)]
+//				if(derived !== null) {
+//					println("--> "+t+", "+derived+", "+style)
+//					overrideStyle(derived, style)
+//					println("<-- "+style)
+//				}
+				allStyles.findFirst[tag.equals(t)]?.overrideStyle(style)
+			]				
+		}
+		
+		style
+	}
 	
+	private def overrideStyle(StyledRelationShip derivedStyle, StyledRelationShip baseStyle) {
+		baseStyle => [
+			if(derivedStyle.color !== null) color = derivedStyle.color
+			if(derivedStyle.dashed !== null)  dashed = derivedStyle.dashed
+		]					
+	}
+	
+	
+	private def toArrow(StyledRelationShip rStyle) {
+		if(rStyle.isDashed) {
+			'.['+rStyle.color+'].>'
+		}
+		else {
+			'-['+rStyle.color+']->'			
+		}
+	}
 }
