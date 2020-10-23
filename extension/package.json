@@ -1,0 +1,70 @@
+{
+    "name": "c4-dsl-extension",
+    "displayName": "C4 DSL Extension",
+    "description": "A DSL for C4 Models",
+    "publisher": "systemticks GmbH",
+    "repository": {
+        "type": "git",
+        "url": "https://gitlab.com/systemticks/c4-grammar"
+    },
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.46.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "C4",
+                "aliases": [
+                    "c4",
+                    "C4"
+                ],
+                "extensions": [
+                    ".c4"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "C4",
+                "scopeName": "source.c4",
+                "path": "./syntaxes/c4.tmLanguage.json"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:C4"
+    ],
+    "files": [
+        "lib",
+        "server",
+        "src",
+        "syntaxes"
+    ],
+    "main": "./pack/c4-dsl-extension",
+    "devDependencies": {
+        "@types/node": "^8.0.0",
+        "@types/vscode": "1.46.0",
+        "rimraf": "^2.6.3",
+        "source-map-loader": "^1.0.2",
+        "ts-loader": "^8.0.3",
+        "tslint": "^5.11.0",
+        "typescript": "3.8.3",
+        "vscode-languageclient": "^5.2.1",
+        "vscode-languageserver": "^5.2.1",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.12"
+    },
+    "scripts": {
+        "prepare": "yarn run clean && yarn run build",
+        "clean": "rimraf extension/lib extension/pack",
+        "build": "tsc && webpack --mode=development",
+        "watch": "tsc -w",
+        "watch:webpack": "webpack --mode=development --watch",
+        "publish": "vsce publish"
+    }
+}

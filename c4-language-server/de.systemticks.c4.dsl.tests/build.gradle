@@ -1,0 +1,17 @@
+dependencies {
+	compile project(':de.systemticks.c4.dsl')
+	compile 'com.github.structurizr:dsl:91754fb7fe'
+	compile 'com.structurizr:structurizr-core:1.6.0'	
+	compile 'com.structurizr:structurizr-plantuml:1.5.2'	
+	
+	testCompile 'org.junit.jupiter:junit-jupiter-api'
+	testRuntime 'org.junit.jupiter:junit-jupiter-engine'
+	testCompile "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
+	testCompile "org.eclipse.xtext:org.eclipse.xtext.xbase.testing:${xtextVersion}"
+}
+test {
+	useJUnitPlatform()
+}
+//this is an eclipse plugin project
+//eclipseClasspath.enabled=false
+//cleanEclipseClasspath.enabled=false

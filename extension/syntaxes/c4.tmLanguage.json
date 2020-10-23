@@ -1,0 +1,66 @@
+{
+    "name": "C4 DSL",
+    "scopeName": "source.c4",
+    "fileTypes": [
+        "c4"
+    ],
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "name": "keyword.control.c4",
+            "match": "\\b(workspace|model|enterprise|person|component|container|softwareSystem|views|systemContext|include|exclude|relationship|styles|element)\\b"
+        },
+        {
+            "name": "keyword.operator.c4",
+            "match": "\\=\\>"
+        },
+        {
+            "name": "constant.numeric.c4",
+            "match": "\\b[1-9][0-9]*\\b"
+        },
+        {
+            "name": "string.quoted.double.c4",
+            "begin": "\"",
+            "end": "\""
+        },
+        {
+            "name": "string.quoted.single.c4",
+            "begin": "'",
+            "end": "'"
+        }
+    ],
+    "repository": 
+        {
+            "comments": {
+                "patterns": [
+                    {
+                        "name": "comment.block.c4",
+                        "begin": "/\\*",
+                        "beginCaptures": {
+                            "0": {
+                                "name": "punctuation.definition.comment.c4"
+                            }
+                        },
+                        "end": "\\*/",
+                        "endCaptures": {
+                            "0": {
+                                "name": "punctuation.definition.comment.c4"
+                            }
+                        }
+                    }, {
+                        "begin": "(^\\s+)?(?=//)",
+                        "beginCaptures": {
+                            "1": {
+                                "name": "punctuation.whitespace.comment.leading.cs"
+                            }
+                        },
+                        "end": "(?=$)",
+                        "name":"comment.line.c4"
+                    }
+                ]
+            }
+        }
+    
+}
