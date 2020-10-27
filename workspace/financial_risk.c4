@@ -11,8 +11,8 @@ workspace "Financial_Risk_System" "This is a simple (incomplete) example C4 mode
         referenceDataSystemV2 = softwareSystem "Reference Data System v2.0" "Manages reference data for all counterparties the bank interacts with." "Future State"
         emailSystem = softwareSystem "E-mail system" "The bank's Microsoft Exchange system."
         centralMonitoringService = softwareSystem "Central Monitoring Service" "The bank's central monitoring and alerting dashboard."
-        activeDirectory = softwareSystem "Active Directory" "The bank's authentication and authorisation system."
-
+        activeDirectory = softwareSystem "Active Directory" "The bank's authentication and authorisation system."        
+        
         financialRiskSystem -> centralMonitoringService "Sends critical failure alerts to" "SNMP" "Asynchronous, Alert"
         businessUser -> financialRiskSystem "Views reports using"
         financialRiskSystem -> tradeDataSystem "Gets trade data from someone else"
@@ -28,12 +28,13 @@ workspace "Financial_Risk_System" "This is a simple (incomplete) example C4 mode
 
         systemContext financialRiskSystem "Context" "An example System Context diagram for the Financial Risk System architecture kata." {
             include *
-            autoLayout
+            autoLayout            
         }
 
         styles {
+
             element "Software System" {
-                color #ffffff
+                color #ffffff                
                 background #801515
                 shape RoundedBox                
             }
