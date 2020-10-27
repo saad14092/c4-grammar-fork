@@ -7,6 +7,7 @@
         "type": "git",
         "url": "https://gitlab.com/systemticks/c4-grammar"
     },
+    "license": "Apache 2.0",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.46.0"
@@ -17,10 +18,9 @@
     "contributes": {
         "languages": [
             {
-                "id": "C4",
+                "id": "c4",
                 "aliases": [
-                    "c4",
-                    "C4"
+                    "c4"
                 ],
                 "extensions": [
                     ".c4"
@@ -30,14 +30,14 @@
         ],
         "grammars": [
             {
-                "language": "C4",
+                "language": "c4",
                 "scopeName": "source.c4",
                 "path": "./syntaxes/c4.tmLanguage.json"
             }
         ]
     },
     "activationEvents": [
-        "onLanguage:C4"
+        "onLanguage:c4"
     ],
     "files": [
         "lib",

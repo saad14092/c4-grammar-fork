@@ -10,11 +10,18 @@
         },
         {
             "name": "keyword.control.c4",
-            "match": "\\b(workspace|model|enterprise|person|component|container|softwareSystem|views|systemContext|include|exclude|relationship|styles|element)\\b"
-        },
+            "match": "\\b(workspace|model|enterprise|views)\\b"        },
         {
             "name": "keyword.operator.c4",
-            "match": "\\=\\>"
+            "match": "\\-\\>"
+        },
+        {
+            "name" : "support.type.c4",
+            "match": "\\b(person|software[s,S]ystem|deployment[e,E]nvironment|deployment[n,N]ode|infrastructure[n,N]ode|containerInstance|system[l,L]andscape|system[c,C]ontext|container|component|filtered|dynamic|deployment|styles|themes|branding|element|relationship)\\b"        
+        },
+        {
+			"name": "variable.other.property.c4",
+            "match": "\\b(include|exclude|auto[l,L]ayout|animation[s,S]tep|shape|icon|width|height|background|colou?r|stroke|font[s,S]ize|border|opacity|metadata|description|thickness|dashed|routing|position)\\b"
         },
         {
             "name": "constant.numeric.c4",

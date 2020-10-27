@@ -3,9 +3,22 @@
  */
 package de.systemticks.c4.ide
 
+import de.systemticks.c4.ide.completion.C4ProposalProvider
+import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
+import org.eclipse.xtext.ide.server.hover.HoverService
+import de.systemticks.c4.ide.hover.C4HoverService
 
 /**
  * Use this class to register ide components.
  */
 class C4DslIdeModule extends AbstractC4DslIdeModule {
+	
+	def Class<? extends IdeContentProposalProvider> bindIdeContentProposalProvider() {
+		return C4ProposalProvider
+	}	
+	
+	def Class<? extends HoverService> bindHoverService() {
+		return C4HoverService
+	}
+	
 }

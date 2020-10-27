@@ -15,13 +15,9 @@ Workflow {
 				runtimeTest = {
 					enabled = true
 				}
-				eclipsePlugin = {
+				genericIde = {
 					enabled = true
 				}
-				eclipsePluginTest = {
-					enabled = true
-				}
-				createEclipseMetaData = true
 			}
 			code = {
 				encoding = "UTF-8"

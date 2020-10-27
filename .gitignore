@@ -2,6 +2,7 @@
 **/lib/
 **/dist/
 **/node_modules/
+**/generated/
 **/build/
 **/src-gen/
 **/python-db-gen/
