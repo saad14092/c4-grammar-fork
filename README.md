@@ -2,7 +2,7 @@
 
 ```
 cd c4-language-server
-./gradlew unzipServer
+./gradlew deployToVSCode
 ```
 
 # Build the VS Code Extension
