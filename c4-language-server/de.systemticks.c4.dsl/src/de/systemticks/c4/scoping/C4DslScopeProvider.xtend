@@ -23,6 +23,9 @@ import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
+import de.systemticks.c4.c4Dsl.AnimationStep
+import de.systemticks.c4.c4Dsl.Include
+import de.systemticks.c4.c4Dsl.Exclude
 
 /**
  * This class contains custom scoping description.
@@ -53,12 +56,39 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 			
 		}
 		
+		else if (context instanceof AnimationStep && reference == C4DslPackage.Literals.ANIMATION_STEP__ELEMENTS) {
+
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, NamedElement);
+
+			return Scopes.scopeFor(candidates);
+			
+		}
+
+		else if (context instanceof Include && reference == C4DslPackage.Literals.INCLUDE__ELEMENTS) {
+
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, NamedElement);
+
+			return Scopes.scopeFor(candidates);
+			
+		}
+
+		else if (context instanceof Exclude && reference == C4DslPackage.Literals.EXCLUDE__ELEMENTS) {
+
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, NamedElement);
+
+			return Scopes.scopeFor(candidates);
+			
+		}
+		
 		else {
 			return super.getScope(context, reference);
 		}
 
 	}
-
+	
 }
 
 

@@ -55,7 +55,7 @@ Container:
 ;
 
 SoftwareSystem:
-	(name=ID '=')? 'softwareSystem' label=STRING (description=STRING | description=STRING taglist=STRING)?  
+	(name=ID '=')? ('softwareSystem'|'softwaresystem') label=STRING (description=STRING | description=STRING taglist=STRING)?  
 	('{'
 		container+=Container+
 	'}')?
@@ -75,35 +75,49 @@ ViewSection:
 ;
 
 View:
-	SystemContextView | ContainerView | ComponentView
+	SystemLandscape | SystemContextView | ContainerView | ComponentView
+;
+
+SystemLandscape:
+	('systemLandscape'|'systemlandscape') key=STRING description=STRING? '{'
+		content=CustomizedContent
+	'}'
 ;
 
 SystemContextView:
-	'systemContext' system=[SoftwareSystem] key=STRING description=STRING? '{'
+	('systemContext'|'systemcontext') system=[SoftwareSystem] key=STRING description=STRING? '{'
 		content=CustomizedContent
-		autoLayout = 'autoLayout'?
 	'}'
 ;
 
 ContainerView:
 	'container' system=[SoftwareSystem] key=STRING description=STRING? '{'
 		content=CustomizedContent
-		autoLayout = 'autoLayout'?
 	'}' 
 ;
 
 ComponentView:
 	'component' container=[Container] key=STRING description=STRING? '{'
 		content=CustomizedContent
-		autoLayout = 'autoLayout'?
 	'}' 
 ;
 
-CustomizedContent:
-	{CustomizedContent} 
-		(includes += Include |
-	 	excludes += Exclude)*	
+CustomizedContent:	 
+		{CustomizedContent} (
+			includes += Include* &
+	 		excludes += Exclude* &
+	 		autoLayout = AutoLayout? &
+	 		animationStep += AnimationStep* &
+	 		('title' title = STRING)?
+	 	)	
 ;
+
+AutoLayout:
+	{AutoLayout} 'autoLayout' direction=LayoutDirection? (rankSeperation=INT | rankSeperation=INT nodeSeperation=INT)?
+;
+
+enum LayoutDirection:
+	tb|bt|lr|rl;
 
 Include:
 	'include' (all?='*' | elements+=[NamedElement]+)	
@@ -112,6 +126,11 @@ Include:
 Exclude:
 	'exclude' elements+=[NamedElement]+	
 ;
+
+AnimationStep:
+	'animationStep' elements+=[NamedElement]+	
+;
+
 
 Styles:
 	{Styles} 'styles' '{'
@@ -124,8 +143,18 @@ StyledElement:
 	'element' tag=STRING '{'
 		(
 			('shape' shape=StyleShape)? &
+			('icon' file=STRING)? &
+			('width' width=INT)? &
+			('height' height=INT)? &			 
 			('background' backgroundColor=HEX_DECIMAL)? &
-			('color' color=HEX_DECIMAL)?		
+			('color' color=HEX_DECIMAL)? &
+			('colour' colour=HEX_DECIMAL)? & 
+			('stroke' stroke=HEX_DECIMAL)? &
+			('fontSize' fontSize=INT)? & 
+			('border' border=("solid"|"dashed"|"dotted"))? &
+			('opacity' opacity=INT)? &
+			('metadata' metadata=("true"|"false"))? & 
+			('description' description=("true"|"false"))?		
 		)  
 	'}'
 ;
@@ -133,8 +162,15 @@ StyledElement:
 StyledRelationShip:
 	'relationship' tag=STRING '{'
 		(
-			('dashed' dashed=("true" | "false"))? &
-			('color' color=HEX_DECIMAL)?
+			('thickness' thickness=INT)? &
+			('color' color=HEX_DECIMAL)? &
+			('colour' colour=HEX_DECIMAL)? & 
+			('dashed' dashed=("true"|"false"))? &
+			('routing' routing=("Direct"|"Orthogonal"|"Curved"))? &
+			('fontSize' fontSize=INT)? &
+			('width' width=INT)? &
+			('position' position=INT)? &
+			('opacity' opacity=INT)?						 
 		)
 	'}'
 ;
@@ -144,4 +180,8 @@ enum StyleShape:
 
 
 terminal HEX_DECIMAL: '#' (('0'..'9') | ('A' .. 'F') | ('a' .. 'f') )+;
+
+@Override 
+terminal SL_COMMENT : ('# '|'//') !('\n'|'\r')* ('\r'? '\n')?;
+
 

@@ -5,11 +5,12 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
         enterprise "Big Bank plc" {
             supportStaff = person "Customer Service Staff" "Customer service staff within the bank." "Bank Staff"
             backoffice = person "Back Office Staff" "Administration and support staff within the bank."
-            mainframe = softwareSystem "Mainframe Banking System" "Stores all of the core banking information about customers, accounts, transactions, etc." "Existing System" 
-            email = softwareSystem "E-mail System" "The internal Microsoft Exchange e-mail system" "Existing System"
-            atm = softwareSystem "ATM" "Allows customers to withdraw cash." "Existing System"
 
-            internetBankingSystem = softwareSystem "Internet Banking System" "Allows customers to view information about their bank accounts, and make payments." {
+            mainframe = softwaresystem "Mainframe Banking System" "Stores all of the core banking information about customers, accounts, transactions, etc." "Existing System"
+            email = softwaresystem "E-mail System" "The internal Microsoft Exchange e-mail system" "Existing System"
+            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"
+
+            internetBankingSystem = softwaresystem "Internet Banking System" "Allows customers to view information about their bank accounts, and make payments." {
                 singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
                 mobileApp = container "Mobile App" "Provides a limited subset of the Internet banking functionality to customers via their mobile device." "Xamarin" "Mobile App"
                 webApplication = container "Web Application" "Delivers the static content and the Internet banking single page application." "Java and Spring MVC"
@@ -27,7 +28,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
         }
         customer = person "Personal Banking Customer" "A customer of the bank, with personal bank accounts."
 
-        //# relationships between people and software systems
+        # relationships between people and software systems
         customer -> internetBankingSystem "Views account balances, and makes payments using"
         internetBankingSystem -> mainframe "Gets account information from, and makes payments using"
         internetBankingSystem -> email "Sends e-mail using"
@@ -38,13 +39,13 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
         atm -> mainframe "Uses"
         backoffice -> mainframe "Uses"
 
-        //# relationships to/from containers
+        # relationships to/from containers
         customer -> webApplication "Visits bigbank.com/ib using" "HTTPS"
         customer -> singlePageApplication "Views account balances, and makes payments using"
         customer -> mobileApp "Views account balances, and makes payments using"
         webApplication -> singlePageApplication "Delivers to the customer's web browser"
 
-        //# relationships to/from components
+        # relationships to/from components
         singlePageApplication -> signinController "Makes API calls to" "JSON/HTTPS"
         singlePageApplication -> accountsSummaryController "Makes API calls to" "JSON/HTTPS"
         singlePageApplication -> resetPasswordController "Makes API calls to" "JSON/HTTPS"
@@ -58,32 +59,49 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
         securityComponent -> database "Reads from and writes to" "JDBC"
         mainframeBankingSystemFacade -> mainframe "Makes API calls to" "XML/HTTPS"
         emailComponent -> email "Sends e-mail using"
-
     }
 
     views {
-
-        systemContext internetBankingSystem "SystemContext" {
+        systemlandscape "SystemLandscape" {
             include *
+            autoLayout
+        }
+
+        systemcontext internetBankingSystem "SystemContext" {
+            include *
+            animationStep internetBankingSystem
+            animationStep customer
+            animationStep mainframe
+            animationStep email
             autoLayout
         }
 
         container internetBankingSystem "Containers" {
             include *
+            animationStep customer mainframe email
+            animationStep webApplication
+            animationStep singlePageApplication
+            animationStep mobileApp
+            animationStep apiApplication
+            animationStep database
             autoLayout
         }
 
         component apiApplication "Components" {
             include *
+            animationStep singlePageApplication mobileApp database email mainframe
+            animationStep signinController securityComponent
+            animationStep accountsSummaryController mainframeBankingSystemFacade
+            animationStep resetPasswordController emailComponent
             autoLayout
         }
-
 
         styles {
             element "Person" {
                 background #08427b
                 color #ffffff
-             //   shape Person
+                fontSize 22
+                shape Person
             }
             element "Bank Staff" {
                 background #999999
@@ -113,6 +131,9 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
             element "Component" {
                 background #85bbf0
                 color #000000
+            }
+            element "Failover" {
+                opacity 25
             }
         }
     }

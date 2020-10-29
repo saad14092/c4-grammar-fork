@@ -42,6 +42,12 @@ export function activate(context: vscode.ExtensionContext) {
     languageClient.trace = Trace.Verbose
     const disposable = languageClient.start();
 
+    vscode.commands.registerCommand("c4.show.diagram", (uri: string) => {        
+        vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(vscode.workspace.rootPath+'/src-gen/'+uri)).then( () =>
+            vscode.commands.executeCommand("plantuml.preview")
+        )
+    }); 
+
     context.subscriptions.push(disposable);
     
     return languageClient;
