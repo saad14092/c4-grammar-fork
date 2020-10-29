@@ -14,10 +14,6 @@
 package de.systemticks.c4.generator
 
 import com.structurizr.dsl.StructurizrDslParser
-import de.systemticks.c4.c4Dsl.ComponentView
-import de.systemticks.c4.c4Dsl.ContainerView
-import de.systemticks.c4.c4Dsl.SystemContextView
-import de.systemticks.c4.c4Dsl.Workspace
 import java.io.File
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
@@ -48,7 +44,11 @@ class C4DslGenerator extends AbstractGenerator {
 		
 		 val fn = resource.URI.lastSegment.split('\\.').head
 
-		 // generate all system context views				 
+		 // generate all system context views				
+		 parser.workspace.views.systemLandscapeViews.forEach[ landscapeView | 
+		 	fsa.generateFile(fn+'_systemLandscape_'+".puml", writer.toString(landscapeView))
+		 ]
+		  
 		 parser.workspace.views.systemContextViews.forEach[ contextView | 
 		 	fsa.generateFile(fn+'_systemContext_'+contextView.softwareSystem.name+".puml", writer.toString(contextView))
 		 ]

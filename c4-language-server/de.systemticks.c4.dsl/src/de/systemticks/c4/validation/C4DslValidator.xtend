@@ -19,6 +19,7 @@ import de.systemticks.c4.c4Dsl.Workspace
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
+import de.systemticks.c4.c4Dsl.StyledRelationShip
 
 /**
  * This class contains custom validation rules. 
@@ -31,7 +32,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 	@Check
 	def tagExistForApplyStyledElement(StyledElement styledElement) {
 		if(!styledElement.eResource.allContents.filter(Workspace).head.allTags.contains(styledElement.tag)) {
-			error('Style cannot be applied, Tag <'+styledElement.tag+"> is nor a default tag, nor a customer tag", 
+			warning('Style cannot be applied, Tag <'+styledElement.tag+"> is neither a default tag, nor a customer tag", 
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
 					"Unknown Tag")			
 		}		
@@ -44,6 +45,30 @@ class C4DslValidator extends AbstractC4DslValidator {
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
 					"Already Defined Style")						
 		}
+	}
+	
+	@Check	
+	def opacityValueRange(StyledElement styledElement) {
+		if(styledElement.opacity < 0 || styledElement.opacity > 100) {
+			error('Value for opacity must be between 0 and 100', 
+					C4DslPackage.Literals.STYLED_ELEMENT__OPACITY,
+					"Invalid Value Range")									
+		} 
+	}
+
+	@Check	
+	def opacityValueRange(StyledRelationShip styledRelationShip) {
+		if(styledRelationShip.opacity < 0 || styledRelationShip.opacity > 100) {
+			error('Value for opacity must be between 0 and 100', 
+					C4DslPackage.Literals.STYLED_RELATION_SHIP__POSITION,
+					"Invalid Value Range")									
+		}
+		if(styledRelationShip.position < 0 || styledRelationShip.position > 100) {
+			error('Value for position must be between 0 and 100', 
+					C4DslPackage.Literals.STYLED_RELATION_SHIP__POSITION,
+					"Invalid Value Range")									
+		} 
+		 
 	}
 	
 }

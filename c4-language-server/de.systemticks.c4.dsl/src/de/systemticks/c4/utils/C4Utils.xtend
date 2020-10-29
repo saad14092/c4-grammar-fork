@@ -13,14 +13,12 @@
 // limitations under the License.
 package de.systemticks.c4.utils
 
-import de.systemticks.c4.c4Dsl.C4DslFactory
 import de.systemticks.c4.c4Dsl.Component
 import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.NamedElement
 import de.systemticks.c4.c4Dsl.Person
 import de.systemticks.c4.c4Dsl.RelationShip
 import de.systemticks.c4.c4Dsl.SoftwareSystem
-import de.systemticks.c4.c4Dsl.StyleShape
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.Workspace
 import java.util.List
@@ -85,51 +83,9 @@ class C4Utils {
 	def static List<String> getCustomTags(RelationShip r) {
 		(r.taglist === null) ? newArrayList : r.taglist.split(',').map[trim]			
 	}
-
-	def static createDefaultStyleContainer() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#438dd5"
-			color = "#ffffff"
-			shape = StyleShape.BOX		
-			tag = DEFAULT_CONTAINER_TAG					
-		]
-	}
-
-	def static createDefaultStyleSoftwareSystem() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#1168bd"
-			color = "#ffffff"
-			shape = StyleShape.BOX
-			tag = DEFAULT_SOFTWARE_SYSTEM_TAG			
-		]
-	}
-
-	def static createDefaultStylePerson() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#08427b"
-			color = "#ffffff"
-			shape = StyleShape.BOX	
-			tag = DEFAULT_PERSON_TAG								
-		]
-	}
-
-	def static createDefaultStyleComponent() {
-		C4DslFactory.eINSTANCE.createStyledElement => [
-			backgroundColor = "#85bbf0"
-			color = "#000000"
-			shape = StyleShape.BOX
-			tag = DEFAULT_COMPONENT_TAG						
-		]
-	}
-	
-	def static createDefaultStyleRelationship() {
-		C4DslFactory.eINSTANCE.createStyledRelationShip => [
-			color = "#707070"
-			dashed = "false"
-		]		
-	}
 	
 	def static isDashed(StyledRelationShip r) {
 		r.dashed !== null  && r.dashed.equals("true")
 	}
+		
 }
