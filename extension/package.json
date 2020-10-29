@@ -59,6 +59,10 @@
         "webpack": "^4.44.1",
         "webpack-cli": "^3.3.12"
     },
+    "extensionPack": [
+        "naumovs.color-highlight",
+        "jebbs.plantuml"
+    ],
     "scripts": {
         "prepare": "yarn run clean && yarn run build",
         "clean": "rimraf extension/lib extension/pack",

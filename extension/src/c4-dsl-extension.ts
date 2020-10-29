@@ -14,7 +14,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace } from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange } from 'vscode-languageclient';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -42,11 +42,18 @@ export function activate(context: vscode.ExtensionContext) {
     languageClient.trace = Trace.Verbose
     const disposable = languageClient.start();
 
-    vscode.commands.registerCommand("c4.show.diagram", (uri: string) => {        
-        vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(vscode.workspace.rootPath+'/src-gen/'+uri)).then( () =>
-            vscode.commands.executeCommand("plantuml.preview")
-        )
-    }); 
+    vscode.commands.registerCommand("c4.show.diagram", (uri: string) => {
+        if(vscode.workspace.workspaceFolders) {
+            vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(vscode.workspace.workspaceFolders[0].uri+'/src-gen/'+uri)).then(
+                 () => vscode.commands.executeCommand("plantuml.preview"))
+        }
+    });     
+
+    vscode.commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
+        const range = new vscode.Range( new vscode.Position(_range.start.line, _range.start.character),
+            new vscode.Position(_range.end.line, _range.end.character))
+        vscode.window.activeTextEditor?.revealRange(range);
+    });      
 
     context.subscriptions.push(disposable);
     

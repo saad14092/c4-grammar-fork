@@ -1,9 +1,13 @@
 package de.systemticks.c4.ide.codelens
 
 import com.google.inject.Inject
+import de.systemticks.c4.c4Dsl.ComponentView
+import de.systemticks.c4.c4Dsl.ContainerView
+import de.systemticks.c4.c4Dsl.NamedElement
+import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.SystemContextView
 import de.systemticks.c4.c4Dsl.SystemLandscape
-import java.util.regex.Pattern
+import de.systemticks.c4.c4Dsl.View
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.lsp4j.CodeLens
 import org.eclipse.lsp4j.CodeLensParams
@@ -14,9 +18,6 @@ import org.eclipse.xtext.ide.server.codelens.ICodeLensService
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.util.CancelIndicator
-import de.systemticks.c4.c4Dsl.ContainerView
-import de.systemticks.c4.c4Dsl.ComponentView
-import de.systemticks.c4.c4Dsl.View
 
 class C4CodeLenseService implements ICodeLensService {
 	
@@ -27,13 +28,30 @@ class C4CodeLenseService implements ICodeLensService {
 		val result = newArrayList
 
 		resource.allContents.filter(View).forEach[ view |			
-		    result += view.createCodeLens(resource)						
+		    result += view.createCodeLensForPlantUML(resource)						
+		]
+
+		resource.allContents.filter(StyledElement).forEach[ style |
+			val styleTag = style.tag
+			resource.allContents.filter(NamedElement).forEach[ element |
+				if(element.taglist !== null && element.taglist.contains(styleTag)) {
+					val range = documentExtensions.newRange(resource, NodeModelUtils.findActualNodeFor(style).textRegion)								
+					result += new CodeLens => [
+						it.range = range
+						command = new Command => [
+							title = element.label
+							command = "c4.goto.taggedElement"
+							arguments = newArrayList(documentExtensions.newRange(resource, NodeModelUtils.findActualNodeFor(element).textRegion))
+						]
+					]									
+				}
+			]
 		]
 
 		return result
 	}
 	
-	def createCodeLens(View view, XtextResource resource) {
+	def createCodeLensForPlantUML(View view, XtextResource resource) {
 		
 		    val range = documentExtensions.newRange(resource, NodeModelUtils.findActualNodeFor(view).textRegion)			
 			new CodeLens => [
