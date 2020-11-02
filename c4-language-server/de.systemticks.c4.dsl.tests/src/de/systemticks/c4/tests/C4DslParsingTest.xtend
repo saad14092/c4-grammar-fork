@@ -94,6 +94,14 @@ class C4DslParsingTest {
 		 val parser = new StructurizrDslParser();
 
 		 parser.parse(rawDsl);
+		 
+		 assertEquals("Getting Started", parser.workspace.name);
+		 assertEquals(1, parser.workspace.model.softwareSystems.size)
+		 assertEquals(1, parser.workspace.model.people.size)
+		 assertEquals(1, parser.workspace.model.relationships.size)
+		 
+		 assertEquals("User",parser.workspace.model.relationships.get(0).source.name)
+		 assertEquals("Software System",parser.workspace.model.relationships.get(0).destination.name)
 
 		 val writer = new StructurizrPlantUMLWriter();
 				 
