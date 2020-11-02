@@ -1,18 +1,6 @@
-# Build the language server
+# A VS Code extension for C4 DSL Models
 
-```
-cd c4-language-server
-./gradlew deployToVSCode
-```
-
-# Build the VS Code Extension
-
-```
-cd extension
-yarn
-```
-
-# Currently supported DSL Elements
+## Currently supported DSL Elements
 
 - [Grammar](#grammar)
 	- [!include](#include) :x:

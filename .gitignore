@@ -12,4 +12,6 @@
 **/target/
 **/test-bin/
 **/pack/
+**/plantuml-gen/
 **/*.log
+**/*.vsix

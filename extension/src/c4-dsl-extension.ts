@@ -19,7 +19,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as L
 export function activate(context: vscode.ExtensionContext) {
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
-    const languageServerPath =  path.join('server', 'c4-language-server-1.0.0-SNAPSHOT', 'bin', executable);
+    const languageServerPath =  path.join('server', 'c4-language-server', 'bin', executable);
     const serverLauncher = context.asAbsolutePath(languageServerPath);
     const serverOptions: ServerOptions = {
         run: {
@@ -44,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand("c4.show.diagram", (uri: string) => {
         if(vscode.workspace.workspaceFolders) {
-            vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(vscode.workspace.workspaceFolders[0].uri+'/src-gen/'+uri)).then(
+            vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(vscode.workspace.workspaceFolders[0].uri+'/plantuml-gen/'+uri)).then(
                  () => vscode.commands.executeCommand("plantuml.preview"))
         }
     });     
