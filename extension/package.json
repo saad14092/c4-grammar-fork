@@ -2,12 +2,13 @@
     "name": "c4-dsl-extension",
     "displayName": "C4 DSL Extension",
     "description": "A DSL for C4 Models",
-    "publisher": "systemticks GmbH",
+    "publisher": "systemticks",
     "repository": {
         "type": "git",
         "url": "https://gitlab.com/systemticks/c4-grammar"
     },
     "license": "Apache-2.0",
+    "icon": "images/c4dsl.png",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.46.0"

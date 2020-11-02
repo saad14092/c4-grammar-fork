@@ -23,8 +23,10 @@ subprojects {
 	apply from: "${rootDir}/gradle/source-layout.gradle"
 	apply plugin: 'eclipse'
 	
+	compileJava.options.encoding = 'ISO-8859-1'
+	
 	group = 'de.systemticks.c4.dsl'
-	version = '1.0.0-SNAPSHOT'
+	//version = '1.0.0-SNAPSHOT'
 	
 	sourceCompatibility = '1.8'
 	targetCompatibility = '1.8'

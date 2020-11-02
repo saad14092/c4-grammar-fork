@@ -13,12 +13,22 @@
 // limitations under the License.
 package de.systemticks.c4
 
+import org.eclipse.xtext.generator.IContextualOutputConfigurationProvider
+import org.eclipse.xtext.generator.IOutputConfigurationProvider
+import de.systemticks.c4.generator.C4DslOutputConfiguration
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class C4DslRuntimeModule extends AbstractC4DslRuntimeModule {
 
+	def Class<? extends IOutputConfigurationProvider> bindIOutputConfigurationProvider() {
+		return C4DslOutputConfiguration;
+	}	
+	
+	def Class<? extends IContextualOutputConfigurationProvider> bindIContextualOutputConfigurationProvider() {
+		return C4DslOutputConfiguration;
+	}	
 
     
 }

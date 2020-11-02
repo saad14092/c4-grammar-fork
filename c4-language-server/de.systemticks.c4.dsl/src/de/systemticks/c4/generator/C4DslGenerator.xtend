@@ -46,19 +46,19 @@ class C4DslGenerator extends AbstractGenerator {
 
 		 // generate all system context views				
 		 parser.workspace.views.systemLandscapeViews.forEach[ landscapeView | 
-		 	fsa.generateFile(fn+'_systemLandscape_'+".puml", writer.toString(landscapeView))
+		 	fsa.generateFile(fn+'_systemLandscape_'+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(landscapeView))
 		 ]
 		  
 		 parser.workspace.views.systemContextViews.forEach[ contextView | 
-		 	fsa.generateFile(fn+'_systemContext_'+contextView.softwareSystem.name+".puml", writer.toString(contextView))
+		 	fsa.generateFile(fn+'_systemContext_'+contextView.softwareSystem.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(contextView))
 		 ]
 		 
 		 parser.workspace.views.containerViews.forEach[ containerView |
-		 	fsa.generateFile(fn+'_container_'+containerView.softwareSystem.name+".puml", writer.toString(containerView))		 	
+		 	fsa.generateFile(fn+'_container_'+containerView.softwareSystem.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(containerView))		 	
 		 ]
 
 		 parser.workspace.views.componentViews.forEach[ componentView |
-		 	fsa.generateFile(fn+'_component_'+componentView.container.name+".puml", writer.toString(componentView))		 	
+		 	fsa.generateFile(fn+'_component_'+componentView.container.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(componentView))		 	
 		 ]
 				 		 		 
 	}
