@@ -60,6 +60,10 @@ class C4DslGenerator extends AbstractGenerator {
 		 parser.workspace.views.componentViews.forEach[ componentView |
 		 	fsa.generateFile(fn+'_component_'+componentView.container.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(componentView))		 	
 		 ]
+
+		 parser.workspace.views.deploymentViews.forEach[ deploymentView |
+		 	fsa.generateFile(fn+'_deployment_'+deploymentView.softwareSystem.name+'_'+deploymentView.key+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(deploymentView))		 	
+		 ]
 				 		 		 
 	}
 }

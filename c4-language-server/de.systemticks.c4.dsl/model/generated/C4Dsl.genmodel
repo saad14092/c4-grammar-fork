@@ -38,14 +38,18 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/enterprise"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/person"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/softwareSystems"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/deploymentEnvironments"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/relationShips"/>
     </genClasses>
-    <genClasses ecoreClass="C4Dsl.ecore#//NamedElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//NamedElement/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//NamedElement/label"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//NamedElement/description"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//NamedElement/taglist"/>
+    <genClasses ecoreClass="C4Dsl.ecore#//AnyModelElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//AnyModelElement/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//AnyModelElement/taglist"/>
     </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//BasicModelElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//BasicModelElement/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//BasicModelElement/description"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//DeploymentElement"/>
     <genClasses ecoreClass="C4Dsl.ecore#//Enterprise">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Enterprise/label"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Enterprise/person"/>
@@ -62,6 +66,31 @@
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//SoftwareSystem">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/container"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//DeploymentEnvironment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentEnvironment/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentEnvironment/deploymentNodes"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//DeploymentNode">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/technology"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/instances"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/deploymentNodes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/infrastructureNodes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/softwareSystemInstances"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/containerInstances"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//InfrastructureNode">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//InfrastructureNode/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//InfrastructureNode/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//InfrastructureNode/technology"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//SoftwareSystemInstance">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystemInstance/softwareSystem"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//ContainerInstance">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ContainerInstance/container"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//RelationShip">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//RelationShip/from"/>
@@ -88,6 +117,11 @@
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//ComponentView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ComponentView/container"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//DeploymentView">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/all"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentView/system"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/environment"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//CustomizedContent">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//CustomizedContent/includes"/>

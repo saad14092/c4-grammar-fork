@@ -13,13 +13,15 @@
 // limitations under the License.
 package de.systemticks.c4.validation
 
+import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.C4DslPackage
 import de.systemticks.c4.c4Dsl.StyledElement
+import de.systemticks.c4.c4Dsl.StyledRelationShip
 import de.systemticks.c4.c4Dsl.Workspace
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
-import de.systemticks.c4.c4Dsl.StyledRelationShip
+import de.systemticks.c4.c4Dsl.AnyModelElement
 
 /**
  * This class contains custom validation rules. 
@@ -55,6 +57,16 @@ class C4DslValidator extends AbstractC4DslValidator {
 					"Invalid Value Range")									
 		} 
 	}
+
+	@Check
+	def uniqueNamedElement(AnyModelElement anyModelElement) {
+		if(anyModelElement.eResource.allContents.filter(BasicModelElement).map[name].filter[equals(anyModelElement.name)].size > 1) {
+			error('Element is already defined', 
+					C4DslPackage.Literals.ANY_MODEL_ELEMENT__NAME,
+					"Already Defined Element")						
+		}
+	}
+
 
 	@Check	
 	def opacityValueRange(StyledRelationShip styledRelationShip) {

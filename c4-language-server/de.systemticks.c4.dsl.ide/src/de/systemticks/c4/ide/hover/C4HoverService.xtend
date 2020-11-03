@@ -2,11 +2,12 @@ package de.systemticks.c4.ide.hover
 
 import de.systemticks.c4.c4Dsl.Component
 import de.systemticks.c4.c4Dsl.Container
-import de.systemticks.c4.c4Dsl.NamedElement
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ide.server.hover.HoverService
 import de.systemticks.c4.c4Dsl.AutoLayout
 import de.systemticks.c4.c4Dsl.LayoutDirection
+import de.systemticks.c4.c4Dsl.DeploymentNode
+import de.systemticks.c4.c4Dsl.BasicModelElement
 
 class C4HoverService extends HoverService {
 	
@@ -14,7 +15,7 @@ class C4HoverService extends HoverService {
 		
 		val result = newArrayList
 		
-		if(element instanceof NamedElement) {
+		if(element instanceof BasicModelElement) {
 			
 			result.add(
 				'''
@@ -56,6 +57,27 @@ class C4HoverService extends HoverService {
 				
 				*Node Separation*:
 				&nbsp;&nbsp;&nbsp;«IF element.nodeSeperation==0»300 px (default)«ELSE»«element.nodeSeperation» px«ENDIF»				
+				'''
+			)
+			
+		}
+
+		else if(element instanceof DeploymentNode) {
+			result.add(
+				'''
+				**«element.label»**
+				
+				*Description*:
+				 
+				&nbsp;&nbsp;&nbsp;«element.description»
+				
+				*Technology*:
+				
+				&nbsp;&nbsp;&nbsp;«element.technology»
+				
+				*Tags*:
+				 
+				&nbsp;&nbsp;&nbsp;«element.taglist»
 				'''
 			)
 			

@@ -8,7 +8,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
             mainframe = softwaresystem "Mainframe Banking System" "Stores all of the core banking information about customers, accounts, transactions, etc." "Existing System"
             email = softwaresystem "E-mail System" "The internal Microsoft Exchange e-mail system" "Existing System"
-            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"
+            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"            
 
             internetBankingSystem = softwaresystem "Internet Banking System" "Allows customers to view information about their bank accounts, and make payments." {
                 singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
@@ -59,6 +59,73 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
         securityComponent -> database "Reads from and writes to" "JDBC"
         mainframeBankingSystemFacade -> mainframe "Makes API calls to" "XML/HTTPS"
         emailComponent -> email "Sends e-mail using"
+
+
+        deploymentEnvironment "Development" {
+            deploymentNode "Developer Laptop" "" "Microsoft Windows 10 or Apple macOS" {
+                deploymentNode "Web Browser" "" "Chrome, Firefox, Safari, or Edge" {
+                    developerSinglePageApplicationInstance = containerInstance singlePageApplication
+                }
+                deploymentNode "Docker Container - Web Server" "" "Docker" {
+                    deploymentNode "Apache Tomcat" "" "Apache Tomcat 8.x" {
+                        developerWebApplicationInstance = containerInstance webApplication
+                        developerApiApplicationInstance = containerInstance apiApplication
+                    }
+                }
+                deploymentNode "Docker Container - Database Server" "" "Docker" {
+                    deploymentNode "Database Server" "" "Oracle 12c" {
+                        developerDatabaseInstance = containerInstance database
+                    }
+                }
+            }
+            deploymentNode "Big Bank plc" "" "Big Bank plc data center" "" {
+                deploymentNode "bigbank-dev001" "" "" "" {
+                    softwareSystemInstance mainframe
+                }
+            }
+
+        }
+
+       deploymentEnvironment "Live" {
+            deploymentNode "Customer's mobile device" "" "Apple iOS or Android" {
+                liveMobileAppInstance = containerInstance mobileApp
+            }
+            deploymentNode "Customer's computer" "" "Microsoft Windows or Apple macOS" {
+                deploymentNode "Web Browser" "" "Chrome, Firefox, Safari, or Edge" {
+                    liveSinglePageApplicationInstance = containerInstance singlePageApplication
+                }
+            }
+
+            deploymentNode "Big Bank plc" "" "Big Bank plc data center" {
+                deploymentNode "bigbank-web***" "" "Ubuntu 16.04 LTS" "" 4 {
+                    deploymentNode "Apache Tomcat" "" "Apache Tomcat 8.x" {
+                        liveWebApplicationInstance = containerInstance webApplication
+                    }
+                }
+                deploymentNode "bigbank-api***" "" "Ubuntu 16.04 LTS" "" 8 {
+                    deploymentNode "Apache Tomcat" "" "Apache Tomcat 8.x" {
+                        liveApiApplicationInstance = containerInstance apiApplication
+                    }
+                }
+
+                deploymentNode "bigbank-db01" "" "Ubuntu 16.04 LTS" {
+                    primaryDatabaseServer = deploymentNode "Oracle - Primary" "" "Oracle 12c" {
+                        livePrimaryDatabaseInstance = containerInstance database
+                    }
+                }
+                deploymentNode "bigbank-db02" "" "Ubuntu 16.04 LTS" "Failover" {
+                    secondaryDatabaseServer = deploymentNode "Oracle - Secondary" "" "Oracle 12c" "Failover" {
+                        liveSecondaryDatabaseInstance = containerInstance database "Failover"
+                    }
+                }
+                deploymentNode "bigbank-prod001" "" "" "" {
+                    softwareSystemInstance mainframe
+                }
+            }
+
+         //   primaryDatabaseServer -> secondaryDatabaseServer "Replicates data to"
+        }
+
     }
 
     views {
@@ -93,6 +160,24 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
             animationStep signinController securityComponent
             animationStep accountsSummaryController mainframeBankingSystemFacade
             animationStep resetPasswordController emailComponent
+            autoLayout
+        }
+
+        deployment internetBankingSystem "Development" "DevelopmentDeployment" {
+            include *
+            animationStep developerSinglePageApplicationInstance
+            animationStep developerWebApplicationInstance developerApiApplicationInstance
+            animationStep developerDatabaseInstance
+            autoLayout
+        }
+
+        deployment internetBankingSystem "Live" "LiveDeployment" {
+            include *
+            animationStep liveSinglePageApplicationInstance
+            animationStep liveMobileAppInstance
+            animationStep liveWebApplicationInstance liveApiApplicationInstance
+            animationStep livePrimaryDatabaseInstance
+            animationStep liveSecondaryDatabaseInstance
             autoLayout
         }
 
