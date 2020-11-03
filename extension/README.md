@@ -19,15 +19,15 @@
 					- [component](#component):white_check_mark:
 						- [url](#url) :x:
 						- [properties](#properties) :x:
-			- [deploymentEnvironment](#deploymentEnvironment):x:
-				- [deploymentNode](#deploymentNode):x:
+			- [deploymentEnvironment](#deploymentEnvironment):white_check_mark:
+				- [deploymentNode](#deploymentNode):white_check_mark:
 					- [url](#url):x:
 					- [properties](#properties):x:
-					- [infrastructureNode](#infrastructureNode):x:
+					- [infrastructureNode](#infrastructureNode):white_check_mark:
 						- [url](#url):x:
 						- [properties](#properties):x:
-					- [softwareSystemInstance](#softwareSystemInstance):x:
-					- [containerInstance](#containerInstance):x:
+					- [softwareSystemInstance](#softwareSystemInstance):white_check_mark:
+					- [containerInstance](#containerInstance):white_check_mark:
 			- [-> (relationship)](#relationship) :white_check_mark:
 				- [url](#url) :x:
 		- [views](#views):white_check_mark:
@@ -59,12 +59,12 @@
 			- [dynamic](#dynamic-view) :x:
 				- [autoLayout](#autoLayout) :x:
 				- [title](#title) :x:
-			- [deployment](#deployment-view) :x:
-				- [include](#include) :x:
-				- [exclude](#exclude) :x:
-				- [autoLayout](#autoLayout) :x:
-				- [animationStep](#animationStep) :x:
-				- [title](#title) :x:
+			- [deployment](#deployment-view) :white_check_mark:
+				- [include](#include) :white_check_mark:
+				- [exclude](#exclude) :white_check_mark:
+				- [autoLayout](#autoLayout) :white_check_mark:
+				- [animationStep](#animationStep) :white_check_mark:
+				- [title](#title) :white_check_mark:
 			- [styles](#styles) :white_check_mark:
 				- [element](#element-style) :white_check_mark:
 				- [relationship](#relationship-style) :white_check_mark:

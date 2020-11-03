@@ -15,16 +15,26 @@ Workspace:
 
 Model:		
 	{Model} 'model'  '{'
-		(enterprise=Enterprise? &		
-		(person+=Person | 
-			softwareSystems+=SoftwareSystem |
-			relationShips+=RelationShip
-		)*)	
+		(
+			enterprise=Enterprise? &		
+			( person+=Person | 
+			  softwareSystems+=SoftwareSystem |
+			  deploymentEnvironments+=DeploymentEnvironment |
+			  relationShips+=RelationShip)*
+		)	
 	'}'
 ;
 
-NamedElement:
+AnyModelElement:
+	BasicModelElement | DeploymentElement
+;
+
+BasicModelElement:
 	Person | SoftwareSystem | Container | Component
+;
+
+DeploymentElement:
+	DeploymentNode | InfrastructureNode | SoftwareSystemInstance | ContainerInstance
 ;
 
 Enterprise:
@@ -61,8 +71,42 @@ SoftwareSystem:
 	'}')?
 ;
 
+// Deployment
+DeploymentEnvironment:
+	'deploymentEnvironment' label=STRING 
+	('{'
+		deploymentNodes+=DeploymentNode+
+	'}')?		
+;
+
+DeploymentNode:
+	(name=ID '=')? 'deploymentNode' label=STRING 
+		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? instances=INT?
+	('{'
+		(
+		deploymentNodes+=DeploymentNode |
+		infrastructureNodes+=InfrastructureNode |
+		softwareSystemInstances+=SoftwareSystemInstance |
+		containerInstances+=ContainerInstance)+
+	'}')?		
+;
+
+InfrastructureNode:
+	(name=ID '=')?'infrastructureNode' label=STRING 
+		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
+;
+
+SoftwareSystemInstance:
+	(name=ID '=')?'softwareSystemInstance' softwareSystem=[SoftwareSystem] taglist=STRING?
+;
+
+ContainerInstance:
+	(name=ID '=')? 'containerInstance' container=[Container] taglist=STRING?
+;
+
+// RelationShips
 RelationShip:
-	from=[NamedElement] "->" to=[NamedElement] 
+	from=[BasicModelElement] "->" to=[BasicModelElement] 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 ;
 
@@ -75,7 +119,7 @@ ViewSection:
 ;
 
 View:
-	SystemLandscape | SystemContextView | ContainerView | ComponentView
+	SystemLandscape | SystemContextView | ContainerView | ComponentView | DeploymentView
 ;
 
 SystemLandscape:
@@ -102,6 +146,14 @@ ComponentView:
 	'}' 
 ;
 
+//deployment <*|software system identifier> <environment name> [key] [description] {
+
+DeploymentView:
+	'deployment' (all?='*' | system=[SoftwareSystem]) environment=STRING key=STRING description=STRING? '{'
+		content=CustomizedContent	
+	'}'
+;
+
 CustomizedContent:	 
 		{CustomizedContent} (
 			includes += Include* &
@@ -120,15 +172,15 @@ enum LayoutDirection:
 	tb|bt|lr|rl;
 
 Include:
-	'include' (all?='*' | elements+=[NamedElement]+)	
+	'include' (all?='*' | elements+=[AnyModelElement]+)	
 ;
 
 Exclude:
-	'exclude' elements+=[NamedElement]+	
+	'exclude' elements+=[AnyModelElement]+	
 ;
 
 AnimationStep:
-	'animationStep' elements+=[NamedElement]+	
+	'animationStep' elements+=[AnyModelElement]+	
 ;
 
 

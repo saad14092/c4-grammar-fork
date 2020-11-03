@@ -16,15 +16,20 @@
         eType="#//Person" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="softwareSystems" upperBound="-1"
         eType="#//SoftwareSystem" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="deploymentEnvironments"
+        upperBound="-1" eType="#//DeploymentEnvironment" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
         eType="#//RelationShip" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="AnyModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="taglist" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BasicModelElement" eSuperTypes="#//AnyModelElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeploymentElement" eSuperTypes="#//AnyModelElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="Enterprise">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="person" upperBound="-1"
@@ -34,22 +39,52 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
         eType="#//RelationShip" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Person" eSuperTypes="#//NamedElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//NamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="Person" eSuperTypes="#//BasicModelElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//BasicModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Container" eSuperTypes="#//NamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="Container" eSuperTypes="#//BasicModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="#//Component" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SoftwareSystem" eSuperTypes="#//NamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="SoftwareSystem" eSuperTypes="#//BasicModelElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="container" upperBound="-1"
         eType="#//Container" containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeploymentEnvironment">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="deploymentNodes" upperBound="-1"
+        eType="#//DeploymentNode" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeploymentNode" eSuperTypes="#//DeploymentElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="instances" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="deploymentNodes" upperBound="-1"
+        eType="#//DeploymentNode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureNodes" upperBound="-1"
+        eType="#//InfrastructureNode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="softwareSystemInstances"
+        upperBound="-1" eType="#//SoftwareSystemInstance" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containerInstances" upperBound="-1"
+        eType="#//ContainerInstance" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InfrastructureNode" eSuperTypes="#//DeploymentElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SoftwareSystemInstance" eSuperTypes="#//DeploymentElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="softwareSystem" eType="#//SoftwareSystem"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContainerInstance" eSuperTypes="#//DeploymentElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="container" eType="#//Container"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RelationShip">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//NamedElement"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//NamedElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//BasicModelElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//BasicModelElement"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="taglist" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -76,6 +111,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="ComponentView" eSuperTypes="#//View">
     <eStructuralFeatures xsi:type="ecore:EReference" name="container" eType="#//Container"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeploymentView" eSuperTypes="#//View">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="system" eType="#//SoftwareSystem"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="environment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CustomizedContent">
     <eStructuralFeatures xsi:type="ecore:EReference" name="includes" upperBound="-1"
         eType="#//Include" containment="true"/>
@@ -101,15 +141,15 @@
   <eClassifiers xsi:type="ecore:EClass" name="Include">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" unique="false"
-        upperBound="-1" eType="#//NamedElement"/>
+        upperBound="-1" eType="#//AnyModelElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Exclude">
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" unique="false"
-        upperBound="-1" eType="#//NamedElement"/>
+        upperBound="-1" eType="#//AnyModelElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AnimationStep">
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" unique="false"
-        upperBound="-1" eType="#//NamedElement"/>
+        upperBound="-1" eType="#//AnyModelElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Styles">
     <eStructuralFeatures xsi:type="ecore:EReference" name="styledElements" upperBound="-1"
