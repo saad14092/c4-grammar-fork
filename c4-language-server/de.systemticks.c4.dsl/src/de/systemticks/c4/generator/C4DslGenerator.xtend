@@ -20,6 +20,11 @@ import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
+import com.structurizr.view.SystemLandscapeView
+import com.structurizr.view.SystemContextView
+import com.structurizr.view.ContainerView
+import com.structurizr.view.ComponentView
+import com.structurizr.view.DeploymentView
 
 /**
  * Generates code from your model files on save.
@@ -28,42 +33,48 @@ import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
  */
 class C4DslGenerator extends AbstractGenerator {
 
+	val FILE_EXTENSION_PLANTUML = '.puml'
+
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 
-		generateWithStructurizrDslParser(resource, fsa)					
-	}
-	
-	def generateWithStructurizrDslParser(Resource resource, IFileSystemAccess2 fsa) {
-				
 		 val parser = new StructurizrDslParser();
 		 val filename = resource.URI.toFileString
 
 		 parser.parse(new File(filename));
 
+		 generatePlantUML(parser, resource, fsa)
+		 
+	}
+	
+	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
+				
 		 val writer = new StructurizrPlantUMLWriter();
 		
 		 val fn = resource.URI.lastSegment.split('\\.').head
 
-		 // generate all system context views				
-		 parser.workspace.views.systemLandscapeViews.forEach[ landscapeView | 
-		 	fsa.generateFile(fn+'_systemLandscape_'+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(landscapeView))
-		 ]
-		  
-		 parser.workspace.views.systemContextViews.forEach[ contextView | 
-		 	fsa.generateFile(fn+'_systemContext_'+contextView.softwareSystem.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(contextView))
-		 ]
-		 
-		 parser.workspace.views.containerViews.forEach[ containerView |
-		 	fsa.generateFile(fn+'_container_'+containerView.softwareSystem.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(containerView))		 	
-		 ]
-
-		 parser.workspace.views.componentViews.forEach[ componentView |
-		 	fsa.generateFile(fn+'_component_'+componentView.container.name+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(componentView))		 	
-		 ]
-
-		 parser.workspace.views.deploymentViews.forEach[ deploymentView |
-		 	fsa.generateFile(fn+'_deployment_'+deploymentView.softwareSystem.name+'_'+deploymentView.key+".puml", C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(deploymentView))		 	
-		 ]
-				 		 		 
+		 parser.workspace.views.views.forEach[ view |
+		 	fsa.generateFile( createFileName(fn, view, FILE_EXTENSION_PLANTUML), C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(view))
+		 ]		 				 		 		 
 	}
+	
+	def dispatch createFileName(String fn, SystemLandscapeView view, String ext) {
+		fn+'_systemLandscape_'+ext
+	}
+
+	def dispatch createFileName(String fn, SystemContextView view, String ext) {
+		fn+'_systemContext_'+view.softwareSystem.name+ext
+	}
+
+	def dispatch createFileName(String fn, ContainerView view, String ext) {
+		fn+'_container_'+view.softwareSystem.name+ext
+	}
+
+	def dispatch createFileName(String fn, ComponentView view, String ext) {
+		fn+'_component_'+view.container.name+ext
+	}
+
+	def dispatch createFileName(String fn, DeploymentView view, String ext) {
+		fn+'_deployment_'+view.softwareSystem.name+"_"+view.key+ext
+	}
+	
 }

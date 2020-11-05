@@ -25,6 +25,12 @@ class C4ProposalProvider extends IdeContentProposalProvider {
 				}
 			}
 			
+			case grammarAccess.styledElementAccess.shapeAssignment_3_0_1: {
+				for(s: shapes) {
+					addProposal(s, context, acceptor)										
+				}
+			}
+			
 			default: {
 				super._createProposals(assignment, context, acceptor);
 			}

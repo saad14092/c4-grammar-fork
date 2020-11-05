@@ -76,6 +76,7 @@ DeploymentEnvironment:
 	'deploymentEnvironment' label=STRING 
 	('{'
 		deploymentNodes+=DeploymentNode+
+		relationShips+=RelationShip*		
 	'}')?		
 ;
 
@@ -106,7 +107,7 @@ ContainerInstance:
 
 // RelationShips
 RelationShip:
-	from=[BasicModelElement] "->" to=[BasicModelElement] 
+	from=[AnyModelElement] "->" to=[AnyModelElement] 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 ;
 
@@ -115,6 +116,7 @@ ViewSection:
 	{ViewSection} 'views' '{'
 		(views += View |
 		styles += Styles )*
+		theme=Theme?
 	'}'
 ;
 
@@ -165,7 +167,7 @@ CustomizedContent:
 ;
 
 AutoLayout:
-	{AutoLayout} 'autoLayout' direction=LayoutDirection? (rankSeperation=INT | rankSeperation=INT nodeSeperation=INT)?
+	{AutoLayout} ('autoLayout'|'autolayout') direction=LayoutDirection? (rankSeperation=INT | rankSeperation=INT nodeSeperation=INT)?
 ;
 
 enum LayoutDirection:
@@ -194,7 +196,7 @@ Styles:
 StyledElement:
 	'element' tag=STRING '{'
 		(
-			('shape' shape=StyleShape)? &
+			('shape' shape=ID)? &
 			('icon' file=STRING)? &
 			('width' width=INT)? &
 			('height' height=INT)? &			 
@@ -227,13 +229,16 @@ StyledRelationShip:
 	'}'
 ;
 
-enum StyleShape:	
-	Box|RoundedBox|Circle|Ellipse|Hexagon|Cylinder|Pipe|Person|Robot|Folder|WebBrowser|MobileDevicePortrait|MobileDeviceLandscape|Component	;
+//enum StyleShape:	
+//	Box|RoundedBox|Circle|Ellipse|Hexagon|Cylinder|Pipe|Person|Robot|Folder|WebBrowser|MobileDevicePortrait|MobileDeviceLandscape|Component	;
 
+Theme:
+	'themes' (urls+=STRING)+
+;
 
 terminal HEX_DECIMAL: '#' (('0'..'9') | ('A' .. 'F') | ('a' .. 'f') )+;
 
 @Override 
 terminal SL_COMMENT : ('# '|'//') !('\n'|'\r')* ('\r'? '\n')?;
 
-
+//terminal URL: 'http' ('s'?) '://' ID ('.'|'/' ID)*;

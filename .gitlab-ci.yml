@@ -1,24 +1,34 @@
-image: "ubuntu:bionic"
+image: "node:10"
 
 before_script:
   - apt-get update
+  - apt-get install -y openjdk-8-jdk 
+  - apt-get install -y ant
+  - apt-get clean
+  - rm -rf /var/lib/apt/lists/*
+  - rm -rf /var/cache/oracle-jdk8-installer
   - apt-get -y install openjdk-8-jdk
   - chmod +x c4-language-server/gradlew
 
 stages:
-  - test
-  - build
+  - server
+  - client
 
-language-server-test:
-  stage: test
+c4-language-server:
+  stage: server
 
   script:
     - cd c4-language-server
     - ./gradlew check
+    - ./gradlew deployToVSCode
 
-language-server-build:
-  stage: build
+c4-language-client:
+  stage: client
+
+  variables:
+    NODE_ENV: "development"
 
   script:
-    - cd c4-language-server
-    - ./gradlew deployToVSCode
+    - cd extension
+    - yarn install 
+    - yarn build

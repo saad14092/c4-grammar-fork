@@ -32,6 +32,15 @@ class C4DslValidator extends AbstractC4DslValidator {
 	
 	
 	@Check
+	def checkShape(StyledElement styledElement) {
+		if(styledElement.shape !== null && !shapes.map[toLowerCase].contains(styledElement.shape.toLowerCase)) {
+			error('A shape with name '+styledElement.shape+' is not defined', 
+					C4DslPackage.Literals.STYLED_ELEMENT__SHAPE,
+					"Undefined Shape")						
+		}
+	}
+	
+	@Check
 	def tagExistForApplyStyledElement(StyledElement styledElement) {
 		if(!styledElement.eResource.allContents.filter(Workspace).head.allTags.contains(styledElement.tag)) {
 			warning('Style cannot be applied, Tag <'+styledElement.tag+"> is neither a default tag, nor a customer tag", 

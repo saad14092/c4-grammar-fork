@@ -1,75 +1,51 @@
 # A VS Code extension for C4 DSL Models
 
-## Currently supported DSL Elements
+This is a VS Code extension for specifying software architecture models with the [Structurizr DSL](https://github.com/structurizr/dsl).
 
-- [Grammar](#grammar)
-	- [!include](#include) :x:
-	- [workspace](#workspace):white_check_mark:
-		- [model](#model):white_check_mark:
-			- [enterprise](#enterprise) :white_check_mark:
-			- [person](#person) :white_check_mark:
-				- [url](#url) :x:
-				- [properties](#properties) :x:
-			- [softwareSystem](#softwareSystem) :white_check_mark:
-				- [url](#url) :x:
-				- [properties](#properties) :x:
-				- [container](#container):white_check_mark:
-					- [url](#url) :x:
-					- [properties](#properties) :x:
-					- [component](#component):white_check_mark:
-						- [url](#url) :x:
-						- [properties](#properties) :x:
-			- [deploymentEnvironment](#deploymentEnvironment):white_check_mark:
-				- [deploymentNode](#deploymentNode):white_check_mark:
-					- [url](#url):x:
-					- [properties](#properties):x:
-					- [infrastructureNode](#infrastructureNode):white_check_mark:
-						- [url](#url):x:
-						- [properties](#properties):x:
-					- [softwareSystemInstance](#softwareSystemInstance):white_check_mark:
-					- [containerInstance](#containerInstance):white_check_mark:
-			- [-> (relationship)](#relationship) :white_check_mark:
-				- [url](#url) :x:
-		- [views](#views):white_check_mark:
-			- [systemLandscape](#systemLandscape-view) :white_check_mark:
-				- [include](#include) :white_check_mark:
-				- [exclude](#exclude) :white_check_mark:
-				- [autoLayout](#autoLayout) :white_check_mark:
-				- [animationStep](#animationStep) :white_check_mark:
-				- [title](#title) :white_check_mark:
-			- [systemContext](#systemContext-view) :white_check_mark:
-				- [include](#include) :white_check_mark:
-				- [exclude](#exclude) :white_check_mark:
-				- [autoLayout](#autoLayout) :white_check_mark:
-				- [animationStep](#animationStep) :white_check_mark:
-				- [title](#title) :white_check_mark:
-			- [container](#container-view) :white_check_mark:
-				- [include](#include) :white_check_mark:
-				- [exclude](#exclude) :white_check_mark:
-				- [autoLayout](#autoLayout) :white_check_mark:
-				- [animationStep](#animationStep) :white_check_mark:
-				- [title](#title) :white_check_mark:
-			- [component](#component-view) :white_check_mark:
-				- [include](#include) :white_check_mark:
-				- [exclude](#exclude) :white_check_mark:
-				- [autoLayout](#autoLayout) :white_check_mark:
-				- [animationStep](#animationStep) :white_check_mark:
-				- [title](#title) :white_check_mark:
-			- [filtered](#filtered-view) :x:
-			- [dynamic](#dynamic-view) :x:
-				- [autoLayout](#autoLayout) :x:
-				- [title](#title) :x:
-			- [deployment](#deployment-view) :white_check_mark:
-				- [include](#include) :white_check_mark:
-				- [exclude](#exclude) :white_check_mark:
-				- [autoLayout](#autoLayout) :white_check_mark:
-				- [animationStep](#animationStep) :white_check_mark:
-				- [title](#title) :white_check_mark:
-			- [styles](#styles) :white_check_mark:
-				- [element](#element-style) :white_check_mark:
-				- [relationship](#relationship-style) :white_check_mark:
-			- [themes](#themes) :x:
-			- [branding](#branding) :x:
-		- [configuration](#configuration) :x:
-			- [users](#users) :x:
+Structurizr DSL, known as [diagram as text](https://structurizr.com/help/text), is the textual representation of the [C4 model](https://c4model.com/).
 
+This extension is backed by an [Xtext](https://www.eclipse.org/Xtext/) grammar, which is used to represent the [Structurizr DSL language reference](https://github.com/structurizr/dsl/blob/master/docs/language-reference.md) in a formal way.
+
+A generator creates PlantUML diagrams on-the-fly, while editing. The diagrams are located in a sub-folder named *plantuml-gen*. The [PlantUML extension](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) will be installed automatically as dependency, if not yet already installed.
+
+Beside that it provides all typical language editor features like:
+
+* syntax highlighting
+* syntax validation
+* code completion
+* outline
+* code lenses
+* folding
+* re-factoring
+* hover
+* semantic validation
+
+## Pre-requisites
+
+Xtext requires a Java VM for running the language server.
+
+Your models must have the file extension *.c4.
+
+## Structurizr DSL 
+
+### Divergences
+
+The goal is, that the Xtext grammar (used in this extension) is compliant to the origin language reference.
+
+However the Xtext grammar is a bit more strict in some points:
+
+* Double quote characters ("...") are **mandatory**, even when a property does not contains whitespaces
+* You can't use keywords like **person** or **container** as variable names
+
+### Unsupported DSL Elements
+
+As of now following DSL elements from the language reference are not yet supported:
+
+* **url** and **properties**
+* **!include** for importing re-usable model fragments
+* **filtered** diagrams
+* **dynamic** diagrams
+* **branding**
+* **configuration** 
+
+Those elements will be provided in subsequent releases.

@@ -70,6 +70,7 @@
         "build": "tsc && webpack --mode=development",
         "watch": "tsc -w",
         "watch:webpack": "webpack --mode=development --watch",
+        "package" : "../c4-language-server/gradlew -p ../c4-language-server deployToVSCode && yarn build && vsce package",
         "publish": "vsce publish"
     }
 }

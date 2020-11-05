@@ -31,6 +31,7 @@ import de.systemticks.c4.c4Dsl.ContainerInstance
 import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.DeploymentView
 import de.systemticks.c4.c4Dsl.DeploymentElement
+import de.systemticks.c4.c4Dsl.DeploymentEnvironment
 
 /**
  * This class contains custom scoping description.
@@ -46,10 +47,13 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 			(reference == C4DslPackage.Literals.RELATION_SHIP__FROM || reference == C4DslPackage.Literals.RELATION_SHIP__TO) ) {
 			
 			val rootElement = EcoreUtil2.getRootContainer(context);
-			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement);
-
-			return Scopes.scopeFor(candidates);
 			
+			if(context.eContainer instanceof DeploymentEnvironment) {
+				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, DeploymentElement));								
+			}
+			else {
+				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement));												
+			}						
 		} 
 		
 		else if ( context instanceof ComponentView && reference == C4DslPackage.Literals.COMPONENT_VIEW__CONTAINER) {

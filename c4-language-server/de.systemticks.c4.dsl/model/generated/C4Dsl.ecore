@@ -56,6 +56,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="deploymentNodes" upperBound="-1"
         eType="#//DeploymentNode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
+        eType="#//RelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeploymentNode" eSuperTypes="#//DeploymentElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -83,8 +85,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="container" eType="#//Container"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RelationShip">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//BasicModelElement"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//BasicModelElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//AnyModelElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//AnyModelElement"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="taglist" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -94,6 +96,8 @@
         eType="#//View" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="styles" upperBound="-1"
         eType="#//Styles" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="theme" eType="#//Theme"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="View">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -159,7 +163,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StyledElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shape" eType="#//StyleShape"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shape" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="file" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
@@ -185,20 +189,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="opacity" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="StyleShape">
-    <eLiterals name="Box" literal="Box"/>
-    <eLiterals name="RoundedBox" value="1" literal="RoundedBox"/>
-    <eLiterals name="Circle" value="2" literal="Circle"/>
-    <eLiterals name="Ellipse" value="3" literal="Ellipse"/>
-    <eLiterals name="Hexagon" value="4" literal="Hexagon"/>
-    <eLiterals name="Cylinder" value="5" literal="Cylinder"/>
-    <eLiterals name="Pipe" value="6" literal="Pipe"/>
-    <eLiterals name="Person" value="7" literal="Person"/>
-    <eLiterals name="Robot" value="8" literal="Robot"/>
-    <eLiterals name="Folder" value="9" literal="Folder"/>
-    <eLiterals name="WebBrowser" value="10" literal="WebBrowser"/>
-    <eLiterals name="MobileDevicePortrait" value="11" literal="MobileDevicePortrait"/>
-    <eLiterals name="MobileDeviceLandscape" value="12" literal="MobileDeviceLandscape"/>
-    <eLiterals name="Component" value="13" literal="Component"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Theme">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="urls" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

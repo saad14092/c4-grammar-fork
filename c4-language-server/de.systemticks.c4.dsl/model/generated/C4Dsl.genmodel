@@ -12,22 +12,6 @@
       <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//LayoutDirection/lr"/>
       <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//LayoutDirection/rl"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="C4Dsl.ecore#//StyleShape">
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Box"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/RoundedBox"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Circle"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Ellipse"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Hexagon"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Cylinder"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Pipe"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Person"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Robot"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Folder"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/WebBrowser"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/MobileDevicePortrait"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/MobileDeviceLandscape"/>
-      <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//StyleShape/Component"/>
-    </genEnums>
     <genClasses ecoreClass="C4Dsl.ecore#//Workspace">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Workspace/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Workspace/description"/>
@@ -70,6 +54,7 @@
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentEnvironment">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentEnvironment/label"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentEnvironment/deploymentNodes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentEnvironment/relationShips"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentNode">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/label"/>
@@ -102,6 +87,7 @@
     <genClasses ecoreClass="C4Dsl.ecore#//ViewSection">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ViewSection/views"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ViewSection/styles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ViewSection/theme"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//View">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//View/key"/>
@@ -176,6 +162,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/width"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/position"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/opacity"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//Theme">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Theme/urls"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

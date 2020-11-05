@@ -96,4 +96,9 @@ class C4Utils {
 		r.dashed !== null  && r.dashed.equals("true")
 	}
 		
+	def static getShapes() {
+		#['Box','RoundedBox','Circle','Ellipse','Hexagon','Cylinder','Pipe','Person','Robot','Folder',
+			'WebBrowser','MobileDevicePortrait','MobileDeviceLandscape','Component']
+	}	
+		
 }
