@@ -13,7 +13,6 @@
 // limitations under the License.
 package de.systemticks.c4.utils
 
-import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.Component
 import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.Person

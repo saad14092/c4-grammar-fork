@@ -30,6 +30,7 @@ import de.systemticks.c4.c4Dsl.AnyModelElement
  */
 class C4DslValidator extends AbstractC4DslValidator {
 	
+	val COLOR_REGEX = "#[0-9A-Fa-f]{6}"
 	
 	@Check
 	def checkShape(StyledElement styledElement) {
@@ -90,6 +91,46 @@ class C4DslValidator extends AbstractC4DslValidator {
 					"Invalid Value Range")									
 		} 
 		 
+	}
+	
+	val INVALID_COLOR_MESSAGE = 'Not a valid hex value for defining a color'
+	
+	@Check
+	def colorValue(StyledElement style) {
+		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
+			warning(INVALID_COLOR_MESSAGE, 
+					C4DslPackage.Literals.STYLED_ELEMENT__COLOR,
+					"Invalid Color Value")												
+		}
+		if(style.colour !== null && !style.colour.matches(COLOR_REGEX)) {
+			warning(INVALID_COLOR_MESSAGE, 
+					C4DslPackage.Literals.STYLED_ELEMENT__COLOUR,
+					"Invalid Color Value")												
+		}
+		if(style.backgroundColor !== null && !style.backgroundColor.matches(COLOR_REGEX)) {
+			warning(INVALID_COLOR_MESSAGE, 
+					C4DslPackage.Literals.STYLED_ELEMENT__BACKGROUND_COLOR,
+					"Invalid Color Value")												
+		}
+		if(style.stroke !== null && !style.stroke.matches(COLOR_REGEX)) {
+			warning(INVALID_COLOR_MESSAGE, 
+					C4DslPackage.Literals.STYLED_ELEMENT__STROKE,
+					"Invalid Color Value")												
+		}
+	}
+
+	@Check
+	def colorValue(StyledRelationShip style) {
+		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
+			warning(INVALID_COLOR_MESSAGE, 
+					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOR,
+					"Invalid Color Value")												
+		}
+		if(style.colour !== null && !style.colour.matches(COLOR_REGEX)) {
+			warning(INVALID_COLOR_MESSAGE, 
+					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOUR,
+					"Invalid Color Value")												
+		}		
 	}
 	
 }

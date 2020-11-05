@@ -8,6 +8,10 @@ import de.systemticks.c4.c4Dsl.AutoLayout
 import de.systemticks.c4.c4Dsl.LayoutDirection
 import de.systemticks.c4.c4Dsl.DeploymentNode
 import de.systemticks.c4.c4Dsl.BasicModelElement
+import de.systemticks.c4.c4Dsl.AnyModelElement
+import de.systemticks.c4.c4Dsl.ContainerInstance
+import de.systemticks.c4.c4Dsl.SoftwareSystemInstance
+import de.systemticks.c4.c4Dsl.InfrastructureNode
 
 class C4HoverService extends HoverService {
 	
@@ -15,32 +19,8 @@ class C4HoverService extends HoverService {
 		
 		val result = newArrayList
 		
-		if(element instanceof BasicModelElement) {
-			
-			result.add(
-				'''
-					**«element.label»**
-					
-					*Description*:
-					 
-					&nbsp;&nbsp;&nbsp;«element.description»
-					
-					«IF element instanceof Container»
-					*Technology*:
-					
-					&nbsp;&nbsp;&nbsp;«element.technology»
-					«ENDIF»
-					«IF element instanceof Component»
-					*Technology*:
-					
-					&nbsp;&nbsp;&nbsp;«element.technology»
-					«ENDIF»
-					
-					*Tags*:
-					 
-					&nbsp;&nbsp;&nbsp;«element.taglist»
-				'''				
-				)			
+		if(element instanceof AnyModelElement) {			
+			result.add(element.createHover.toString)			
 		}
 		
 		else if(element instanceof AutoLayout) {
@@ -61,27 +41,6 @@ class C4HoverService extends HoverService {
 			)
 			
 		}
-
-		else if(element instanceof DeploymentNode) {
-			result.add(
-				'''
-				**«element.label»**
-				
-				*Description*:
-				 
-				&nbsp;&nbsp;&nbsp;«element.description»
-				
-				*Technology*:
-				
-				&nbsp;&nbsp;&nbsp;«element.technology»
-				
-				*Tags*:
-				 
-				&nbsp;&nbsp;&nbsp;«element.taglist»
-				'''
-			)
-			
-		}
 		
 		result	  	
 	}
@@ -93,6 +52,100 @@ class C4HoverService extends HoverService {
 			case LayoutDirection.LR: '(lr) Left to right'
 			case LayoutDirection.RL: '(rl) right to left'
 		}
+	}
+	
+	private def dispatch createHover(AnyModelElement element) {
+		'''
+		'''
+	}
+
+	private def dispatch createHover(BasicModelElement element) {
+		'''
+			**«element.label»**
+			
+			*Description*:
+			 
+			&nbsp;&nbsp;&nbsp;«element.description»
+			
+			«IF element instanceof Container»
+			*Technology*:
+			
+			&nbsp;&nbsp;&nbsp;«element.technology»
+			«ENDIF»
+			«IF element instanceof Component»
+			*Technology*:
+			
+			&nbsp;&nbsp;&nbsp;«element.technology»
+			«ENDIF»
+			
+			*Tags*:
+			 
+			&nbsp;&nbsp;&nbsp;«element.taglist»
+		'''				
+	}
+
+	private def dispatch createHover(DeploymentNode element) {
+		'''
+		**«element.label»**
+		
+		*Description*:
+		 
+		&nbsp;&nbsp;&nbsp;«element.description»
+		
+		*Technology*:
+		
+		&nbsp;&nbsp;&nbsp;«element.technology»
+		
+		*Tags*:
+		 
+		&nbsp;&nbsp;&nbsp;«element.taglist»
+		'''
+	}
+
+	private def dispatch createHover(InfrastructureNode element) {
+		'''
+		**«element.label»**
+		
+		*Description*:
+		 
+		&nbsp;&nbsp;&nbsp;«element.description»
+		
+		*Technology*:
+		
+		&nbsp;&nbsp;&nbsp;«element.technology»
+		
+		*Tags*:
+		 
+		&nbsp;&nbsp;&nbsp;«element.taglist»
+		'''
+	}
+		
+	private def dispatch createHover(ContainerInstance element) {
+		'''
+		**«element.name»**
+				
+		*Container*:
+		
+		&nbsp;&nbsp;&nbsp;«element.container.label»
+		
+		*Tags*:
+		 
+		&nbsp;&nbsp;&nbsp;«element.taglist»
+		'''
+	}
+
+	private def dispatch createHover(SoftwareSystemInstance element) {
+		'''
+		**«element.name»**
+				
+		*Software System*:
+		
+		&nbsp;&nbsp;&nbsp;«element.softwareSystem.label»
+		
+		*Tags*:
+		 
+		&nbsp;&nbsp;&nbsp;«element.taglist»
+		'''
 	}
 		
 }
