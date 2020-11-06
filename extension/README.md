@@ -20,11 +20,15 @@ Beside that it provides all typical language editor features like:
 * hover
 * semantic validation
 
+![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/17706e9b41936def3e1a27f8289f6e138ab92707/extension/images/c4dsl-screenshot-1.png)
+
 ## Pre-requisites
 
-Xtext requires a Java VM for running the language server.
+Xtext requires a [Java VM](http://java.com/en/download/) for running the language server.
 
-Your models must have the file extension *.c4.
+The PlantUML extension requires [Graphviz](http://www.graphviz.org/download/) for layouting the diagrams. See the section [requirements](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) for more information, how to install it for your OS.
+
+Your models must have the file extension ***.c4**.
 
 ## Structurizr DSL 
 
@@ -34,7 +38,7 @@ The goal is, that the Xtext grammar (used in this extension) is compliant to the
 
 However the Xtext grammar is a bit more strict in some points:
 
-* Double quote characters ("...") are **mandatory**, even when a property does not contains whitespaces
+* Double quote characters ("...") are **mandatory**, even when a property does not contain whitespaces
 * You can't use keywords like **person** or **container** as variable names
 
 ### Unsupported DSL Elements
