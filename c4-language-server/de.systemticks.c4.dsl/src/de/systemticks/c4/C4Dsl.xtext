@@ -5,7 +5,7 @@ generate c4Dsl "http://www.systemticks.de/c4/C4Dsl"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 Workspace:
-	{Workspace} 'workspace' name=STRING description=STRING? '{'
+	{Workspace} 'workspace' (name=STRING | name=STRING description=STRING)? '{'
 		model = Model
 		viewSection = ViewSection?
 	'}'
@@ -125,25 +125,25 @@ View:
 ;
 
 SystemLandscape:
-	('systemLandscape'|'systemlandscape') key=STRING description=STRING? '{'
+	('systemLandscape'|'systemlandscape') (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}'
 ;
 
 SystemContextView:
-	('systemContext'|'systemcontext') system=[SoftwareSystem] key=STRING description=STRING? '{'
+	('systemContext'|'systemcontext') system=[SoftwareSystem] (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}'
 ;
 
 ContainerView:
-	'container' system=[SoftwareSystem] key=STRING description=STRING? '{'
+	'container' system=[SoftwareSystem] (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}' 
 ;
 
 ComponentView:
-	'component' container=[Container] key=STRING description=STRING? '{'
+	'component' container=[Container] (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}' 
 ;
@@ -151,7 +151,7 @@ ComponentView:
 //deployment <*|software system identifier> <environment name> [key] [description] {
 
 DeploymentView:
-	'deployment' (all?='*' | system=[SoftwareSystem]) environment=STRING key=STRING description=STRING? '{'
+	'deployment' (all?='*' | system=[SoftwareSystem]) environment=STRING (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent	
 	'}'
 ;
