@@ -25,6 +25,7 @@ import com.structurizr.view.SystemContextView
 import com.structurizr.view.ContainerView
 import com.structurizr.view.ComponentView
 import com.structurizr.view.DeploymentView
+import com.structurizr.view.DynamicView
 
 /**
  * Generates code from your model files on save.
@@ -75,6 +76,10 @@ class C4DslGenerator extends AbstractGenerator {
 
 	def dispatch createFileName(String fn, DeploymentView view, String ext) {
 		fn+'_deployment_'+view.softwareSystem.name+"_"+view.key+ext
+	}
+
+	def dispatch createFileName(String fn, DynamicView view, String ext) {
+		fn+'_dynamic_'+view.element.name+"_"+view.key+ext
 	}
 	
 }

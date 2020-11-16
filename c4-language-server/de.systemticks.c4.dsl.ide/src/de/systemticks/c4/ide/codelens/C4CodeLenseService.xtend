@@ -24,6 +24,7 @@ import de.systemticks.c4.c4Dsl.InfrastructureNode
 import de.systemticks.c4.c4Dsl.DeploymentNode
 import de.systemticks.c4.c4Dsl.ContainerInstance
 import de.systemticks.c4.c4Dsl.SoftwareSystemInstance
+import de.systemticks.c4.c4Dsl.DynamicView
 
 class C4CodeLenseService implements ICodeLensService {
 	
@@ -116,5 +117,9 @@ class C4CodeLenseService implements ICodeLensService {
 		fn+'_deployment_'+view.system.label+'_'+view.key+".puml"		
 	}	
 	
+	def dispatch createFilename(DynamicView view, Resource resource) {		
+		val fn = resource.URI.lastSegment.split('\\.').head		
+		fn+'_dynamic_'+view.reference.label+'_'+view.key+".puml"		
+	}	
 	
 }
