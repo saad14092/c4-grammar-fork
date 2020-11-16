@@ -32,6 +32,7 @@ import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.DeploymentView
 import de.systemticks.c4.c4Dsl.DeploymentElement
 import de.systemticks.c4.c4Dsl.DeploymentEnvironment
+import de.systemticks.c4.c4Dsl.DynamicView
 
 /**
  * This class contains custom scoping description.
@@ -62,6 +63,16 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, Container);
 
 			return Scopes.scopeFor(candidates);
+			
+		}
+		
+		else if( context instanceof DynamicView && reference ==  C4DslPackage.Literals.DYNAMIC_VIEW__REFERENCE) {
+
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val container = EcoreUtil2.getAllContentsOfType(rootElement, Container);
+			val systems = EcoreUtil2.getAllContentsOfType(rootElement, SoftwareSystem);
+
+			return Scopes.scopeFor(container + systems);
 			
 		}
 		

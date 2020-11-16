@@ -92,22 +92,34 @@
     <genClasses ecoreClass="C4Dsl.ecore#//View">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//View/key"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//View/description"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//View/content"/>
     </genClasses>
-    <genClasses ecoreClass="C4Dsl.ecore#//SystemLandscape"/>
+    <genClasses ecoreClass="C4Dsl.ecore#//SystemLandscape">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SystemLandscape/content"/>
+    </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//SystemContextView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SystemContextView/system"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SystemContextView/content"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//ContainerView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ContainerView/system"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ContainerView/content"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//ComponentView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ComponentView/container"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ComponentView/content"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentView">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/all"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentView/system"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/environment"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentView/content"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//DynamicView">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DynamicView/all"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DynamicView/reference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DynamicView/relationShips"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DynamicView/autoLayout"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DynamicView/title"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//CustomizedContent">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//CustomizedContent/includes"/>

@@ -9,13 +9,14 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "engines": {
         "vscode": "^1.46.0"
     },
     "categories": [
         "Programming Languages"
     ],
+    "keywords": ["c4", "c4 model", "architecture", "dsl", "structurizr"],
     "contributes": {
         "languages": [
             {

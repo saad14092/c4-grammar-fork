@@ -121,7 +121,7 @@ ViewSection:
 ;
 
 View:
-	SystemLandscape | SystemContextView | ContainerView | ComponentView | DeploymentView
+	SystemLandscape | SystemContextView | ContainerView | ComponentView | DeploymentView | DynamicView
 ;
 
 SystemLandscape:
@@ -153,6 +153,17 @@ ComponentView:
 DeploymentView:
 	'deployment' (all?='*' | system=[SoftwareSystem]) environment=STRING (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent	
+	'}'
+;
+
+//dynamic <*|software system identifier|container identifier> [key] [description] {
+//	...
+//}
+DynamicView: 
+	'dynamic' (all?='*' | reference=[BasicModelElement]) (key=STRING | key=STRING description=STRING)? '{'
+			relationShips+=RelationShip*
+	 		(autoLayout = AutoLayout? &
+	 		('title' title = STRING)?)
 	'}'
 ;
 

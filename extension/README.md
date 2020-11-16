@@ -26,6 +26,8 @@ Beside that it provides all typical language editor features like:
 
 Xtext requires a [Java VM](http://java.com/en/download/) for running the language server.
 
+> :warning: There seems to be runtime issues with Java 11 or higher. Please use Java 8 instead.
+
 The PlantUML extension requires [Graphviz](http://www.graphviz.org/download/) for layouting the diagrams. See the section [requirements](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) for more information, how to install it for your OS.
 
 Your models must have the file extension ***.c4**.
@@ -47,9 +49,12 @@ As of now following DSL elements from the language reference are not yet support
 
 * **url** and **properties**
 * **!include** for importing re-usable model fragments
+* **!adr** for refering to architecture decision records
+* **!docs** for refering to additional markdown/asciidoc documentation
 * **filtered** diagrams
-* **dynamic** diagrams
 * **branding**
-* **configuration** 
+* **configuration**
+* **impliedRelationShips**
+* **persepctives** 
 
 Those elements will be provided in subsequent releases.
