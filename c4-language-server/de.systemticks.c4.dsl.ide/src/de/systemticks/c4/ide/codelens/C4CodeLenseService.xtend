@@ -34,7 +34,7 @@ class C4CodeLenseService implements ICodeLensService {
 		
 		val result = newArrayList
 
-		resource.allContents.filter(View).forEach[ view |			
+		resource.allContents.filter(View).filter[isReady].forEach[ view |			
 		    result += view.createCodeLensForPlantUML(resource)						
 		]
 
@@ -121,5 +121,29 @@ class C4CodeLenseService implements ICodeLensService {
 		val fn = resource.URI.lastSegment.split('\\.').head		
 		fn+'_dynamic_'+view.reference.label+'_'+view.key+".puml"		
 	}	
+	
+	def dispatch isReady(View view) {
+		true
+	}
+	
+	def dispatch isReady(SystemContextView view) {
+		view.system !== null
+	}
+
+	def dispatch isReady(ContainerView view) {
+		view.system !== null
+	}
+
+	def dispatch isReady(ComponentView view) {
+		view.container !== null
+	}
+	
+	def dispatch isReady(DeploymentView view) {
+		view.system !== null
+	}
+
+	def dispatch isReady(DynamicView view) {
+		view.reference !== null
+	}
 	
 }
