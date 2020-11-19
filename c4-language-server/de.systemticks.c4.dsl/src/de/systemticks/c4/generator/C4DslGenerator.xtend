@@ -14,7 +14,6 @@
 package de.systemticks.c4.generator
 
 import com.structurizr.dsl.StructurizrDslParser
-import java.io.File
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
@@ -26,6 +25,11 @@ import com.structurizr.view.ContainerView
 import com.structurizr.view.ComponentView
 import com.structurizr.view.DeploymentView
 import com.structurizr.view.DynamicView
+import org.eclipse.xtext.resource.XtextResource
+import org.eclipse.xtext.resource.SaveOptions
+import java.io.ByteArrayOutputStream
+import com.structurizr.dsl.StructurizrDslParserException
+import java.io.IOException
 
 /**
  * Generates code from your model files on save.
@@ -39,11 +43,24 @@ class C4DslGenerator extends AbstractGenerator {
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 
 		 val parser = new StructurizrDslParser();
-		 val filename = resource.URI.toFileString
 
-		 parser.parse(new File(filename));
+		 // The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
+		 // Therefore the we need to store the editor content in a temporary stream
+		 val xRes = (resource as XtextResource)
+		 val tmp = new ByteArrayOutputStream 
 
-		 generatePlantUML(parser, resource, fsa)
+		 //FIXME Needs a proper exception handling
+		 try {
+		 	xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
+		 	parser.parse(tmp.toString('UTF-8'))
+		 	generatePlantUML(parser, resource, fsa)
+		 }
+		 catch(StructurizrDslParserException e)	{
+		 	e.printStackTrace
+		 }
+		 catch(IOException e) {
+		 	e.printStackTrace
+		 }
 		 
 	}
 	
