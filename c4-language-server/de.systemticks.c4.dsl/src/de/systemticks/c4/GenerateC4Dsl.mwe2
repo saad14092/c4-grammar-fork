@@ -27,7 +27,7 @@ Workflow {
 		}
 		language = StandardLanguage {
 			name = "de.systemticks.c4.C4Dsl"
-			fileExtensions = "c4"
+			fileExtensions = "dsl"
 
 			serializer = {
 				generateStub = false

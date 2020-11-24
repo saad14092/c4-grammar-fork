@@ -4,6 +4,10 @@ generate c4Dsl "http://www.systemticks.de/c4/C4Dsl"
 
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
+C4Model:
+	(includeableSection=IncludeableSection | workspace=Workspace)
+;
+
 Workspace:
 	{Workspace} 'workspace' (name=STRING | name=STRING description=STRING)? '{'
 		model = Model
@@ -12,9 +16,23 @@ Workspace:
 ;	
 
 // Model
+IncludeableSection:
+		{IncludeableSection} (
+			includes+=Import |
+			person+=Person | 
+			 softwareSystems+=SoftwareSystem |
+			 relationShips+=RelationShip)*		
+;
+
+Import:
+	'!include' importURI=INCLUDE_PATH
+;
+
+INCLUDE_PATH: ID ('/' ID)* '.dsl' | STRING;
 
 Model:		
 	{Model} 'model'  '{'
+		includes+=Import*
 		(
 			enterprise=Enterprise? &		
 			( person+=Person | 

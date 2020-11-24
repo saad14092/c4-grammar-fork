@@ -5,20 +5,34 @@
     updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="8.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="C4Dsl" basePackage="de.systemticks.c4" disposableProviderFactory="true"
-      fileExtensions="c4" ecorePackage="C4Dsl.ecore#/">
+      fileExtensions="dsl" ecorePackage="C4Dsl.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="C4Dsl.ecore#//LayoutDirection">
       <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//LayoutDirection/tb"/>
       <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//LayoutDirection/bt"/>
       <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//LayoutDirection/lr"/>
       <genEnumLiterals ecoreEnumLiteral="C4Dsl.ecore#//LayoutDirection/rl"/>
     </genEnums>
+    <genClasses ecoreClass="C4Dsl.ecore#//C4Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//C4Model/includeableSection"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//C4Model/workspace"/>
+    </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Workspace">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Workspace/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Workspace/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Workspace/model"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Workspace/viewSection"/>
     </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//IncludeableSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/includes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/person"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/softwareSystems"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/relationShips"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//Import">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Import/importURI"/>
+    </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/includes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/enterprise"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/person"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/softwareSystems"/>
