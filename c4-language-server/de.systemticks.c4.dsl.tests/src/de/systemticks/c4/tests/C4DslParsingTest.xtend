@@ -6,8 +6,7 @@ package de.systemticks.c4.tests
 import com.google.inject.Inject
 import com.structurizr.dsl.StructurizrDslParser
 import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
-import de.systemticks.c4.c4Dsl.Workspace
-import java.io.File
+import de.systemticks.c4.c4Dsl.C4Model
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.extensions.InjectionExtension
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -15,16 +14,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
 
+import static extension de.systemticks.c4.utils.C4Utils.*
 import static org.junit.Assert.assertArrayEquals
 import static org.junit.Assert.assertEquals
-
-import static extension de.systemticks.c4.utils.C4Utils.*
 
 @ExtendWith(InjectionExtension)
 @InjectWith(C4DslInjectorProvider)
 class C4DslParsingTest {
 	@Inject
-	ParseHelper<Workspace> parseHelper
+	ParseHelper<C4Model> parseHelper
 	
 	@Test
 	def void loadModel() {
@@ -49,7 +47,7 @@ class C4DslParsingTest {
 				}
 		''')
 		
-		val tags = result.model.softwareSystems.head.tags
+		val tags = result.workspace.model.softwareSystems.head.tags
 		
 		assertEquals(3, tags.size)
 		assertArrayEquals(#['Financial Risk System', DEFAULT_SOFTWARE_SYSTEM_TAG, ELEMENT_TAG], tags)		
