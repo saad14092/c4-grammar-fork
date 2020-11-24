@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "engines": {
         "vscode": "^1.46.0"
     },
@@ -25,7 +25,7 @@
                     "c4"
                 ],
                 "extensions": [
-                    ".c4"
+                    ".dsl"
                 ],
                 "configuration": "./language-configuration.json"
             }
