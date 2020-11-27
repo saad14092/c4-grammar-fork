@@ -203,11 +203,14 @@ enum LayoutDirection:
 	tb|bt|lr|rl;
 
 Include:
-	'include' (all?='*' | elements+=[AnyModelElement]+)	
-;
+	'include' ((all?='*' | elements+=[AnyModelElement]+) | rel=FilteredRelationShip);
 
 Exclude:
-	'exclude' elements+=[AnyModelElement]+	
+	'exclude' (elements+=[AnyModelElement]+ | rel=FilteredRelationShip)
+;
+
+FilteredRelationShip:
+	(allFrom?='*' | from=[AnyModelElement]) "->" ( allTo?='*' | to=[AnyModelElement])
 ;
 
 AnimationStep:
