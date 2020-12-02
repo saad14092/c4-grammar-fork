@@ -145,6 +145,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
         container internetBankingSystem "Containers" {
             include *
+            exclude customer -> email
             animationStep customer mainframe email
             animationStep webApplication
             animationStep singlePageApplication

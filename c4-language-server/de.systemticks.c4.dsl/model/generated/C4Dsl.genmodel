@@ -150,9 +150,17 @@
     <genClasses ecoreClass="C4Dsl.ecore#//Include">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Include/all"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Include/elements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Include/rel"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Exclude">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Exclude/elements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Exclude/rel"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//FilteredRelationShip">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//FilteredRelationShip/allFrom"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//FilteredRelationShip/from"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//FilteredRelationShip/allTo"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//FilteredRelationShip/to"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//AnimationStep">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//AnimationStep/elements"/>

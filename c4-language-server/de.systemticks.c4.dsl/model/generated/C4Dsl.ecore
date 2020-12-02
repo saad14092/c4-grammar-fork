@@ -185,10 +185,20 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" unique="false"
         upperBound="-1" eType="#//AnyModelElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rel" eType="#//FilteredRelationShip"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Exclude">
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" unique="false"
         upperBound="-1" eType="#//AnyModelElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rel" eType="#//FilteredRelationShip"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FilteredRelationShip">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="allFrom" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//AnyModelElement"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="allTo" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//AnyModelElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AnimationStep">
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" unique="false"

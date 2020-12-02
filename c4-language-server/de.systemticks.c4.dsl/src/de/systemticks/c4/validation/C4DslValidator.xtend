@@ -13,15 +13,18 @@
 // limitations under the License.
 package de.systemticks.c4.validation
 
+import de.systemticks.c4.c4Dsl.AnyModelElement
 import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.C4DslPackage
+import de.systemticks.c4.c4Dsl.RelationShip
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.StyledRelationShip
 import de.systemticks.c4.c4Dsl.Workspace
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
-import de.systemticks.c4.c4Dsl.AnyModelElement
+import de.systemticks.c4.c4Dsl.DeploymentNode
+import de.systemticks.c4.c4Dsl.DeploymentElement
 
 /**
  * This class contains custom validation rules. 
@@ -77,6 +80,25 @@ class C4DslValidator extends AbstractC4DslValidator {
 		}
 	}
 
+
+	@Check
+	def validRelationShips(RelationShip r) {
+		if(r.from instanceof BasicModelElement && !(r.to instanceof BasicModelElement)) {
+			error('Relationship only allowed to elements of type Person, Software System, Container, Component', 
+					C4DslPackage.Literals.RELATION_SHIP__TO,
+					"Relationship not allowed")									
+		}
+		else if(r.from instanceof DeploymentNode && !(r.to instanceof DeploymentNode)) {
+			error('Relationship only allowed to another Deployment Node', 
+					C4DslPackage.Literals.RELATION_SHIP__TO,
+					"Relationship not allowed")												
+		}
+		else if(r.from instanceof DeploymentElement && !(r.to instanceof DeploymentElement)) {
+			error('Relationship only allowed to elements of type Deployment Node, Infrastructure Node, Software System Instance, Container Instance', 
+					C4DslPackage.Literals.RELATION_SHIP__TO,
+					"Relationship not allowed")												
+		}
+	}
 
 	@Check	
 	def opacityValueRange(StyledRelationShip styledRelationShip) {

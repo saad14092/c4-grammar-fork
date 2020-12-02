@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.1
+
+* Provide capability to include/exclude relationships. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/18
+* Validate allowed RelationShips between Model Elements. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/17
+
 ## v1.1.0
 
 * The file extension is now *.dsl instead of *.c4. This is to be compliant with the origin language reference and to allow e.g. imports. This means an incompatible change to earlier releases! Closes https://gitlab.com/systemticks/c4-grammar/-/issues/16

@@ -33,6 +33,7 @@ import de.systemticks.c4.c4Dsl.DeploymentView
 import de.systemticks.c4.c4Dsl.DeploymentElement
 import de.systemticks.c4.c4Dsl.DeploymentEnvironment
 import de.systemticks.c4.c4Dsl.DynamicView
+import de.systemticks.c4.c4Dsl.FilteredRelationShip
 
 /**
  * This class contains custom scoping description.
@@ -109,6 +110,12 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 			else {
 				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement));								
 			}			
+		}
+
+		else if ( context instanceof FilteredRelationShip) {
+			
+			val rootElement = EcoreUtil2.getRootContainer(context)
+			return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement))			
 		}
 
 		else if (context instanceof SoftwareSystemInstance && reference == C4DslPackage.Literals.SOFTWARE_SYSTEM_INSTANCE__SOFTWARE_SYSTEM) {
