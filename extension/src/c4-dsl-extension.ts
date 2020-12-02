@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'c4' }],
         synchronize: {
-            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.c4')
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.dsl')
         }
     };
     const languageClient = new LanguageClient('c4LanguageClient', 'C4 Language Server', serverOptions, clientOptions);
