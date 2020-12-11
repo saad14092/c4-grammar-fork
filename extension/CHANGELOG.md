@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.1.2
+
+* Plant UML is not rendered in case the view key contains a whitespace. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/20
+
 ## v1.1.1
 
 * Provide capability to include/exclude relationships. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/18
