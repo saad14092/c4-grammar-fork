@@ -48,7 +48,6 @@ However the Xtext grammar is a bit more strict in some points:
 As of now following DSL elements from the language reference are not yet supported:
 
 * **url** and **properties**
-* **!include** for importing re-usable model fragments
 * **!adr** for refering to architecture decision records
 * **!docs** for refering to additional markdown/asciidoc documentation
 * **filtered** diagrams
