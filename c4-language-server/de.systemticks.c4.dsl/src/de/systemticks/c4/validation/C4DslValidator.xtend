@@ -16,15 +16,16 @@ package de.systemticks.c4.validation
 import de.systemticks.c4.c4Dsl.AnyModelElement
 import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.C4DslPackage
+import de.systemticks.c4.c4Dsl.DeploymentElement
+import de.systemticks.c4.c4Dsl.DeploymentNode
 import de.systemticks.c4.c4Dsl.RelationShip
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.StyledRelationShip
+import de.systemticks.c4.c4Dsl.View
 import de.systemticks.c4.c4Dsl.Workspace
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
-import de.systemticks.c4.c4Dsl.DeploymentNode
-import de.systemticks.c4.c4Dsl.DeploymentElement
 
 /**
  * This class contains custom validation rules. 
@@ -153,6 +154,15 @@ class C4DslValidator extends AbstractC4DslValidator {
 					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOUR,
 					"Invalid Color Value")												
 		}		
+	}
+	
+	@Check
+	def whitespacesInKey(View view) {
+		if(!view.key.matches("[a-zA-Z_0-9|-]+")) {
+			error('Key contains illegal characters. Must match [a-zA-Z_0-9|-]+', 
+					C4DslPackage.Literals.VIEW__KEY,
+					"Key contains whitespaces")												
+		}
 	}
 	
 }
