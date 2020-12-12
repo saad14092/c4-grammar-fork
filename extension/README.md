@@ -28,9 +28,11 @@ Xtext requires a [Java VM](http://java.com/en/download/) for running the languag
 
 > :warning: There seems to be runtime issues with Java 11 or higher. Please use Java 8 instead.
 
+> :warning: In some cases (especially reported under MacOS) the language server seems to have missing execution rights. Check <YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-1.1.0\server\c4-language-server\bin and add +x if missing to make it executable.
+
 The PlantUML extension requires [Graphviz](http://www.graphviz.org/download/) for layouting the diagrams. See the section [requirements](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) for more information, how to install it for your OS.
 
-Your models must have the file extension ***.c4**.
+Your models must have the file extension ***.dsl**.
 
 ## Structurizr DSL 
 
