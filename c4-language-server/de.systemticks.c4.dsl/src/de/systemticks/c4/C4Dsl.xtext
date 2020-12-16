@@ -91,7 +91,7 @@ SoftwareSystem:
 
 // Deployment
 DeploymentEnvironment:
-	'deploymentEnvironment' label=STRING 
+	'deploymentEnvironment' name=STRING 
 	('{'
 		deploymentNodes+=DeploymentNode+
 		relationShips+=RelationShip*		
@@ -169,7 +169,7 @@ ComponentView:
 //deployment <*|software system identifier> <environment name> [key] [description] {
 
 DeploymentView:
-	'deployment' (all?='*' | system=[SoftwareSystem]) environment=STRING (key=STRING | key=STRING description=STRING)? '{'
+	'deployment' (all?='*' | system=[SoftwareSystem]) environment=[DeploymentEnvironment|STRING] (key=STRING | key=STRING description=STRING)? '{'
 		content=CustomizedContent	
 	'}'
 ;
