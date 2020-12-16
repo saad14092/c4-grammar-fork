@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.3
+
+* Provide code templates (code snippets) for creating new elements Closes https://gitlab.com/systemticks/c4-grammar/-/issues/21
+* Name of environment in deployment view is not checked against availabe deployment environments Closes https://gitlab.com/systemticks/c4-grammar/-/issues/23
+
 ## v1.1.2
 
 * Plant UML is not rendered in case the view key contains a whitespace. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/20

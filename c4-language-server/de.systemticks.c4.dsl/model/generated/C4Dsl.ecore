@@ -74,7 +74,7 @@
         eType="#//Container" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeploymentEnvironment">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="deploymentNodes" upperBound="-1"
         eType="#//DeploymentNode" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
@@ -146,7 +146,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="DeploymentView" eSuperTypes="#//View">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="system" eType="#//SoftwareSystem"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="environment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="environment" eType="#//DeploymentEnvironment"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//CustomizedContent"
         containment="true"/>
   </eClassifiers>

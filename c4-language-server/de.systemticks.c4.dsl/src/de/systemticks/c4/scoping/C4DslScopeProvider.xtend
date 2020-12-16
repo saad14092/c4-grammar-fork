@@ -77,6 +77,12 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 			
 		}
 		
+		else if(context instanceof DeploymentView && reference == C4DslPackage.Literals.DEPLOYMENT_VIEW__ENVIRONMENT) {
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, DeploymentEnvironment);			
+			return Scopes.scopeFor(candidates);			
+		}
+		
 		else if (context instanceof AnimationStep && reference == C4DslPackage.Literals.ANIMATION_STEP__ELEMENTS) {
 
 			val rootElement = EcoreUtil2.getRootContainer(context);

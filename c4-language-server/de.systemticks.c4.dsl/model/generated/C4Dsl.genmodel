@@ -66,7 +66,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/container"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentEnvironment">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentEnvironment/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentEnvironment/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentEnvironment/deploymentNodes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentEnvironment/relationShips"/>
     </genClasses>
@@ -125,7 +125,7 @@
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentView">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/all"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentView/system"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/environment"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentView/environment"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentView/content"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DynamicView">
