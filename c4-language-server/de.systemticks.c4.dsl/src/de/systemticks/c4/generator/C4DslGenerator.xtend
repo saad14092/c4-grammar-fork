@@ -58,6 +58,9 @@ class C4DslGenerator extends AbstractGenerator {
 		 catch(StructurizrDslParserException e)	{
 		 	e.printStackTrace
 		 }
+		 catch(RuntimeException e) {
+		 	e.printStackTrace
+		 }
 		 catch(IOException e) {
 		 	e.printStackTrace
 		 }

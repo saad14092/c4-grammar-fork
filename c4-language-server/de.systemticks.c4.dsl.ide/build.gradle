@@ -12,6 +12,8 @@ task deployToVSCode(type: Copy, dependsOn: distZip) {
 	def zipFile = file("${buildDir}/distributions/c4-language-server.zip")
 	def outputDir = file("${buildDir}/../../../extension/server")
 
+	fileMode = 0755
+
 	from zipTree(zipFile)
 	into outputDir
 }
