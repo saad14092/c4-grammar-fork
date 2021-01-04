@@ -158,9 +158,9 @@ class C4DslValidator extends AbstractC4DslValidator {
 	
 	@Check
 	def whitespacesInKey(View view) {
-		if(!view.key.matches("[a-zA-Z_0-9|-]+")) {
+		if(!view.name.matches("[a-zA-Z_0-9|-]+")) {
 			error('Key contains illegal characters. Must match [a-zA-Z_0-9|-]+', 
-					C4DslPackage.Literals.VIEW__KEY,
+					C4DslPackage.Literals.VIEW__NAME,
 					"Key contains whitespaces")												
 		}
 	}

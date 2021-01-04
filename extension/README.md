@@ -52,7 +52,6 @@ As of now following DSL elements from the language reference are not yet support
 * **url** and **properties**
 * **!adr** for refering to architecture decision records
 * **!docs** for refering to additional markdown/asciidoc documentation
-* **filtered** diagrams
 * **branding**
 * **configuration**
 * **impliedRelationShips**

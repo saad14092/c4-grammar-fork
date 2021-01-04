@@ -104,23 +104,25 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ViewSection/theme"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//View">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//View/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//View/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//View/description"/>
     </genClasses>
-    <genClasses ecoreClass="C4Dsl.ecore#//SystemLandscape">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SystemLandscape/content"/>
+    <genClasses ecoreClass="C4Dsl.ecore#//StaticView">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//StaticView/content"/>
     </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//SystemLandscape"/>
     <genClasses ecoreClass="C4Dsl.ecore#//SystemContextView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SystemContextView/system"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SystemContextView/content"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//ContainerView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ContainerView/system"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ContainerView/content"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//ComponentView">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ComponentView/container"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ComponentView/content"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//FilteredView">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//FilteredView/baseKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//FilteredView/taglist"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentView">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentView/all"/>

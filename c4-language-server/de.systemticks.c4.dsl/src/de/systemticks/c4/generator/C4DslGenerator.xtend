@@ -14,22 +14,25 @@
 package de.systemticks.c4.generator
 
 import com.structurizr.dsl.StructurizrDslParser
+import com.structurizr.dsl.StructurizrDslParserException
+import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
+import com.structurizr.view.ComponentView
+import com.structurizr.view.ContainerView
+import com.structurizr.view.DeploymentView
+import com.structurizr.view.DynamicView
+import com.structurizr.view.FilteredView
+import com.structurizr.view.SystemContextView
+import com.structurizr.view.SystemLandscapeView
+import de.systemticks.c4.c4Dsl.View
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
-import com.structurizr.view.SystemLandscapeView
-import com.structurizr.view.SystemContextView
-import com.structurizr.view.ContainerView
-import com.structurizr.view.ComponentView
-import com.structurizr.view.DeploymentView
-import com.structurizr.view.DynamicView
-import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.SaveOptions
-import java.io.ByteArrayOutputStream
-import com.structurizr.dsl.StructurizrDslParserException
-import java.io.IOException
+import org.eclipse.xtext.resource.XtextResource
 
 /**
  * Generates code from your model files on save.
@@ -49,20 +52,23 @@ class C4DslGenerator extends AbstractGenerator {
 		 val xRes = (resource as XtextResource)
 		 val tmp = new ByteArrayOutputStream 
 
-		 //FIXME Needs a proper exception handling
-		 try {
-		 	xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
-		 	parser.parse(tmp.toString('UTF-8'))
-		 	generatePlantUML(parser, resource, fsa)
-		 }
-		 catch(StructurizrDslParserException e)	{
-		 	e.printStackTrace
-		 }
-		 catch(RuntimeException e) {
-		 	e.printStackTrace
-		 }
-		 catch(IOException e) {
-		 	e.printStackTrace
+		 val views = EcoreUtil2.getAllContentsOfType( resource.contents.get(0), View)  
+			 if(views !== null && views.size > 0) {
+			 //FIXME Needs a proper exception handling
+			 try {
+			 	xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
+			 	parser.parse(tmp.toString('UTF-8'))
+			 	generatePlantUML(parser, resource, fsa)
+			 }
+			 catch(StructurizrDslParserException e)	{
+			 	e.printStackTrace
+			 }
+			 catch(RuntimeException e) {
+			 	e.printStackTrace
+			 }
+			 catch(IOException e) {
+			 	e.printStackTrace
+			 }		 	
 		 }
 		 
 	}
@@ -94,6 +100,10 @@ class C4DslGenerator extends AbstractGenerator {
 		fn+'_component_'+view.container.name+ext
 	}
 
+	def dispatch createFileName(String fn, FilteredView view, String ext) {
+		fn+'_filtered_'+view.baseViewKey+"_"+view.key+ext
+	}
+	
 	def dispatch createFileName(String fn, DeploymentView view, String ext) {
 		fn+'_deployment_'+view.softwareSystem.name+"_"+view.key+ext
 	}

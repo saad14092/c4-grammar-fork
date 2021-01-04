@@ -16,6 +16,8 @@ package de.systemticks.c4
 import org.eclipse.xtext.generator.IContextualOutputConfigurationProvider
 import org.eclipse.xtext.generator.IOutputConfigurationProvider
 import de.systemticks.c4.generator.C4DslOutputConfiguration
+import org.eclipse.xtext.naming.IQualifiedNameProvider
+import de.systemticks.c4.scoping.C4DslQualifiedNameProvider
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -29,6 +31,10 @@ class C4DslRuntimeModule extends AbstractC4DslRuntimeModule {
 	def Class<? extends IContextualOutputConfigurationProvider> bindIContextualOutputConfigurationProvider() {
 		return C4DslOutputConfiguration;
 	}	
+
+	override Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+		return C4DslQualifiedNameProvider
+	}
 
     
 }
