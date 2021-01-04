@@ -121,27 +121,26 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="View">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SystemLandscape" eSuperTypes="#//View">
+  <eClassifiers xsi:type="ecore:EClass" name="StaticView" eSuperTypes="#//View">
     <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//CustomizedContent"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SystemContextView" eSuperTypes="#//View">
+  <eClassifiers xsi:type="ecore:EClass" name="SystemLandscape" eSuperTypes="#//StaticView"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SystemContextView" eSuperTypes="#//StaticView">
     <eStructuralFeatures xsi:type="ecore:EReference" name="system" eType="#//SoftwareSystem"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//CustomizedContent"
-        containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ContainerView" eSuperTypes="#//View">
+  <eClassifiers xsi:type="ecore:EClass" name="ContainerView" eSuperTypes="#//StaticView">
     <eStructuralFeatures xsi:type="ecore:EReference" name="system" eType="#//SoftwareSystem"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//CustomizedContent"
-        containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentView" eSuperTypes="#//View">
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentView" eSuperTypes="#//StaticView">
     <eStructuralFeatures xsi:type="ecore:EReference" name="container" eType="#//Container"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="content" eType="#//CustomizedContent"
-        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FilteredView" eSuperTypes="#//View">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="baseKey" eType="#//StaticView"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="taglist" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeploymentView" eSuperTypes="#//View">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

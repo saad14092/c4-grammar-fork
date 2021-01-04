@@ -139,37 +139,44 @@ ViewSection:
 ;
 
 View:
-	SystemLandscape | SystemContextView | ContainerView | ComponentView | DeploymentView | DynamicView
+	 StaticView | DeploymentView | DynamicView | FilteredView
+;
+
+StaticView:
+	SystemLandscape | SystemContextView | ContainerView | ComponentView		
 ;
 
 SystemLandscape:
-	('systemLandscape'|'systemlandscape') (key=STRING | key=STRING description=STRING)? '{'
+	('systemLandscape'|'systemlandscape') (name=STRING | name=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}'
 ;
 
 SystemContextView:
-	('systemContext'|'systemcontext') system=[SoftwareSystem] (key=STRING | key=STRING description=STRING)? '{'
+	('systemContext'|'systemcontext') system=[SoftwareSystem] (name=STRING | name=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}'
 ;
 
 ContainerView:
-	'container' system=[SoftwareSystem] (key=STRING | key=STRING description=STRING)? '{'
+	'container' system=[SoftwareSystem] (name=STRING | name=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}' 
 ;
 
 ComponentView:
-	'component' container=[Container] (key=STRING | key=STRING description=STRING)? '{'
+	'component' container=[Container] (name=STRING | name=STRING description=STRING)? '{'
 		content=CustomizedContent
 	'}' 
 ;
 
-//deployment <*|software system identifier> <environment name> [key] [description] {
+//filtered <baseKey> <include|exclude> <tags> [key] [description]
+FilteredView:
+	'filtered' baseKey=[StaticView|STRING] ('include'|'exclude') taglist=STRING  (name=STRING | name=STRING description=STRING)?;
 
+//deployment <*|software system identifier> <environment name> [key] [description] {
 DeploymentView:
-	'deployment' (all?='*' | system=[SoftwareSystem]) environment=[DeploymentEnvironment|STRING] (key=STRING | key=STRING description=STRING)? '{'
+	'deployment' (all?='*' | system=[SoftwareSystem]) environment=[DeploymentEnvironment|STRING] (name=STRING | name=STRING description=STRING)? '{'
 		content=CustomizedContent	
 	'}'
 ;
@@ -178,7 +185,7 @@ DeploymentView:
 //	...
 //}
 DynamicView: 
-	'dynamic' (all?='*' | reference=[BasicModelElement]) (key=STRING | key=STRING description=STRING)? '{'
+	'dynamic' (all?='*' | reference=[BasicModelElement]) (name=STRING | name=STRING description=STRING)? '{'
 			relationShips+=RelationShip*
 	 		(autoLayout = AutoLayout? &
 	 		('title' title = STRING)?)

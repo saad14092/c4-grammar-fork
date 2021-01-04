@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.4
+
+* Provide support for _filtered_ views. There is currently no PlantUML writer available in the structuritr plantuml project. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/4
+* Fixed Bug in case of empty dsl file: Closes https://gitlab.com/systemticks/c4-grammar/-/issues/25
+
 ## v1.1.3
 
 * Provide code templates (code snippets) for creating new elements Closes https://gitlab.com/systemticks/c4-grammar/-/issues/21

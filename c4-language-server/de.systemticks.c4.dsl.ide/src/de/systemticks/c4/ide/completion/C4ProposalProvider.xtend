@@ -2,6 +2,7 @@ package de.systemticks.c4.ide.completion
 
 import com.google.inject.Inject
 import de.systemticks.c4.c4Dsl.DeploymentEnvironment
+import de.systemticks.c4.c4Dsl.StaticView
 import de.systemticks.c4.c4Dsl.Workspace
 import de.systemticks.c4.services.C4DslGrammarAccess
 import org.eclipse.xtext.Assignment
@@ -105,6 +106,14 @@ class C4ProposalProvider extends IdeContentProposalProvider {
 				for(c: candidates) {
 					addProposal('"'+c.name+'"', context, acceptor)
 				}
+			}
+			
+			case grammarAccess.filteredViewAccess.baseKeyAssignment_1: {
+				val rootElement = EcoreUtil2.getRootContainer(context.currentModel);
+				val candidates = EcoreUtil2.getAllContentsOfType(rootElement, StaticView);			
+				for(c: candidates) {
+					addProposal('"'+c.name+'"', context, acceptor)
+				}				
 			}
 			
 			default: {

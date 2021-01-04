@@ -34,6 +34,9 @@ import de.systemticks.c4.c4Dsl.DeploymentElement
 import de.systemticks.c4.c4Dsl.DeploymentEnvironment
 import de.systemticks.c4.c4Dsl.DynamicView
 import de.systemticks.c4.c4Dsl.FilteredRelationShip
+import de.systemticks.c4.c4Dsl.FilteredView
+
+import de.systemticks.c4.c4Dsl.StaticView
 
 /**
  * This class contains custom scoping description.
@@ -142,6 +145,15 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 			
 		}
 		
+		else if ( context instanceof FilteredView && reference == C4DslPackage.Literals.FILTERED_VIEW__BASE_KEY) {
+			
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, StaticView)
+						
+			return Scopes.scopeFor(candidates);
+			
+		}
+				
 		else {
 			return super.getScope(context, reference);
 		}
