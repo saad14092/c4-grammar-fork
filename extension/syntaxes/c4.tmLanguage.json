@@ -12,7 +12,7 @@
             "name": "keyword.control.c4",
             "match": "\\b(workspace|model|enterprise|views)\\b"        },
         {
-            "name": "keyword.operator.c4",
+            "name": "keyword.other.c4",
             "match": "\\-\\>"
         },
         {
@@ -22,6 +22,10 @@
         {
 			"name": "variable.other.property.c4",
             "match": "\\b(include|exclude|auto[l,L]ayout|animation[s,S]tep|shape|icon|width|height|background|colou?r|stroke|font[s,S]ize|border|opacity|metadata|description|thickness|dashed|routing|position)\\b"
+        },
+        {
+			"name": "variable.other.property.c4",
+            "match": "\\b(url|properties|perspectives)\\b"
         },
         {
             "name": "constant.numeric.c4",

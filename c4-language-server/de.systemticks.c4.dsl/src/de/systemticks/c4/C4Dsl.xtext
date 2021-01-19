@@ -55,8 +55,21 @@ DeploymentElement:
 	DeploymentNode | InfrastructureNode | SoftwareSystemInstance | ContainerInstance
 ;
 
+KeyValuePair:
+	{KeyValuePair} (name=STRING|ID) (value=STRING|ID)
+;
+
+
+MetaDataSection:
+	{MetaDataSection} 
+	('url' url=STRING)?
+	('properties' '{' properties += KeyValuePair+ '}')?
+	('perspectives' '{' perspectives += KeyValuePair+ '}')?
+;
+
 Enterprise:
 	'enterprise' label=STRING '{'
+		metaData=MetaDataSection
 		(	person+=Person | 
 			softwareSystems+=SoftwareSystem |
 			relationShips+=RelationShip
@@ -66,26 +79,35 @@ Enterprise:
 
 //[<identifier> = ]person <name> [description] [tags]
 Person:
-	(name=ID '=')? 'person' label=STRING (description=STRING | description=STRING taglist=STRING)? 
+	(name=ID '=')? 'person' label=STRING (description=STRING | description=STRING taglist=STRING)?
+	('{'
+		metaData=MetaDataSection
+	'}')?
+	 
 ;
 
 Component:
 	(name=ID '=')? 'component' label=STRING 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
+	('{'
+		metaData=MetaDataSection
+	'}')?
 ;
 
 Container:
 	(name=ID '=')? 'container' label=STRING
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
-		components+=Component+
+		metaData=MetaDataSection
+		components+=Component*
 	'}')?
 ;
 
 SoftwareSystem:
 	(name=ID '=')? ('softwareSystem'|'softwaresystem') label=STRING (description=STRING | description=STRING taglist=STRING)?  
 	('{'
-		container+=Container+
+		metaData=MetaDataSection
+		container+=Container*
 	'}')?
 ;
 
@@ -102,6 +124,7 @@ DeploymentNode:
 	(name=ID '=')? 'deploymentNode' label=STRING 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? instances=INT?
 	('{'
+		metaData=MetaDataSection
 		(
 		deploymentNodes+=DeploymentNode |
 		infrastructureNodes+=InfrastructureNode |
@@ -113,6 +136,9 @@ DeploymentNode:
 InfrastructureNode:
 	(name=ID '=')?'infrastructureNode' label=STRING 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
+	('{'
+		metaData=MetaDataSection
+	'}')?
 ;
 
 SoftwareSystemInstance:
@@ -127,7 +153,12 @@ ContainerInstance:
 RelationShip:
 	from=[AnyModelElement] "->" to=[AnyModelElement] 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
+	('{'
+		metaData=MetaDataSection
+	'}')?
 ;
+
+
 
 // Views
 ViewSection:

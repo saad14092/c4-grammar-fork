@@ -8,10 +8,20 @@ workspace "name" "description" {
                 co2 = component "c2"
                 co3 = component "c3"
             }
-            c2 = container "ABC"
+            c2 = container "ABC" {
+                url "http://myurl"
+                perspectives {
+                    p1 "description"
+                }
+            }
         }
 
-        co1 -> co2 "Uses"
+        co1 -> co2 "Uses" {
+            url "http://myurl"
+            properties {
+                prop1 "Value 1"
+            }
+        }
         co2 -> co3 "Use also me"
         s1 -> s2 "Uses"
         

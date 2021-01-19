@@ -46,10 +46,21 @@
     <genClasses ecoreClass="C4Dsl.ecore#//BasicModelElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//BasicModelElement/label"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//BasicModelElement/description"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//BasicModelElement/metaData"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentElement"/>
+    <genClasses ecoreClass="C4Dsl.ecore#//KeyValuePair">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//KeyValuePair/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//KeyValuePair/value"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//MetaDataSection">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//MetaDataSection/url"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//MetaDataSection/properties"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//MetaDataSection/perspectives"/>
+    </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Enterprise">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Enterprise/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Enterprise/metaData"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Enterprise/person"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Enterprise/softwareSystems"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Enterprise/relationShips"/>
@@ -75,6 +86,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/description"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/technology"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//DeploymentNode/instances"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/metaData"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/deploymentNodes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/infrastructureNodes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//DeploymentNode/softwareSystemInstances"/>
@@ -84,6 +96,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//InfrastructureNode/label"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//InfrastructureNode/description"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//InfrastructureNode/technology"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//InfrastructureNode/metaData"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//SoftwareSystemInstance">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystemInstance/softwareSystem"/>
@@ -97,6 +110,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//RelationShip/description"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//RelationShip/technology"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//RelationShip/taglist"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//RelationShip/metaData"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//ViewSection">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//ViewSection/views"/>

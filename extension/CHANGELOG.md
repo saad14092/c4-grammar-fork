@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.5
+
+* Supports language features **url**, **properties** and **perspectives**
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/26
+
 ## v1.1.4
 
 * Provide support for _filtered_ views. There is currently no PlantUML writer available in the structuritr plantuml project. Closes https://gitlab.com/systemticks/c4-grammar/-/issues/4
