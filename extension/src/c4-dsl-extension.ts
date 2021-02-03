@@ -12,11 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as vscode from 'vscode';
+import {ExtensionContext, workspace, languages, commands, Uri, window, Range, Position} from 'vscode'
 import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange } from 'vscode-languageclient';
+import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 
-export function activate(context: vscode.ExtensionContext) {
+const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
+
+export function activate(context: ExtensionContext) {
+
+    const isHighlighted = workspace.getConfiguration().get(CONF_SEMANTIC_HIGHLIGHTING)
+
+    if(isHighlighted !== undefined && isHighlighted === true) {
+        context.subscriptions.push(languages.registerDocumentSemanticTokensProvider( {language: 'c4', scheme: 'file'}
+        , new C4SemanticTokenProvider(), c4Legend ))
+    }
+
+    workspace.onDidChangeConfiguration( (event) => {
+        if(event.affectsConfiguration(CONF_SEMANTIC_HIGHLIGHTING)) {
+            commands.executeCommand("workbench.action.reloadWindow")
+        }
+    });
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
     const languageServerPath =  path.join('server', 'c4-language-server', 'bin', executable);
@@ -34,7 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'c4' }],
         synchronize: {
-            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.dsl')
+            fileEvents: workspace.createFileSystemWatcher('**/*.dsl')
         }
     };
     const languageClient = new LanguageClient('c4LanguageClient', 'C4 Language Server', serverOptions, clientOptions);
@@ -42,17 +58,17 @@ export function activate(context: vscode.ExtensionContext) {
     languageClient.trace = Trace.Verbose
     const disposable = languageClient.start();
 
-    vscode.commands.registerCommand("c4.show.diagram", (uri: string) => {
-        if(vscode.workspace.workspaceFolders) {
-            vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(vscode.workspace.workspaceFolders[0].uri+'/plantuml-gen/'+uri)).then(
-                 () => vscode.commands.executeCommand("plantuml.preview"))
+    commands.registerCommand("c4.show.diagram", (uri: string) => {
+        if(workspace.workspaceFolders) {
+            commands.executeCommand("vscode.open", Uri.parse(workspace.workspaceFolders[0].uri+'/plantuml-gen/'+uri)).then(
+                 () => commands.executeCommand("plantuml.preview"))
         }
     });     
 
-    vscode.commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
-        const range = new vscode.Range( new vscode.Position(_range.start.line, _range.start.character),
-            new vscode.Position(_range.end.line, _range.end.character))
-        vscode.window.activeTextEditor?.revealRange(range);
+    commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
+        const range = new Range( new Position(_range.start.line, _range.start.character),
+            new Position(_range.end.line, _range.end.character))
+        window.activeTextEditor?.revealRange(range);
     });      
 
     context.subscriptions.push(disposable);

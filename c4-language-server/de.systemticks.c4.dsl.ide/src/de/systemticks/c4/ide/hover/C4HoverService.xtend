@@ -16,16 +16,14 @@ import de.systemticks.c4.c4Dsl.InfrastructureNode
 class C4HoverService extends HoverService {
 	
 	override getContents(EObject element) {
-		
-		val result = newArrayList
-		
+				
 		if(element instanceof AnyModelElement) {			
-			result.add(element.createHover.toString)			
+			return element.createHover.toString			
 		}
 		
 		else if(element instanceof AutoLayout) {
 			
-			result.add(
+			return
 				'''
 				**AutoLayout**
 				
@@ -37,12 +35,13 @@ class C4HoverService extends HoverService {
 				
 				*Node Separation*:
 				&nbsp;&nbsp;&nbsp;«IF element.nodeSeperation==0»300 px (default)«ELSE»«element.nodeSeperation» px«ENDIF»				
-				'''
-			)
-			
+				'''						
+		}
+
+		else {			
+			return ""		
 		}
 		
-		result	  	
 	}
 	
 	def layoutDirection(LayoutDirection direction) {

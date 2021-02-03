@@ -22,6 +22,17 @@ Beside that it provides all typical language editor features like:
 
 ![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/17706e9b41936def3e1a27f8289f6e138ab92707/extension/images/c4dsl-screenshot-1.png)
 
+## Semantic Highlighting
+
+When describing C4 models textually, there are plenty of raw strings describing different aspects and meta data of a model element. They are visually difficult to be distinguished from each other.
+
+Therefore a semantic highlighting options is provided, in order to highlight the different aspects in different colors (see screenshot below).
+
+You can switch it off (configuration property 'c4.language.SemanticHighlighting') in case it is too dazzling... It falls back to raw syntax coloring then.
+
+![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-semantic-highlighting.png)
+
+
 ## Pre-requisites
 
 Xtext requires a [Java VM](http://java.com/en/download/) for running the language server.

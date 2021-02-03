@@ -9,14 +9,14 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "engines": {
-        "vscode": "^1.46.0"
+        "vscode": "^1.50.0"
     },
     "categories": [
         "Programming Languages"
     ],
-    "keywords": ["c4", "c4 model", "architecture", "dsl", "structurizr"],
+    "keywords": ["c4", "c4 model", "architecture", "dsl", "structurizr", "plantuml", "xtext"],
     "contributes": {
         "languages": [
             {
@@ -36,7 +36,18 @@
                 "scopeName": "source.c4",
                 "path": "./syntaxes/c4.tmLanguage.json"
             }
-        ]
+        ],
+        "configuration" :{
+            "title": "",
+            "properties": {
+                "c4.language.SemanticHighlighting" : {
+                    "type" : "boolean",
+                    "default" : true,
+                    "description": "Apply semantic highlighting to c4 dsl language elements",
+                    "scope": "application"
+                }
+            }
+        }
     },
     "activationEvents": [
         "onLanguage:c4"

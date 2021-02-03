@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.6
+
+* Enables semantic highlighting
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/28
+
 ## v1.1.5
 
 * Supports language features **url**, **properties** and **perspectives**
