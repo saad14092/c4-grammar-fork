@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.7
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/33
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/32
+* Provide C4 DSL model for this extension itself as an example (workspace/c4-dsl-extension.dsl)
+
 ## v1.1.6
 
 * Enables semantic highlighting
