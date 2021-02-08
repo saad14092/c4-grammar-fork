@@ -1,8 +1,8 @@
 dependencies {
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
-	implementation 'com.github.structurizr:dsl:535f5dd5c6'
-	implementation 'com.structurizr:structurizr-plantuml:1.5.2'	
+	implementation 'com.github.structurizr:dsl:3ee35d3f21'
+	implementation 'com.structurizr:structurizr-plantuml:1.6.0'	
 }
 
 configurations {

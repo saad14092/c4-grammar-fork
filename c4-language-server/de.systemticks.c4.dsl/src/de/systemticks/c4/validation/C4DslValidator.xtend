@@ -81,6 +81,15 @@ class C4DslValidator extends AbstractC4DslValidator {
 		}
 	}
 
+	@Check
+	def uniqueLabelElement(BasicModelElement basicModelElement) {
+		if(basicModelElement.eResource.allContents.filter(BasicModelElement).map[label].filter[equals(basicModelElement.label)].size > 1) {
+			error('Element is already defined', 
+					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
+					"Already Defined Element")						
+		}
+	}
+
 
 	@Check
 	def validRelationShips(RelationShip r) {

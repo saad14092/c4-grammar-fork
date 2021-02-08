@@ -52,7 +52,7 @@ BasicModelElement:
 ;
 
 DeploymentElement:
-	DeploymentNode | InfrastructureNode | SoftwareSystemInstance | ContainerInstance
+	DeploymentNode | InfrastructureNode | ContainerInstance | SoftwareSystemInstance
 ;
 
 KeyValuePair:
