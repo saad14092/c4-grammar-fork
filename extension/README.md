@@ -48,7 +48,7 @@ Your models must have the file extension ***.dsl**.
 ## Examples
 
 The architecture (i.e. its diagrams) of this extension is modeled with - guess what - the c4 dsl itself.
-Just open [c4-dsl-extension.dsl](../workspace/c4-dsl-extension.dsl) in your VS Code.
+Just open "../workspace/c4-dsl-extension.dsl" in your VS Code.
 
 The workspace folder does also contain some basic examples from the structurizr dsl website.
 
