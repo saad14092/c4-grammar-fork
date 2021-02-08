@@ -149,7 +149,7 @@ class ModelElementHighlighterWithoutTechnology extends C4SemanticHighlighter {
 
 class RelationShipHighlighter extends C4SemanticHighlighter {
 
-    pattern: RegExp = /([a-zA-Z0-9_]*)\s*\-\>\s*([a-zA-Z0-9_]*)\s*(\"(?:[^\"]+)\")\s*(\"(?:[^\"]+)\")?\s*(\"(?:[^\"]+)\")?.*/
+    pattern: RegExp = /([a-zA-Z0-9_]*)\s*\-\>\s*([a-zA-Z0-9_]*)\s*(\"(?:[^\"]*)\")?\s*(\"(?:[^\"]*)\")?\s*(\"(?:[^\"]*)\")?.*/
 
     assignHighlights(text: string): Array<SemanticToken> {
 
@@ -165,6 +165,9 @@ class RelationShipHighlighter extends C4SemanticHighlighter {
             if(matched[2]) {
                 tokens.push( this.calculateToken(text, matched[2], fromIdx, ID_IDX ))
                 fromIdx = tokens.slice(-1)[0].start + tokens.slice(-1)[0].length 
+            }
+            if(matched[3]) {
+                fromIdx = text.indexOf(matched[3], fromIdx) + matched[3].length
             }
             if(matched.length >= 5) {
                 if(matched[4]) {

@@ -75,12 +75,29 @@ class C4DslValidator extends AbstractC4DslValidator {
 	@Check
 	def uniqueNamedElement(AnyModelElement anyModelElement) {
 		if(anyModelElement.eResource.allContents.filter(BasicModelElement).map[name].filter[equals(anyModelElement.name)].size > 1) {
-			error('Element is already defined', 
+			error('Element with the id '+anyModelElement.name+' is already defined', 
 					C4DslPackage.Literals.ANY_MODEL_ELEMENT__NAME,
 					"Already Defined Element")						
 		}
 	}
 
+	@Check
+	def uniqueLabelElement(BasicModelElement basicModelElement) {
+		if(basicModelElement.eResource.allContents.filter(BasicModelElement).map[label].filter[equals(basicModelElement.label)].size > 1) {
+			error('Element with the label '+basicModelElement.label+' is already defined', 
+					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
+					"Already Defined Element")						
+		}
+	}
+
+	@Check
+	def uniqueView(View view) {
+		if(view.eResource.allContents.filter(View).filter[name !== null].map[name].filter[equals(view.name)].size > 1) {
+			error('A View with the name'+view.name+' is already defined', 
+					C4DslPackage.Literals.VIEW__NAME,
+					"Already Defined Element")						
+		}
+	}
 
 	@Check
 	def validRelationShips(RelationShip r) {
