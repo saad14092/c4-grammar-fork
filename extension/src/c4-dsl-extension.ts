@@ -14,10 +14,11 @@
 
 import {ExtensionContext, workspace, languages, commands, Uri, window, Range, Position} from 'vscode'
 import * as path from 'path';
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange } from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
+const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
 
 export function activate(context: ExtensionContext) {
 
@@ -32,19 +33,26 @@ export function activate(context: ExtensionContext) {
         if(event.affectsConfiguration(CONF_SEMANTIC_HIGHLIGHTING)) {
             commands.executeCommand("workbench.action.reloadWindow")
         }
+        else if(event.affectsConfiguration(CONF_PLANTUML_GENERATOR)) {
+            //TODO: cleanup existing plantum files
+            commands.executeCommand("workbench.action.reloadWindow")
+        }
     });
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
     const languageServerPath =  path.join('server', 'c4-language-server', 'bin', executable);
     const serverLauncher = context.asAbsolutePath(languageServerPath);
+
+    const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) !== undefined ? workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string : 'StructurizrPlantUMLWriter'
+
     const serverOptions: ServerOptions = {
-        run: {
+        run: {            
             command: serverLauncher,
-            args: ['-log', '-trace']
+            args: ['-log', '-trace', '-renderer', renderer]
         },
         debug: {
             command: serverLauncher,
-            args: ['-log', '-trace']
+            args: ['-log', '-trace', '-renderer', renderer]
         }
     };
     const clientOptions: LanguageClientOptions = {
@@ -75,6 +83,17 @@ export function activate(context: ExtensionContext) {
     
     return languageClient;
 }
+
+/*
+function sendPlantUmlRenderer() {
+
+    const renderConf = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR)
+
+    const renderer: string = renderConf !== undefined ? renderConf as string: "StructurizrPlantUMLWriter"
+
+    commands.executeCommand("c4.generator.type", renderer)
+}
+*/
 
 export function deactivate() {
     

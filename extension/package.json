@@ -9,14 +9,22 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "engines": {
         "vscode": "^1.50.0"
     },
     "categories": [
         "Programming Languages"
     ],
-    "keywords": ["c4", "c4 model", "architecture", "dsl", "structurizr", "plantuml", "xtext"],
+    "keywords": [
+        "c4",
+        "c4 model",
+        "architecture",
+        "dsl",
+        "structurizr",
+        "plantuml",
+        "xtext"
+    ],
     "contributes": {
         "languages": [
             {
@@ -37,14 +45,21 @@
                 "path": "./syntaxes/c4.tmLanguage.json"
             }
         ],
-        "configuration" :{
+        "configuration": {
             "title": "",
             "properties": {
-                "c4.language.SemanticHighlighting" : {
-                    "type" : "boolean",
-                    "default" : true,
+                "c4.language.SemanticHighlighting": {
+                    "type": "boolean",
+                    "default": true,
                     "description": "Apply semantic highlighting to c4 dsl language elements",
                     "scope": "application"
+                },
+                "c4.plantuml.generator" : {
+                    "type": "string",
+                    "enum": ["StructurizrPlantUMLWriter", "C4PlantUMLWriter"],
+                    "default" : "StructurizrPlantUMLWriter",
+                    "scope" : "application",
+                    "description": "The flavor of the generated Plant UML"
                 }
             }
         }
@@ -65,6 +80,7 @@
         "rimraf": "^2.6.3",
         "source-map-loader": "^1.0.2",
         "ts-loader": "^8.0.3",
+        "ts-node": "^9.1.1",
         "tslint": "^5.11.0",
         "typescript": "3.8.3",
         "vscode-languageclient": "^5.2.1",
@@ -80,11 +96,11 @@
         "prepare": "yarn run clean && yarn run build",
         "clean": "rimraf extension/lib extension/pack",
         "build": "tsc && webpack --mode=development",
-        "build-server" : "../c4-language-server/gradlew -p ../c4-language-server deployToVSCode",
-        "build-all" : "yarn build-server && yarn build",
+        "build-server": "../c4-language-server/gradlew -p ../c4-language-server deployToVSCode",
+        "build-all": "yarn build-server && yarn build",
         "watch": "tsc -w",
         "watch:webpack": "webpack --mode=development --watch",
-        "package" : "yarn build-all && vsce package",
+        "package": "yarn build-all && vsce package",
         "publish": "vsce publish"
     }
 }

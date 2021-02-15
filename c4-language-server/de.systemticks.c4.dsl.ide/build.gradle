@@ -5,7 +5,7 @@ dependencies {
 }
 
 apply plugin: 'application'
-mainClassName = "org.eclipse.xtext.ide.server.ServerLauncher"
+mainClassName = "de.systemticks.c4.ide.launch.C4ServerLauncher"
 applicationName = 'c4-language-server'
 
 task deployToVSCode(type: Copy, dependsOn: distZip) {
@@ -18,5 +18,10 @@ task deployToVSCode(type: Copy, dependsOn: distZip) {
 	into outputDir
 }
 
+task cleanDeployedServer(type: Delete) {
+	delete fileTree("${buildDir}/../../../extension/server")
+}
+
 build.dependsOn deployToVSCode
 
+clean.dependsOn cleanDeployedServer
