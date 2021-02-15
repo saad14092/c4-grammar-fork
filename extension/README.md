@@ -32,6 +32,20 @@ You can switch it off (configuration property 'c4.language.SemanticHighlighting'
 
 ![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-semantic-highlighting.png)
 
+## PlantUML Render Options
+
+Supports the different Plant UML render options provided by the origin structurizr-plantuml project.
+You can change the renderer by setting the corresponding configuration: **c4.plantuml.generator**
+
+Explanation is taken from the origin README:
+
+```
+There are three PlantUML writer implementations:
+
+- `StructurizrPlantUMLWriter`: most closely resembles the diagram notation used on the [C4 model website](https://c4model.com), and the [Structurizr](https://structurizr.com) web-based renderer.
+- `PlantUMLWriter`: default PlantUML styling (with UML stereotypes).
+- `C4PlantUMLWriter`: produces diagram definitions that use the [C4-PlantUML macros](https://github.com/plantuml-stdlib/C4-PlantUML).
+```
 
 ## Pre-requisites
 

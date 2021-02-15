@@ -15,7 +15,7 @@ package de.systemticks.c4.generator
 
 import com.structurizr.dsl.StructurizrDslParser
 import com.structurizr.dsl.StructurizrDslParserException
-import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
+//import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
 import com.structurizr.view.ComponentView
 import com.structurizr.view.ContainerView
 import com.structurizr.view.DeploymentView
@@ -75,7 +75,7 @@ class C4DslGenerator extends AbstractGenerator {
 	
 	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 				
-		 val writer = new StructurizrPlantUMLWriter();
+		 val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
 		
 		 val fn = resource.URI.lastSegment.split('\\.').head
 
