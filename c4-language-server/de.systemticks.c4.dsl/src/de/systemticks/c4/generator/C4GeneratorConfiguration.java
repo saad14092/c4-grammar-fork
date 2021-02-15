@@ -1,6 +1,7 @@
 package de.systemticks.c4.generator;
 
 import com.structurizr.io.plantuml.C4PlantUMLWriter;
+import com.structurizr.io.plantuml.BasicPlantUMLWriter;
 import com.structurizr.io.plantuml.PlantUMLWriter;
 import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
 
@@ -31,6 +32,10 @@ public enum C4GeneratorConfiguration {
     		return new C4PlantUMLWriter();
     	}
     	
+        else if(renderer.equals("BasicPlantUMLWriter")) {
+    		return new BasicPlantUMLWriter();
+        }
+
     	else {
     		return new StructurizrPlantUMLWriter();
     	}

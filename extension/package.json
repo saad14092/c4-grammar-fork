@@ -56,7 +56,7 @@
                 },
                 "c4.plantuml.generator" : {
                     "type": "string",
-                    "enum": ["StructurizrPlantUMLWriter", "C4PlantUMLWriter"],
+                    "enum": ["StructurizrPlantUMLWriter", "C4PlantUMLWriter", "BasicPlantUMLWriter"],
                     "default" : "StructurizrPlantUMLWriter",
                     "scope" : "application",
                     "description": "The flavor of the generated Plant UML"
