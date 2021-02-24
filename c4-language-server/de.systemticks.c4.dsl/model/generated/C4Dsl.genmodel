@@ -36,8 +36,13 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/enterprise"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/person"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/softwareSystems"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/groups"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/deploymentEnvironments"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/relationShips"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//Group">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Group/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Group/element"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//AnyModelElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//AnyModelElement/name"/>
@@ -71,9 +76,11 @@
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Container">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Container/technology"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Container/groups"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Container/components"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//SoftwareSystem">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/groups"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/container"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//DeploymentEnvironment">

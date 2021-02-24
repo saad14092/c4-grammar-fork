@@ -10,7 +10,7 @@
         },
         {
             "name": "keyword.control.c4",
-            "match": "\\b(workspace|model|enterprise|views)\\b"        },
+            "match": "\\b(workspace|model|enterprise|views|group)\\b"        },
         {
             "name": "keyword.other.c4",
             "match": "\\-\\>"
