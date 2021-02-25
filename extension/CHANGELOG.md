@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.9
+
+* Supports language feature **group**
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/38
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/37
+
 ## v1.1.8
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/31
