@@ -34,12 +34,20 @@ Model:
 	{Model} 'model'  '{'
 		includes+=Import*
 		(
-			enterprise=Enterprise? &		
-			( person+=Person | 
+			//FIXME: Only one enterprise is allowed but any numbers of other model elements. This needs to be validated
+			( enterprise=Enterprise |		
+			  person+=Person | 
 			  softwareSystems+=SoftwareSystem |
+			  groups+=Group |
 			  deploymentEnvironments+=DeploymentEnvironment |
 			  relationShips+=RelationShip)*
 		)	
+	'}'
+;
+
+Group:
+	'group' name=STRING '{'
+		element+=BasicModelElement+
 	'}'
 ;
 
@@ -99,7 +107,8 @@ Container:
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
-		components+=Component*
+		(groups+=Group |		
+		components+=Component)*
 	'}')?
 ;
 
@@ -107,7 +116,8 @@ SoftwareSystem:
 	(name=ID '=')? ('softwareSystem'|'softwaresystem') label=STRING (description=STRING | description=STRING taglist=STRING)?  
 	('{'
 		metaData=MetaDataSection
-		container+=Container*
+		(groups+=Group |		
+		 container+=Container)*
 	'}')?
 ;
 

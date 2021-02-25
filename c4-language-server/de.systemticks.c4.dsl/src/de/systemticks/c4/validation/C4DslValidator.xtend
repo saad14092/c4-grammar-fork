@@ -16,9 +16,15 @@ package de.systemticks.c4.validation
 import de.systemticks.c4.c4Dsl.AnyModelElement
 import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.C4DslPackage
+import de.systemticks.c4.c4Dsl.Component
+import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.DeploymentElement
 import de.systemticks.c4.c4Dsl.DeploymentNode
+import de.systemticks.c4.c4Dsl.Group
+import de.systemticks.c4.c4Dsl.Model
+import de.systemticks.c4.c4Dsl.Person
 import de.systemticks.c4.c4Dsl.RelationShip
+import de.systemticks.c4.c4Dsl.SoftwareSystem
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.StyledRelationShip
 import de.systemticks.c4.c4Dsl.View
@@ -116,6 +122,39 @@ class C4DslValidator extends AbstractC4DslValidator {
 					C4DslPackage.Literals.RELATION_SHIP__TO,
 					"Relationship not allowed")												
 		}
+	}
+
+	@Check	
+	def allowedGroups(Group group) {
+		
+		if(group.eContainer instanceof Container) {
+			group.element.forEach[ e, index |
+				if(!(e instanceof Component)) {
+					error('In the context of this group only components are allowed', 
+						C4DslPackage.Literals.GROUP__ELEMENT, index,
+						"Forbidden group element")											
+				}
+			]
+		}
+		else if(group.eContainer instanceof SoftwareSystem) {
+			group.element.forEach[ e, index | 
+				if(!(e instanceof Container)) {
+					error('In the context of this group only containers are allowed', 
+						C4DslPackage.Literals.GROUP__ELEMENT, index, 
+						"Forbidden group element")											
+				}
+			]
+		}
+		else if(group.eContainer instanceof Model) {
+			group.element.forEach[ e, index |
+				if(!(e instanceof SoftwareSystem || e instanceof Person)) {
+					error('In the context of this group only softwaresystems and persons are allowed', 
+						C4DslPackage.Literals.GROUP__ELEMENT, index,
+						"Forbidden group element")											
+				}
+			]
+		}
+		
 	}
 
 	@Check	
