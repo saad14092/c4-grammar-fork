@@ -128,28 +128,28 @@ class C4DslValidator extends AbstractC4DslValidator {
 	def allowedGroups(Group group) {
 		
 		if(group.eContainer instanceof Container) {
-			group.element.forEach[ e |
+			group.element.forEach[ e, index |
 				if(!(e instanceof Component)) {
 					error('In the context of this group only components are allowed', 
-						C4DslPackage.Literals.GROUP__ELEMENT,
+						C4DslPackage.Literals.GROUP__ELEMENT, index,
 						"Forbidden group element")											
 				}
 			]
 		}
 		else if(group.eContainer instanceof SoftwareSystem) {
-			group.element.forEach[ e |
+			group.element.forEach[ e, index | 
 				if(!(e instanceof Container)) {
 					error('In the context of this group only containers are allowed', 
-						C4DslPackage.Literals.GROUP__ELEMENT,
+						C4DslPackage.Literals.GROUP__ELEMENT, index, 
 						"Forbidden group element")											
 				}
 			]
 		}
 		else if(group.eContainer instanceof Model) {
-			group.element.forEach[ e |
+			group.element.forEach[ e, index |
 				if(!(e instanceof SoftwareSystem || e instanceof Person)) {
 					error('In the context of this group only softwaresystems and persons are allowed', 
-						C4DslPackage.Literals.GROUP__ELEMENT,
+						C4DslPackage.Literals.GROUP__ELEMENT, index,
 						"Forbidden group element")											
 				}
 			]

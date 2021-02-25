@@ -34,8 +34,9 @@ Model:
 	{Model} 'model'  '{'
 		includes+=Import*
 		(
-			enterprise=Enterprise? &		
-			( person+=Person | 
+			//FIXME: Only one enterprise is allowed but any numbers of other model elements. This needs to be validated
+			( enterprise=Enterprise |		
+			  person+=Person | 
 			  softwareSystems+=SoftwareSystem |
 			  groups+=Group |
 			  deploymentEnvironments+=DeploymentEnvironment |
