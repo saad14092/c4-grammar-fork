@@ -15,7 +15,6 @@ package de.systemticks.c4.generator
 
 import com.structurizr.dsl.StructurizrDslParser
 import com.structurizr.dsl.StructurizrDslParserException
-//import com.structurizr.io.plantuml.StructurizrPlantUMLWriter
 import com.structurizr.view.ComponentView
 import com.structurizr.view.ContainerView
 import com.structurizr.view.DeploymentView
@@ -45,71 +44,74 @@ class C4DslGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 
-		 val parser = new StructurizrDslParser();
+		val parser = new StructurizrDslParser();
 
-		 // The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
-		 // Therefore the we need to store the editor content in a temporary stream
-		 val xRes = (resource as XtextResource)
-		 val tmp = new ByteArrayOutputStream 
+		// The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
+		// Therefore the we need to store the editor content in a temporary stream
+		val xRes = (resource as XtextResource)
+		val tmp = new ByteArrayOutputStream
 
-		 val views = EcoreUtil2.getAllContentsOfType( resource.contents.get(0), View)  
-			 if(views !== null && views.size > 0) {
-			 //FIXME Needs a proper exception handling
-			 try {
-			 	xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
-			 	parser.parse(tmp.toString('UTF-8'))
-			 	generatePlantUML(parser, resource, fsa)
-			 }
-			 catch(StructurizrDslParserException e)	{
-			 	e.printStackTrace
-			 }
-			 catch(RuntimeException e) {
-			 	e.printStackTrace
-			 }
-			 catch(IOException e) {
-			 	e.printStackTrace
-			 }		 	
-		 }
-		 
+		val views = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), View)
+		if (views !== null && views.size > 0) {
+			// FIXME Needs a proper exception handling
+			try {
+				xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
+				parser.parse(tmp.toString('UTF-8'))
+				generatePlantUML(parser, resource, fsa)
+			} catch (StructurizrDslParserException e) {
+				e.printStackTrace
+			} catch (RuntimeException e) {
+				e.printStackTrace
+			} catch (IOException e) {
+				e.printStackTrace
+			}
+		}
+
 	}
-	
+
 	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
-				
-		 val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
-		
-		 val fn = resource.URI.lastSegment.split('\\.').head
 
-		 parser.workspace.views.views.forEach[ view |
-		 	fsa.generateFile( createFileName(fn, view, FILE_EXTENSION_PLANTUML), C4DslOutputConfiguration.PLANTUML_OUTPUT, writer.toString(view))
-		 ]		 				 		 		 
+		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
+
+		val fn = resource.URI.lastSegment.split('\\.').head
+
+		parser.workspace.views.views.forEach [ view |
+						
+			val out = createFileName(fn, view, FILE_EXTENSION_PLANTUML)
+			fsa.generateFile(
+				out,
+				C4DslOutputConfiguration.PLANTUML_OUTPUT,
+				writer.toString(view)
+			)				
+		]
 	}
-	
+
 	def dispatch createFileName(String fn, SystemLandscapeView view, String ext) {
-		fn+'_systemLandscape_'+ext
+		fn + '_systemLandscape_' + ext
 	}
 
 	def dispatch createFileName(String fn, SystemContextView view, String ext) {
-		fn+'_systemContext_'+view.softwareSystem.name+ext
+		fn + '_systemContext_' + view.softwareSystem.name + ext
 	}
 
 	def dispatch createFileName(String fn, ContainerView view, String ext) {
-		fn+'_container_'+view.softwareSystem.name+ext
+		fn + '_container_' + view.softwareSystem.name + ext
 	}
 
 	def dispatch createFileName(String fn, ComponentView view, String ext) {
-		fn+'_component_'+view.container.name+ext
+		fn + '_component_' + view.container.name + ext
 	}
 
 	def dispatch createFileName(String fn, FilteredView view, String ext) {
-		fn+'_filtered_'+view.baseViewKey+"_"+view.key+ext
+		fn + '_filtered_' + view.baseViewKey + "_" + view.key + ext
 	}
-	
+
 	def dispatch createFileName(String fn, DeploymentView view, String ext) {
-		fn+'_deployment_'+view.softwareSystem.name+"_"+view.key+ext
+		fn + '_deployment_' + view.softwareSystem.name + "_" + view.key + ext
 	}
 
 	def dispatch createFileName(String fn, DynamicView view, String ext) {
-		fn+'_dynamic_'+view.element.name+"_"+view.key+ext
+		fn + '_dynamic_' + view.element.name + "_" + view.key + ext
 	}
-	
+
 }
