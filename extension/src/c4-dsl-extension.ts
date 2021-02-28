@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, Uri, window, Range, Position} from 'vscode'
+import {ExtensionContext, workspace, languages, commands, window, Range, Position } from 'vscode'
 import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
+import { C4PlantUMLPreview } from './c4-plantuml-preview';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
 const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
+const CONF_PLANTUML_RENDERER = "c4.plantuml.renderer"
 
 export function activate(context: ExtensionContext) {
 
@@ -66,13 +68,6 @@ export function activate(context: ExtensionContext) {
     languageClient.trace = Trace.Verbose
     const disposable = languageClient.start();
 
-    commands.registerCommand("c4.show.diagram", (uri: string) => {
-        if(workspace.workspaceFolders) {
-            commands.executeCommand("vscode.open", Uri.parse(workspace.workspaceFolders[0].uri+'/plantuml-gen/'+uri)).then(
-                 () => commands.executeCommand("plantuml.preview"))
-        }
-    });     
-
     commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
         const range = new Range( new Position(_range.start.line, _range.start.character),
             new Position(_range.end.line, _range.end.character))
@@ -81,19 +76,20 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(disposable);
     
+    const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
+
+    commands.registerCommand("c4.show.diagram", (uri: string) => {
+        if(workspace.workspaceFolders) {
+            svgPreviewPanel.updateWebView(uri)
+        }
+    });     
+
+
+      // And set its HTML content
+
     return languageClient;
 }
 
-/*
-function sendPlantUmlRenderer() {
-
-    const renderConf = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR)
-
-    const renderer: string = renderConf !== undefined ? renderConf as string: "StructurizrPlantUMLWriter"
-
-    commands.executeCommand("c4.generator.type", renderer)
-}
-*/
 
 export function deactivate() {
     
