@@ -20,6 +20,7 @@ import { C4PlantUMLPreview } from './c4-plantuml-preview';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
 const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
+const CONF_PLANTUML_RENDERER = "c4.plantuml.renderer"
 
 export function activate(context: ExtensionContext) {
 
@@ -75,7 +76,7 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(disposable);
     
-    const svgPreviewPanel = new C4PlantUMLPreview()
+    const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
 
     commands.registerCommand("c4.show.diagram", (uri: string) => {
         if(workspace.workspaceFolders) {

@@ -3,6 +3,7 @@ workspace "C4 DSL Extension Workspace" {
 
         architect = person "Software Architect" "Modelling the SW architecture with C4 DSL" ""   
 
+        kroki = softwareSystem "Kroki.io Server" "Creates diagrams from textual descriptions. Kroki provides a unified API with support for PlantUML, Mermaid, etc." "Extern"
         c4DslExtension = softwareSystem "C4 Dsl Extension" "The overall extension" {
 
             languageServer = container "Language Server" "The Language Server provides C$ DSL specific features via JSON-RPC based protocol to the code editor" "Java Application" {
@@ -28,10 +29,10 @@ workspace "C4 DSL Extension Workspace" {
                 commands = component "c4.dsl.commands" "Commands are used to trigger actions in Visual Studio Code" "VS Code component"
 
                 language_client = component "language client" "Wire C4 DSL features provided by the language server with the VS Code editor" "VS Code component"
-                plantuml_ext = component "plantuml extension" "Rich PlantUML support for Visual Studio Code." "VS Code Extension" "Extension"
                 color_highlight = component "color highlight extension" "This extension styles css/web colors found in your document" "VS Code Extension" "Extension"
 
-                graphviz = component "GraphViz" "Library for rendering dot graphs" "Shared Library" "Extern"
+                plantuml_preview = component "Plant UML Preview" "A built-in Webview showing the Plant UML diagram of a corresponding c4 view"
+
             }
 
 
@@ -40,12 +41,8 @@ workspace "C4 DSL Extension Workspace" {
         architect -> editor "Specifies architecture models with *.dsl files"
 
         # communication inside vs code
-        plantuml_ext -> command_service "Register command"
         commands -> command_service "Register command"
 
-        commands -> plantuml_ext "Indirect call via command service" "Execute Command" "Runtime"
-
-        plantuml_ext -> graphviz "Requires" "" "Runtime"
         color_highlight -> editor "Scans for color strings and highlights them accordingly"
 
         semantic_highlight -> editor "Enriches text with semantic highlighting tokens"
@@ -64,9 +61,10 @@ workspace "C4 DSL Extension Workspace" {
         dsl_core -> structurizr_plantuml "Transforms the structurizr compliant data model into puml files"
         dsl_core -> xtext "Uses"
 
-        structurizr_plantuml -> puml "Writes the *.puml file (Plant UML code) into a configurable folder"
-        plantuml_ext -> puml "Opens the *.puml file and shows the preview" "File Access" "Runtime"
+        structurizr_plantuml -> puml "Writes continuously *.puml files (Plant UML code) into a folder. One puml for each view."
 
+        commands -> plantuml_preview "Triggers Plant UML View via code lense"
+        plantuml_preview -> kroki "Requests SVG representation from a given Plant UML code" "HTTP" "Runtime"
     }
 
     views {
@@ -74,16 +72,19 @@ workspace "C4 DSL Extension Workspace" {
         container c4DslExtension {
             include *
             autoLayout
+            title "C4 DSL Extension Context View"
         }
 
         component languageClient {
             include *
             autoLayout
+            title "The C4 Language Client"
         }
 
         component languageServer  {
             include *
             autoLayout
+            title "The C4 Language Server"
         }
 
         styles {

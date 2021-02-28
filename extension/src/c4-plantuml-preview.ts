@@ -6,7 +6,13 @@ import got from 'got';
 
 export class C4PlantUMLPreview {
 
-    panel: WebviewPanel
+    urlSVG: string;
+
+    constructor(renderer: string) {
+        this.urlSVG = renderer + "/" + "svg"
+    }
+
+    panel: WebviewPanel | undefined
 
     private createPanel() {
 
@@ -16,6 +22,10 @@ export class C4PlantUMLPreview {
             ViewColumn.Two,
             {}
         );
+
+        panel.onDidDispose( () => {
+            this.panel = undefined
+        })
 
         return panel;
     }
@@ -36,8 +46,10 @@ export class C4PlantUMLPreview {
                 if (urlCode) {
                     this.toSVG(urlCode).then((svg: string) => {
                         fs.writeFileSync(svgUri.fsPath, svg)
-                        const plantUmlSvgSrc = this.panel.webview.asWebviewUri(svgUri);
-                        this.panel.webview.html = this.updateViewContent(plantUmlSvgSrc);
+                        if(this.panel) {
+                            const plantUmlSvgSrc = this.panel.webview.asWebviewUri(svgUri);
+                            this.panel.webview.html = this.updateViewContent(plantUmlSvgSrc);    
+                        }
                     });
                 }
             }
@@ -78,7 +90,7 @@ export class C4PlantUMLPreview {
 
     private async toSVG(encoded: string): Promise<string> {
 
-        const response = await got('https://kroki.io/plantuml/svg/' + encoded);
+        const response = await got(this.urlSVG +"/" + encoded);
         return response.body;
     }
 
