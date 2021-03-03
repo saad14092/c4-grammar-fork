@@ -78,9 +78,9 @@ export function activate(context: ExtensionContext) {
     
     const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
 
-    commands.registerCommand("c4.show.diagram", (uri: string) => {
+    commands.registerCommand("c4.show.diagram", (uri: string, workspaceFolder: string) => {
         if(workspace.workspaceFolders) {
-            svgPreviewPanel.updateWebView(uri)
+            svgPreviewPanel.updateWebView(uri, workspaceFolder)
         }
     });     
 

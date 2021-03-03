@@ -88,9 +88,13 @@ class C4CodeLenseService implements ICodeLensService {
 				command = new Command => [
 					title = "$(link-external) Show as PlantUML"
 					command = "c4.show.diagram"
-					arguments = newArrayList(view.createFilename(resource))
+					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder)
 				]
 			]				
+	}
+	
+	def getWorkspaceFolder(XtextResource resource) {
+		resource.URI.segments.get(resource.URI.segmentCount-2)
 	}
 	
 	def dispatch createFilename(SystemLandscape view, Resource resource) {
