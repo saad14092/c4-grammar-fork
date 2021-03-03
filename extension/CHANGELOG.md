@@ -1,6 +1,10 @@
 # Change Log
 
-## 2.0.0
+## v2.0.1
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/42
+
+## v2.0.0
 
 With version v2.0.0 the Plant UML Diagram is no longer rendered with the Plant UML extension, but with a built-in Webview.
 The corresponding SVG is requested by the kroki.io server on-demand. See https://kroki.io/ for more details.

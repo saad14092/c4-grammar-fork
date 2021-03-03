@@ -1,4 +1,4 @@
-import { Uri, window, ViewColumn, WebviewPanel, workspace } from "vscode";
+import { Uri, window, ViewColumn, WebviewPanel, workspace, WorkspaceFolder } from "vscode";
 import * as path from 'path';
 import * as pako from 'pako';
 import * as fs from 'fs';
@@ -30,11 +30,17 @@ export class C4PlantUMLPreview {
         return panel;
     }
 
-    updateWebView(fn: string) {
+    determineWorkspaceFolder(fn: string): WorkspaceFolder | undefined  {
+        return workspace.workspaceFolders?.find( (folder) => { return folder.name === fn }); 
+    }
 
-        if (workspace.workspaceFolders) {
-            const pumlFile = Uri.file(path.join(workspace.workspaceFolders[0].uri.fsPath, 'plantuml-gen', fn)).fsPath
-            const svgUri = Uri.file(path.join(workspace.workspaceFolders[0].uri.fsPath, 'plantuml-gen', fn.replace('puml', 'svg')))
+    updateWebView(fn: string, folderFromServer: string) {
+
+        const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
+
+        if (workspaceFolder) {
+            const pumlFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn)).fsPath
+            const svgUri = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn.replace('puml', 'svg')))
 
             if (!this.panel) {
                 this.panel = this.createPanel();
