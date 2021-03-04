@@ -12,7 +12,7 @@ import org.eclipse.xtext.ide.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ide.editor.contentassist.IIdeContentProposalAcceptor
 import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 
-import static de.systemticks.c4.utils.C4Utils.*
+import static extension de.systemticks.c4.utils.C4Utils.*
 
 class C4ProposalProvider extends IdeContentProposalProvider {
 
@@ -89,9 +89,10 @@ class C4ProposalProvider extends IdeContentProposalProvider {
 		switch (assignment) {
 						
 			case grammarAccess.styledElementAccess.tagAssignment_1: {
-				for(element: allTags(context.rootModel as Workspace)) {
-					addProposal('"'+element+'"', context, acceptor)					
-				}
+				
+				context.rootModel.eContents.filter(Workspace).head?.allTags.forEach[tag|
+						addProposal('"'+tag+'"', context, acceptor)										
+				]				
 			}
 			
 			case grammarAccess.styledElementAccess.shapeAssignment_3_0_1: {

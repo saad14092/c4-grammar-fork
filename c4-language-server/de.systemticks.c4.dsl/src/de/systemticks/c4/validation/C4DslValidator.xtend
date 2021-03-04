@@ -41,6 +41,7 @@ import static extension de.systemticks.c4.utils.C4Utils.*
 class C4DslValidator extends AbstractC4DslValidator {
 	
 	val COLOR_REGEX = "#[0-9A-Fa-f]{6}"
+	public static String NO_STYLED_ELEMENT_FOR_TAG = "No styled element for given tag"
 	
 	@Check
 	def checkShape(StyledElement styledElement) {
@@ -54,10 +55,26 @@ class C4DslValidator extends AbstractC4DslValidator {
 	@Check
 	def tagExistForApplyStyledElement(StyledElement styledElement) {
 		if(!styledElement.eResource.allContents.filter(Workspace).head.allTags.contains(styledElement.tag)) {
-			warning('Style cannot be applied, Tag <'+styledElement.tag+"> is neither a default tag, nor a customer tag", 
+			info('Style cannot be applied, Tag <'+styledElement.tag+"> is neither a default tag, nor a customer tag", 
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
 					"Unknown Tag")			
 		}		
+	}
+	
+	@Check(NORMAL)
+	def styledElementsExistsForTag(AnyModelElement modelElement) {
+		
+		val styledTags = modelElement.eResource.allContents.filter(StyledElement).map[tag]
+		
+		modelElement.customTags.forEach[
+			tag | {
+				if( !styledTags.contains(tag)) {
+					info('No Style with tag <'+tag+ '> defined yet', 
+						C4DslPackage.Literals.ANY_MODEL_ELEMENT__TAGLIST,
+						NO_STYLED_ELEMENT_FOR_TAG)								
+				}
+			}	
+		]
 	}
 	
 	@Check

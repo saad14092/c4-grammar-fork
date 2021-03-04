@@ -278,8 +278,6 @@ class DynamicAndDeploymentViews extends C4SemanticHighlighter {
         }
 
         return tokens;
-
-        throw new Error('Method not implemented.');
     }
     
 }
