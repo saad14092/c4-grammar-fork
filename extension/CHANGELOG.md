@@ -1,5 +1,10 @@
 # Change Log
 
+## v2.0.2
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/43
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/41
+
 ## v2.0.1
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/42

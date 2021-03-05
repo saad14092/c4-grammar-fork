@@ -4,13 +4,13 @@
 package de.systemticks.c4.ide
 
 import de.systemticks.c4.ide.codelens.C4CodeLenseService
-import de.systemticks.c4.ide.command.C4CommandService
 import de.systemticks.c4.ide.completion.C4ProposalProvider
 import de.systemticks.c4.ide.hover.C4HoverService
 import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
+import org.eclipse.xtext.ide.server.codeActions.ICodeActionService2
 import org.eclipse.xtext.ide.server.codelens.ICodeLensService
-import org.eclipse.xtext.ide.server.commands.IExecutableCommandService
 import org.eclipse.xtext.ide.server.hover.HoverService
+import de.systemticks.c4.ide.codeaction.C4DslCodeActionService
 
 /**
  * Use this class to register ide components.
@@ -29,6 +29,9 @@ class C4DslIdeModule extends AbstractC4DslIdeModule {
 		return C4CodeLenseService;
 	}
 	
+	def Class<? extends ICodeActionService2> bindICodeActionService2() {
+		return C4DslCodeActionService;
+	}	
 	/*
 	def Class<? extends IExecutableCommandService> bindIExecutableCommandService() {
 		return C4CommandService;

@@ -6,7 +6,10 @@ Structurizr DSL, known as [diagram as text](https://structurizr.com/help/text), 
 
 This extension is backed by an [Xtext](https://www.eclipse.org/Xtext/) grammar, which is used to represent the [Structurizr DSL language reference](https://github.com/structurizr/dsl/blob/master/docs/language-reference.md) in a formal way.
 
-A generator creates PlantUML diagrams on-the-fly, while editing. The diagrams are located in a sub-folder named *plantuml-gen*. The [PlantUML extension](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) will be installed automatically as dependency, if not yet already installed.
+A generator creates PlantUML diagrams on-the-fly, while editing. The diagrams are located in a sub-folder named *plantuml-gen*. 
+
+Every C4 view in the editor will be enriched with a code lense (Show as Plant UML). When clicking, the corresponding plantuml file will be converted into a svg file, utilizing the free service from [kroki.io](https://kroki.io). 
+The graph is then displayed in a separate window.
 
 Beside that it provides all typical language editor features like:
 
@@ -55,9 +58,9 @@ Xtext requires a [Java VM](http://java.com/en/download/) for running the languag
 
 > :warning: In some cases (especially reported under MacOS) the language server seems to have missing execution rights. Check <YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-1.1.0\server\c4-language-server\bin and add +x if missing to make it executable.
 
-The PlantUML extension requires [Graphviz](http://www.graphviz.org/download/) for layouting the diagrams. See the section [requirements](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) for more information, how to install it for your OS.
+You must open a workspace, that contains you models, which need to have the file extension **.dsl** 
 
-Your models must have the file extension ***.dsl**.
+Multiple workspaces are supported.
 
 ## Examples
 
@@ -83,6 +86,7 @@ As of now following DSL elements from the language reference are not yet support
 
 * **!adr** for refering to architecture decision records
 * **!docs** for refering to additional markdown/asciidoc documentation
+* **!constant**
 * **branding**
 * **configuration**
 * **impliedRelationShips**
