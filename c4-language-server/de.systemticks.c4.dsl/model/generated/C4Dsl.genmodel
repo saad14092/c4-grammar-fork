@@ -16,11 +16,20 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//C4Model/includeableSection"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//C4Model/workspace"/>
     </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//Constant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Constant/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Constant/value"/>
+    </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Workspace">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Workspace/constants"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Workspace/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Workspace/description"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Workspace/addOns"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Workspace/model"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Workspace/viewSection"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//AdditionalData">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//AdditionalData/path"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//IncludeableSection">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/includes"/>

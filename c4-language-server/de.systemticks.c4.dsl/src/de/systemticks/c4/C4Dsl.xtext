@@ -8,12 +8,25 @@ C4Model:
 	(includeableSection=IncludeableSection | workspace=Workspace)
 ;
 
-Workspace:
-	{Workspace} 'workspace' (name=STRING | name=STRING description=STRING)? '{'
+Constant:
+	"!constant" name=ID value=STRING	
+;
+
+Workspace:	
+	{Workspace}
+	constants+=Constant* 
+	'workspace' (name=STRING | name=STRING description=STRING)? '{'
+		addOns+=AdditionalData*		
 		model = Model
 		viewSection = ViewSection?
 	'}'
 ;	
+
+
+AdditionalData:
+	('!adrs' | '!docs' ) path=(STRING | PATH)
+;
+
 
 // Model
 IncludeableSection:
@@ -28,12 +41,15 @@ Import:
 	'!include' importURI=INCLUDE_PATH
 ;
 
-INCLUDE_PATH: ID ('/' ID)* '.dsl' | STRING;
+INCLUDE_PATH: PATH '.dsl' | STRING;
+
+PATH: ID ('/' ID)*;
 
 Model:		
 	{Model} 'model'  '{'
 		includes+=Import*
 		(
+			('impliedRelationships' ('true' | 'false'))?
 			//FIXME: Only one enterprise is allowed but any numbers of other model elements. This needs to be validated
 			( enterprise=Enterprise |		
 			  person+=Person | 
