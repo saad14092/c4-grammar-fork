@@ -84,11 +84,7 @@ However the Xtext grammar is a bit more strict in some points:
 
 As of now following DSL elements from the language reference are not yet supported:
 
-* **!adr** for refering to architecture decision records
-* **!docs** for refering to additional markdown/asciidoc documentation
-* **!constant**
 * **branding**
 * **configuration**
-* **impliedRelationShips**
 
 Those elements will be provided in subsequent releases.
