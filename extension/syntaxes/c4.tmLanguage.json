@@ -10,10 +10,15 @@
         },
         {
             "name": "keyword.control.c4",
-            "match": "\\b(workspace|model|enterprise|views|styles|group)\\b"        },
+            "match": "\\b(workspace|model|enterprise|views|styles|group|constant|adrs|docs|impliedRelationships)\\b"        
+        },
         {
             "name": "keyword.other.c4",
             "match": "\\-\\>"
+        },
+        {
+            "name": "keyword.other.c4",
+            "match": "\\b(true|false)\\b"
         },
         {
             "name" : "support.type.c4",

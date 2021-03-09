@@ -27,7 +27,8 @@ export class C4SemanticTokenProvider implements DocumentSemanticTokensProvider {
             new RelationShipHighlighter(),
             new InstanceHighlighter(),
             new BasicViewHighlighter(),
-            new DynamicAndDeploymentViews()
+            new DynamicAndDeploymentViews(),
+            new ConstantHighlighter()
         ];
 
     provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): ProviderResult<SemanticTokens> {
@@ -280,4 +281,26 @@ class DynamicAndDeploymentViews extends C4SemanticHighlighter {
         return tokens;
     }
     
+}
+
+class ConstantHighlighter extends C4SemanticHighlighter {
+
+//    pattern: RegExp = /(?:deployment|dynamic)\s+(\*|[a-zA-Z0-9_]+)\s*(\"(?:[^\"]+)\")\s*(\"(?:[^\"]+)\")\s*(\"(?:[^\"]*)\")?.*/
+
+    pattern: RegExp = /(?:\!constant)\s+(\*|[a-zA-Z0-9_]+)\s+(\"(?:[^\"]+)\").*/;
+
+    assignHighlights(text: string): SemanticToken[] {
+
+        const matched = text.match(this.pattern)
+        const tokens: SemanticToken[] = [];
+        var fromIdx = 0
+
+        if(matched !== null) {
+            if(matched[1]) {
+                tokens.push( this.calculateToken(text, matched[1], fromIdx, ID_IDX ))
+            }
+       }
+
+        return tokens;
+    }
 }

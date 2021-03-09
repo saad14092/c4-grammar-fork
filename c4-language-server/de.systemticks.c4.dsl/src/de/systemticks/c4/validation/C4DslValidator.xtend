@@ -13,14 +13,17 @@
 // limitations under the License.
 package de.systemticks.c4.validation
 
+import de.systemticks.c4.c4Dsl.AdditionalData
 import de.systemticks.c4.c4Dsl.AnyModelElement
 import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.C4DslPackage
 import de.systemticks.c4.c4Dsl.Component
+import de.systemticks.c4.c4Dsl.Constant
 import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.DeploymentElement
 import de.systemticks.c4.c4Dsl.DeploymentNode
 import de.systemticks.c4.c4Dsl.Group
+import de.systemticks.c4.c4Dsl.Import
 import de.systemticks.c4.c4Dsl.Model
 import de.systemticks.c4.c4Dsl.Person
 import de.systemticks.c4.c4Dsl.RelationShip
@@ -29,6 +32,9 @@ import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.StyledRelationShip
 import de.systemticks.c4.c4Dsl.View
 import de.systemticks.c4.c4Dsl.Workspace
+import java.io.File
+import java.util.List
+import java.util.regex.Pattern
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
@@ -39,7 +45,8 @@ import static extension de.systemticks.c4.utils.C4Utils.*
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class C4DslValidator extends AbstractC4DslValidator {
-	
+
+	val SUBSTITUTE_PATTERN = Pattern.compile("\\$\\{.*\\}")	
 	val COLOR_REGEX = "#[0-9A-Fa-f]{6}"
 	public static String NO_STYLED_ELEMENT_FOR_TAG = "No styled element for given tag"
 	
@@ -61,6 +68,31 @@ class C4DslValidator extends AbstractC4DslValidator {
 		}		
 	}
 	
+	@Check
+	def includeExists(Import _import) {
+		val dir = new File(_import.eResource.URI.toFileString).parent
+		val dslFile = new File(dir + File.separator + _import.importURI.replace('"','') ) 
+		
+		if (!dslFile.exists || !dslFile.isFile) {
+			error('No dsl file with name '+_import.importURI+" exists",
+				C4DslPackage.Literals.IMPORT__IMPORT_URI,
+				"Unknown Import"
+			)			
+		}
+		
+	}
+	
+	@Check
+	def pathExists(AdditionalData docsOrAdrs) {
+		val dir = new File(docsOrAdrs.eResource.URI.toFileString).parent 
+		if(! (new File(dir + File.separator + docsOrAdrs.path).exists) ) {
+			error('The path '+docsOrAdrs.path+" does not exists",
+				C4DslPackage.Literals.ADDITIONAL_DATA__PATH,
+				"Unknown Directory"
+			)
+		}
+	}
+	
 	@Check(NORMAL)
 	def styledElementsExistsForTag(AnyModelElement modelElement) {
 		
@@ -76,6 +108,30 @@ class C4DslValidator extends AbstractC4DslValidator {
 			}	
 		]
 	}
+
+//	@Check(NORMAL)
+	def stringSubstitutionWorkspace(Workspace workspace) {
+		if(workspace.name !== null && workspace.name.length > 3 && workspace.name.hasUnknownConstant(workspace.constants)) {
+			info('Workspace name contains a constant', 
+				C4DslPackage.Literals.WORKSPACE__NAME,
+				"Contains Constant")											
+		}
+	}
+	
+	def boolean hasUnknownConstant(String text, List<Constant> constants) {
+		
+		if(text !== null && text.length > 3) {
+			val m = SUBSTITUTE_PATTERN.matcher(text)
+			while(m.find) {
+				if( !constants.map[name].contains( text.substring(m.start+2, m.end-1) ) ) {
+					return true
+				}
+			}
+		}
+
+		return false		
+	}
+	
 	
 	@Check
 	def uniqueStyledElement(StyledElement styledElement) {
