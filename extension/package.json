@@ -68,7 +68,7 @@
                 "c4.plantuml.renderer": {
                     "type": "string",
                     "default" : "https://kroki.io/plantuml",
-                    "description": "Teh server that creates diagrams from textual descriptions, e.g. from plantuml",
+                    "description": "The server that creates diagrams from textual descriptions, e.g. from plantuml",
                     "scope": "application"
                 }
             }
