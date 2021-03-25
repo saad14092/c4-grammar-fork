@@ -49,7 +49,7 @@ Model:
 	{Model} 'model'  '{'
 		includes+=Import*
 		(
-			('impliedRelationships' ('true' | 'false'))?
+			( implied=ImpliedRelationshipsSetting )?
 			//FIXME: Only one enterprise is allowed but any numbers of other model elements. This needs to be validated
 			( enterprise=Enterprise |		
 			  person+=Person | 
@@ -59,6 +59,10 @@ Model:
 			  relationShips+=RelationShip)*
 		)	
 	'}'
+;
+
+ImpliedRelationshipsSetting:
+	'impliedRelationships' active=('true' | 'false')
 ;
 
 Group:
@@ -96,7 +100,8 @@ Enterprise:
 		metaData=MetaDataSection
 		(	person+=Person | 
 			softwareSystems+=SoftwareSystem |
-			relationShips+=RelationShip
+			relationShips+=RelationShip |
+			implied+=ImpliedRelationShip
 		)*	
 	'}'
 ;
@@ -106,6 +111,7 @@ Person:
 	(name=ID '=')? 'person' label=STRING (description=STRING | description=STRING taglist=STRING)?
 	('{'
 		metaData=MetaDataSection
+		implied+=ImpliedRelationShip*		
 	'}')?
 	 
 ;
@@ -115,6 +121,7 @@ Component:
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
+		implied+=ImpliedRelationShip*		
 	'}')?
 ;
 
@@ -124,7 +131,8 @@ Container:
 	('{'
 		metaData=MetaDataSection
 		(groups+=Group |		
-		components+=Component)*
+		components+=Component |
+		implied+=ImpliedRelationShip)*
 	'}')?
 ;
 
@@ -133,7 +141,8 @@ SoftwareSystem:
 	('{'
 		metaData=MetaDataSection
 		(groups+=Group |		
-		 container+=Container)*
+		 container+=Container | 
+		 implied+=ImpliedRelationShip)*
 	'}')?
 ;
 
@@ -142,6 +151,7 @@ DeploymentEnvironment:
 	'deploymentEnvironment' name=STRING 
 	('{'
 		deploymentNodes+=DeploymentNode+
+		implied+=ImpliedRelationShip*		
 		relationShips+=RelationShip*		
 	'}')?		
 ;
@@ -155,7 +165,9 @@ DeploymentNode:
 		deploymentNodes+=DeploymentNode |
 		infrastructureNodes+=InfrastructureNode |
 		softwareSystemInstances+=SoftwareSystemInstance |
-		containerInstances+=ContainerInstance)+
+		containerInstances+=ContainerInstance |
+		implied+=ImpliedRelationShip
+		)+
 	'}')?		
 ;
 
@@ -164,13 +176,16 @@ InfrastructureNode:
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
+		implied+=ImpliedRelationShip*		
 	'}')?
 ;
 
+//FIXME: Not up-to-date with latest grammar
 SoftwareSystemInstance:
 	(name=ID '=')?'softwareSystemInstance' softwareSystem=[SoftwareSystem] taglist=STRING?
 ;
 
+//FIXME: Not up-to-date with latest grammar
 ContainerInstance:
 	(name=ID '=')? 'containerInstance' container=[Container] taglist=STRING?
 ;
@@ -178,6 +193,14 @@ ContainerInstance:
 // RelationShips
 RelationShip:
 	from=[AnyModelElement] "->" to=[AnyModelElement] 
+		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
+	('{'
+		metaData=MetaDataSection
+	'}')?
+;
+
+ImpliedRelationShip:
+	"->" to=[AnyModelElement] 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
