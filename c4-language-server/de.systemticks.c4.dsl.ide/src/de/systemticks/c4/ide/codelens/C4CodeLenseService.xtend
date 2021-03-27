@@ -124,7 +124,7 @@ class C4CodeLenseService implements ICodeLensService {
 
 	def dispatch createFilename(DeploymentView view, Resource resource) {		
 		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_deployment_'+view.system.label+'_'+view.name+".puml"		
+		fn+'_deployment_'+view.createKey+".puml"		
 	}	
 	
 	def dispatch createFilename(DynamicView view, Resource resource) {		
@@ -159,5 +159,15 @@ class C4CodeLenseService implements ICodeLensService {
 	def dispatch isReady(DynamicView view) {
 		view.reference !== null
 	}
+	
+	def createKey(DeploymentView view) {
+		if(view.name !== null) {
+			view.name
+		}
+		else {
+			view.system.label + "-" + view.environment.name.replace(' ', '') + "-" + 'Deployment'
+		}
+	}
+	
 	
 }
