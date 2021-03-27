@@ -107,7 +107,7 @@ class C4DslGenerator extends AbstractGenerator {
 	}
 
 	def dispatch createFileName(String fn, DeploymentView view, String ext) {
-		fn + '_deployment_' + view.softwareSystem.name + "_" + view.key + ext
+		fn + '_deployment_' + view.key + ext
 	}
 
 	def dispatch createFileName(String fn, DynamicView view, String ext) {

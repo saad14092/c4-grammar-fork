@@ -38,6 +38,7 @@ import java.util.regex.Pattern
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
+import de.systemticks.c4.c4Dsl.ImpliedRelationShip
 
 /**
  * This class contains custom validation rules. 
@@ -91,6 +92,16 @@ class C4DslValidator extends AbstractC4DslValidator {
 				"Unknown Directory"
 			)
 		}
+	}
+	
+	@Check
+	def isImpliedRelationShipAllowed(ImpliedRelationShip iR) {
+		val _model = iR.eResource.allContents.filter(Model).head
+		if(_model?.implied?.active.equals('false')) {
+			error('Implied Relationships are set to "false". Please change to "true"', 
+				C4DslPackage.Literals.IMPLIED_RELATION_SHIP__TO,
+				"Implied Relationship Setting Violation")														
+		}		 		
 	}
 	
 	@Check(NORMAL)
@@ -246,7 +257,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 	}
 	
 	val INVALID_COLOR_MESSAGE = 'Not a valid hex value for defining a color'
-	
+		
 	@Check
 	def colorValue(StyledElement style) {
 		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
