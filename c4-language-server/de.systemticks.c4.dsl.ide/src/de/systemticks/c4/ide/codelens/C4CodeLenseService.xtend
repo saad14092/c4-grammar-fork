@@ -165,8 +165,12 @@ class C4CodeLenseService implements ICodeLensService {
 			view.name
 		}
 		else {
-			view.system.label + "-" + view.environment.name.replace(' ', '') + "-" + 'Deployment'
+			view.system.label.clean + "-" + view.environment.name.clean + "-" + 'Deployment'
 		}
+	}
+	
+	def clean(String s) {
+		s.replace(' ', '')
 	}
 	
 	
