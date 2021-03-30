@@ -26,6 +26,12 @@
         "xtext"
     ],
     "contributes": {
+        "commands": [
+            {
+              "command": "c4.show.structurizr",
+              "title": "Open in Structurizr Preview"
+            }
+          ],              
         "languages": [
             {
                 "id": "c4",
@@ -72,7 +78,16 @@
                     "scope": "application"
                 }
             }
-        }
+        },
+        "menus": {
+            "explorer/context": [
+              {
+                "command": "c4.show.structurizr",
+                "group": "navigation",
+                "when": "resourceLangId == c4"
+              }
+            ]
+          }      
     },
     "activationEvents": [
         "onLanguage:c4"

@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, window, Range, Position } from 'vscode'
+import {ExtensionContext, workspace, languages, commands, window, Range, Position, Uri } from 'vscode'
 import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
+import { C4StructurizrPreview } from './c4-structurizr-preview';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
 const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
@@ -84,6 +85,11 @@ export function activate(context: ExtensionContext) {
         }
     });     
 
+    const structurizrPanel = new C4StructurizrPreview();
+
+    commands.registerCommand('c4.show.structurizr', (uri: Uri) => {
+        structurizrPanel.updateWebView(uri)
+    });
 
       // And set its HTML content
 

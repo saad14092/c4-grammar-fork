@@ -26,6 +26,7 @@ import de.systemticks.c4.c4Dsl.ContainerInstance
 import de.systemticks.c4.c4Dsl.SoftwareSystemInstance
 import de.systemticks.c4.c4Dsl.DynamicView
 import de.systemticks.c4.c4Dsl.FilteredView
+import java.io.File
 
 class C4CodeLenseService implements ICodeLensService {
 	
@@ -97,39 +98,36 @@ class C4CodeLenseService implements ICodeLensService {
 		resource.URI.segments.get(resource.URI.segmentCount-2)
 	}
 	
+	def filename(Resource resource) {
+		resource.URI.lastSegment.split('\\.').head + File.separator
+	}
+	
 	def dispatch createFilename(SystemLandscape view, Resource resource) {
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_systemLandscape_'+".puml"
+		resource.filename+'_systemLandscape_'+".puml"
 	}
 	
 	def dispatch createFilename(SystemContextView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_systemContext_'+view.system.label+".puml"		
+		resource.filename+'_systemContext_'+view.system.label+".puml"		
 	}	
 
 	def dispatch createFilename(ContainerView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_container_'+view.system.label+".puml"		
+		resource.filename+'_container_'+view.system.label+".puml"		
 	}	
 
 	def dispatch createFilename(ComponentView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_component_'+view.container.label+".puml"		
+		resource.filename+'_component_'+view.container.label+".puml"		
 	}	
 	
 	def dispatch createFilename(FilteredView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_filtered_'+view.baseKey+'_'+view.name+".puml"		
+		resource.filename+'_filtered_'+view.baseKey+'_'+view.name+".puml"		
 	}	
 
 	def dispatch createFilename(DeploymentView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_deployment_'+view.createKey+".puml"		
+		resource.filename+'_deployment_'+view.createKey+".puml"		
 	}	
 	
 	def dispatch createFilename(DynamicView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_dynamic_'+view.reference.label+'_'+view.name+".puml"		
+		resource.filename+'_dynamic_'+view.reference.label+'_'+view.name+".puml"		
 	}	
 	
 	def dispatch isReady(View view) {
