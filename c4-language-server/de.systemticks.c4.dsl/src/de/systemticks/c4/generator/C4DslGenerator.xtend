@@ -78,8 +78,9 @@ class C4DslGenerator extends AbstractGenerator {
 	def generateEncodedWorkspace(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 		val workspaceJson = WorkspaceUtils.toJson(parser.workspace, false)
 		val encodedWorkspace = Base64.getEncoder().encodeToString(workspaceJson.getBytes());
+		val fn = resource.URI.lastSegment.split('\\.').head
 		fsa.generateFile(
-			resource.URI.lastSegment.split('\\.').head+"_workspace.json", 
+			fn + File.separator+"_workspace.enc", 
 			C4DslOutputConfiguration.PLANTUML_OUTPUT,
 			encodedWorkspace
 		)		

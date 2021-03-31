@@ -25,23 +25,23 @@ export class C4StructurizrPreview {
     }
 
     private determineWorkspaceFolder(fn: string): WorkspaceFolder | undefined  {
-        return workspace.workspaceFolders?.find( (folder) => { return fn.startsWith(folder.uri.fsPath) }); 
+        return workspace.workspaceFolders?.find( (folder) => { return folder.name === fn }); 
     }
 
-    public updateWebView(dslFile: Uri) {
+    updateWebView(fn: string, folderFromServer: string, diagramKey: string) {
 
-        const ws = this.determineWorkspaceFolder(dslFile.fsPath)
+        const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
 
-        if(ws) {
-            const filename = dslFile.fsPath.replace(/^.*[\\\/]/, '').replace('.dsl', '')
-            const encodedJsonFile = path.join(ws.uri.fsPath, 'plantuml-gen', filename+'_workspace.json')
+        if(workspaceFolder) {
+            const encodedJsonFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn)).fsPath
+ 
 
             if(fs.existsSync(encodedJsonFile)) {
                 const content = fs.readFileSync(encodedJsonFile, 'utf8')
                 if (!this.panel) {
                     this.panel = this.createPanel();
                 }
-                const html = this.updateViewContent(content)
+                const html = this.updateViewContent(content, diagramKey)
                 console.log(html)
 
                 this.panel.webview.html = html
@@ -54,7 +54,7 @@ export class C4StructurizrPreview {
         }
     }
 
-    private updateViewContent(encodedJson: string) {
+    private updateViewContent(encodedJson: string, diagramKey: string) {
 
         return `<!DOCTYPE html>
         <html>
@@ -78,7 +78,7 @@ export class C4StructurizrPreview {
                     <input type="hidden" name="iframe" value="structurizrPreview" />
                     <input type="hidden" name="preview" value="true" />
                     <input type="hidden" name="source" value="${encodedJson}" />
-                    <input type="hidden" name="diagram" value="" />
+                    <input type="hidden" name="diagram" value="${diagramKey}" />
                 </form>
         
                 <script>

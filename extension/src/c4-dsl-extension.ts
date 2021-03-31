@@ -79,16 +79,26 @@ export function activate(context: ExtensionContext) {
     
     const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
 
-    commands.registerCommand("c4.show.diagram", (uri: string, workspaceFolder: string) => {
+    commands.registerCommand("c4.show.diagram", (...args: string[]) => {
         if(workspace.workspaceFolders) {
-            svgPreviewPanel.updateWebView(uri, workspaceFolder)
+          //  const uri = args[0]
+            const workspaceFolder = args[1]
+            const encodedWorkspaceJson = args[2]
+            const diagramKey = args[3]
+            console.log(args)
+            if(true) {
+                structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
+            }
+            else {
+                svgPreviewPanel.updateWebView(encodedWorkspaceJson, workspaceFolder)
+            }
         }
     });     
 
     const structurizrPanel = new C4StructurizrPreview();
 
     commands.registerCommand('c4.show.structurizr', (uri: Uri) => {
-        structurizrPanel.updateWebView(uri)
+     //   structurizrPanel.updateWebView(uri)
     });
 
       // And set its HTML content

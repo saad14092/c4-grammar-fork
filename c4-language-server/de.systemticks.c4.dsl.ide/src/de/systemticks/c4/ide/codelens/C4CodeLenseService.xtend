@@ -89,7 +89,7 @@ class C4CodeLenseService implements ICodeLensService {
 				command = new Command => [
 					title = "$(link-external) Show as PlantUML"
 					command = "c4.show.diagram"
-					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder)
+					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder, resource.filename+"_workspace.enc", view.name?:'')
 				]
 			]				
 	}
