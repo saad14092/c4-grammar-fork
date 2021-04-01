@@ -27,6 +27,7 @@ import de.systemticks.c4.c4Dsl.SoftwareSystemInstance
 import de.systemticks.c4.c4Dsl.DynamicView
 import de.systemticks.c4.c4Dsl.FilteredView
 import java.io.File
+import de.systemticks.c4.c4Dsl.SoftwareSystem
 
 class C4CodeLenseService implements ICodeLensService {
 	
@@ -89,7 +90,7 @@ class C4CodeLenseService implements ICodeLensService {
 				command = new Command => [
 					title = "$(link-external) Show as PlantUML"
 					command = "c4.show.diagram"
-					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder, resource.filename+"_workspace.enc", view.name?:'')
+					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder, resource.filename+"_workspace.enc", view.name?:view.createDiagramKey)
 				]
 			]				
 	}
@@ -100,6 +101,32 @@ class C4CodeLenseService implements ICodeLensService {
 	
 	def filename(Resource resource) {
 		resource.URI.lastSegment.split('\\.').head + File.separator
+	}
+	
+	// Diagram Key
+	def dispatch createDiagramKey(ContainerView view) {
+		view.system.label.clean+"-Container"
+	}
+	
+	def dispatch createDiagramKey(ComponentView view) {
+		(view.container.eContainer as SoftwareSystem).label.clean+'-'+view.container.label.clean+"-Component"
+	}
+	
+	def dispatch createDiagramKey(SystemContextView view) {
+		view.system.label.clean+"-SystemContext"
+	}
+
+	def dispatch createDiagramKey(SystemLandscape view) {
+		"SystemLandscape"
+	}
+
+	//FIXME: 001 is hard coded, but must be determined
+	def dispatch createDiagramKey(DynamicView view) {
+		(view.reference.eContainer as SoftwareSystem).label.clean+view.reference.label.clean+"-Dynamic-001"
+	}
+	
+	def dispatch createDiagramKey(DeploymentView view) {
+		view.system.label.clean+"-"+view.environment.name+"-Deployment"
 	}
 	
 	def dispatch createFilename(SystemLandscape view, Resource resource) {

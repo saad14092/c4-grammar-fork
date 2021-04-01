@@ -1,5 +1,12 @@
 # Change Log
 
+## v2.1.0
+
+With this release the origin structurizr renderer is integrated, which is also the default renderer.
+The setting can be changed with the configuration item "c4.plantuml.generator"
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/48
+
 ## v2.0.4
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/46

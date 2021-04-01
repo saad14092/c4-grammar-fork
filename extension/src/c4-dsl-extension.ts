@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, window, Range, Position, Uri } from 'vscode'
+import {ExtensionContext, workspace, languages, commands, window, Range, Position } from 'vscode'
 import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
@@ -78,30 +78,23 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disposable);
     
     const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
-
+    const structurizrPanel = new C4StructurizrPreview();
+    
     commands.registerCommand("c4.show.diagram", (...args: string[]) => {
         if(workspace.workspaceFolders) {
-          //  const uri = args[0]
+            const uri = args[0]
             const workspaceFolder = args[1]
             const encodedWorkspaceJson = args[2]
             const diagramKey = args[3]
             console.log(args)
-            if(true) {
+            if( renderer == "StructurizrOrigin" ) {
                 structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
             }
             else {
-                svgPreviewPanel.updateWebView(encodedWorkspaceJson, workspaceFolder)
+                svgPreviewPanel.updateWebView(uri, workspaceFolder)
             }
         }
     });     
-
-    const structurizrPanel = new C4StructurizrPreview();
-
-    commands.registerCommand('c4.show.structurizr', (uri: Uri) => {
-     //   structurizrPanel.updateWebView(uri)
-    });
-
-      // And set its HTML content
 
     return languageClient;
 }

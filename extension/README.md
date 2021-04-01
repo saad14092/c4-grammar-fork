@@ -37,10 +37,13 @@ You can switch it off (configuration property 'c4.language.SemanticHighlighting'
 
 ## PlantUML Render Options
 
-Supports the different Plant UML render options provided by the origin structurizr-plantuml project.
+Supports different PlantUML render options.
 You can change the renderer by setting the corresponding configuration: **c4.plantuml.generator**
 
-Explanation is taken from the origin README:
+Default is **StructurizrOrigin** which is integrating the origin PlantUML preview from the structurizr service. 
+
+As an alternative you can use a custom renderer (rendering the graph), implemented by this extension.
+But again the generators (dsl -> puml) are using the origin structurizr libraries:
 
 ```
 There are three PlantUML writer implementations:
@@ -84,7 +87,9 @@ However the Xtext grammar is a bit more strict in some points:
 
 As of now following DSL elements from the language reference are not yet supported:
 
+* **deploymentGroups**
 * **branding**
 * **configuration**
+
 
 Those elements will be provided in subsequent releases.
