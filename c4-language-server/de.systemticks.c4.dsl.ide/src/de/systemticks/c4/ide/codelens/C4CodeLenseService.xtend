@@ -26,6 +26,8 @@ import de.systemticks.c4.c4Dsl.ContainerInstance
 import de.systemticks.c4.c4Dsl.SoftwareSystemInstance
 import de.systemticks.c4.c4Dsl.DynamicView
 import de.systemticks.c4.c4Dsl.FilteredView
+import java.io.File
+import de.systemticks.c4.c4Dsl.SoftwareSystem
 
 class C4CodeLenseService implements ICodeLensService {
 	
@@ -88,7 +90,7 @@ class C4CodeLenseService implements ICodeLensService {
 				command = new Command => [
 					title = "$(link-external) Show as PlantUML"
 					command = "c4.show.diagram"
-					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder)
+					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder, resource.filename+"_workspace.enc", view.name?:view.createDiagramKey)
 				]
 			]				
 	}
@@ -97,39 +99,62 @@ class C4CodeLenseService implements ICodeLensService {
 		resource.URI.segments.get(resource.URI.segmentCount-2)
 	}
 	
+	def filename(Resource resource) {
+		resource.URI.lastSegment.split('\\.').head + File.separator
+	}
+	
+	// Diagram Key
+	def dispatch createDiagramKey(ContainerView view) {
+		view.system.label.clean+"-Container"
+	}
+	
+	def dispatch createDiagramKey(ComponentView view) {
+		(view.container.eContainer as SoftwareSystem).label.clean+'-'+view.container.label.clean+"-Component"
+	}
+	
+	def dispatch createDiagramKey(SystemContextView view) {
+		view.system.label.clean+"-SystemContext"
+	}
+
+	def dispatch createDiagramKey(SystemLandscape view) {
+		"SystemLandscape"
+	}
+
+	//FIXME: 001 is hard coded, but must be determined
+	def dispatch createDiagramKey(DynamicView view) {
+		(view.reference.eContainer as SoftwareSystem).label.clean+view.reference.label.clean+"-Dynamic-001"
+	}
+	
+	def dispatch createDiagramKey(DeploymentView view) {
+		view.system.label.clean+"-"+view.environment.name+"-Deployment"
+	}
+	
 	def dispatch createFilename(SystemLandscape view, Resource resource) {
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_systemLandscape_'+".puml"
+		resource.filename+'_systemLandscape_'+".puml"
 	}
 	
 	def dispatch createFilename(SystemContextView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_systemContext_'+view.system.label+".puml"		
+		resource.filename+'_systemContext_'+view.system.label+".puml"		
 	}	
 
 	def dispatch createFilename(ContainerView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_container_'+view.system.label+".puml"		
+		resource.filename+'_container_'+view.system.label+".puml"		
 	}	
 
 	def dispatch createFilename(ComponentView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_component_'+view.container.label+".puml"		
+		resource.filename+'_component_'+view.container.label+".puml"		
 	}	
 	
 	def dispatch createFilename(FilteredView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_filtered_'+view.baseKey+'_'+view.name+".puml"		
+		resource.filename+'_filtered_'+view.baseKey+'_'+view.name+".puml"		
 	}	
 
 	def dispatch createFilename(DeploymentView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_deployment_'+view.createKey+".puml"		
+		resource.filename+'_deployment_'+view.createKey+".puml"		
 	}	
 	
 	def dispatch createFilename(DynamicView view, Resource resource) {		
-		val fn = resource.URI.lastSegment.split('\\.').head		
-		fn+'_dynamic_'+view.reference.label+'_'+view.name+".puml"		
+		resource.filename+'_dynamic_'+view.reference.label+'_'+view.name+".puml"		
 	}	
 	
 	def dispatch isReady(View view) {

@@ -53,16 +53,15 @@ export class C4PlantUMLPreview {
                     this.toSVG(urlCode).then((svg: string) => {
                         fs.writeFileSync(svgUri.fsPath, svg)
                         if(this.panel) {
-                            const plantUmlSvgSrc = this.panel.webview.asWebviewUri(svgUri);
-                            this.panel.webview.html = this.updateViewContent(plantUmlSvgSrc);    
+                            this.panel.webview.html = this.updateViewContent(svg);    
                         }
                     });
                 }
             }
             else {
                 console.log("Re-use existing svg file")
-                const plantUmlSvgSrc = this.panel.webview.asWebviewUri(svgUri);
-                this.panel.webview.html = this.updateViewContent(plantUmlSvgSrc);
+                const svg = fs.readFileSync(svgUri.fsPath, 'utf-8')
+                this.panel.webview.html = this.updateViewContent(svg);
             }
         }
     }
@@ -100,7 +99,7 @@ export class C4PlantUMLPreview {
         return response.body;
     }
 
-    private updateViewContent(svgFile: Uri) {
+    private updateViewContent(svgFile: string) {
 
         return `<!DOCTYPE html>
         <html lang="en">
@@ -118,7 +117,7 @@ export class C4PlantUMLPreview {
             </style>
         </head>
         <body>
-            <img src="${svgFile}" />
+            ${svgFile}
         </body>
         </html>`;
     }

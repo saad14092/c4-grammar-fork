@@ -15,6 +15,7 @@ package de.systemticks.c4.generator
 
 import com.structurizr.dsl.StructurizrDslParser
 import com.structurizr.dsl.StructurizrDslParserException
+import com.structurizr.util.WorkspaceUtils
 import com.structurizr.view.ComponentView
 import com.structurizr.view.ContainerView
 import com.structurizr.view.DeploymentView
@@ -25,6 +26,7 @@ import com.structurizr.view.SystemLandscapeView
 import de.systemticks.c4.c4Dsl.View
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.util.Base64
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.AbstractGenerator
@@ -32,6 +34,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.eclipse.xtext.resource.SaveOptions
 import org.eclipse.xtext.resource.XtextResource
+import java.io.File
 
 /**
  * Generates code from your model files on save.
@@ -56,8 +59,11 @@ class C4DslGenerator extends AbstractGenerator {
 			// FIXME Needs a proper exception handling
 			try {
 				xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
-				parser.parse(tmp.toString('UTF-8'))
+				parser.parse(tmp.toString('UTF-8'))				
+								
+				generateEncodedWorkspace(parser, resource, fsa)								
 				generatePlantUML(parser, resource, fsa)
+				
 			} catch (StructurizrDslParserException e) {
 				e.printStackTrace
 			} catch (RuntimeException e) {
@@ -69,6 +75,17 @@ class C4DslGenerator extends AbstractGenerator {
 
 	}
 
+	def generateEncodedWorkspace(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
+		val workspaceJson = WorkspaceUtils.toJson(parser.workspace, false)
+		val encodedWorkspace = Base64.getEncoder().encodeToString(workspaceJson.getBytes());
+		val fn = resource.URI.lastSegment.split('\\.').head
+		fsa.generateFile(
+			fn + File.separator+"_workspace.enc", 
+			C4DslOutputConfiguration.PLANTUML_OUTPUT,
+			encodedWorkspace
+		)		
+	}
+
 	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 
 		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
@@ -77,7 +94,7 @@ class C4DslGenerator extends AbstractGenerator {
 
 		parser.workspace.views.views.forEach [ view |
 						
-			val out = createFileName(fn, view, FILE_EXTENSION_PLANTUML)
+			val out = createFileName(fn + File.separator, view, FILE_EXTENSION_PLANTUML)
 			fsa.generateFile(
 				out,
 				C4DslOutputConfiguration.PLANTUML_OUTPUT,

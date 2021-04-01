@@ -17,6 +17,7 @@ import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
+import { C4StructurizrPreview } from './c4-structurizr-preview';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
 const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
@@ -77,15 +78,23 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disposable);
     
     const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
-
-    commands.registerCommand("c4.show.diagram", (uri: string, workspaceFolder: string) => {
+    const structurizrPanel = new C4StructurizrPreview();
+    
+    commands.registerCommand("c4.show.diagram", (...args: string[]) => {
         if(workspace.workspaceFolders) {
-            svgPreviewPanel.updateWebView(uri, workspaceFolder)
+            const uri = args[0]
+            const workspaceFolder = args[1]
+            const encodedWorkspaceJson = args[2]
+            const diagramKey = args[3]
+            console.log(args)
+            if( renderer == "StructurizrOrigin" ) {
+                structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
+            }
+            else {
+                svgPreviewPanel.updateWebView(uri, workspaceFolder)
+            }
         }
     });     
-
-
-      // And set its HTML content
 
     return languageClient;
 }
