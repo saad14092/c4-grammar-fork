@@ -1,5 +1,9 @@
 # Change Log
 
+## v2.1.1
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/50
+
 ## v2.1.0
 
 With this release the origin structurizr renderer is integrated, which is also the default renderer.

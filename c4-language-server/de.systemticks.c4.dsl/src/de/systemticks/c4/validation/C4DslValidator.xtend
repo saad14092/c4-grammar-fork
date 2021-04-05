@@ -38,7 +38,7 @@ import java.util.regex.Pattern
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
-import de.systemticks.c4.c4Dsl.ImpliedRelationShip
+import de.systemticks.c4.c4Dsl.DeploymentEnvironment
 
 /**
  * This class contains custom validation rules. 
@@ -95,15 +95,52 @@ class C4DslValidator extends AbstractC4DslValidator {
 	}
 	
 	@Check
-	def isImpliedRelationShipAllowed(ImpliedRelationShip iR) {
-		val _model = iR.eResource.allContents.filter(Model).head
-		if(_model?.implied?.active.equals('false')) {
+	def isImpliedRelationShipAllowed(RelationShip r) {
+		val _model = r.eResource.allContents.filter(Model).head
+		if(_model?.implied?.active.equals('false') && r.from === null) {
 			error('Implied Relationships are set to "false". Please change to "true"', 
-				C4DslPackage.Literals.IMPLIED_RELATION_SHIP__TO,
+				C4DslPackage.Literals.RELATION_SHIP__TO,
 				"Implied Relationship Setting Violation")														
 		}		 		
 	}
 	
+	@Check
+	def relationshipBetweenParentAndChildren(RelationShip r) {
+		if(r.from === null) {
+			val parent = r.eContainer
+			switch parent {
+				SoftwareSystem : {
+					if(parent.container.contains(r.to)) {
+						error('Relationships cannot be added between parents and children', 
+							C4DslPackage.Literals.RELATION_SHIP__TO,
+							"Relationship not allowed ")																				
+					}					
+				} 
+				Container : {
+					if(parent.components.contains(r.to)) {
+						error('Relationships cannot be added between parents and children', 
+							C4DslPackage.Literals.RELATION_SHIP__TO,
+							"Relationship not allowed ")																				
+					}										
+				}
+				DeploymentNode : {
+					if(parent.deploymentNodes.contains(r.to)) {
+						error('Relationships cannot be added between parents and children', 
+							C4DslPackage.Literals.RELATION_SHIP__TO,
+							"Relationship not allowed ")																				
+					}										
+				}
+				DeploymentEnvironment : {
+					if(parent.deploymentNodes.contains(r.to)) {
+						error('Relationships cannot be added between parents and children', 
+							C4DslPackage.Literals.RELATION_SHIP__TO,
+							"Relationship not allowed ")																				
+					}										
+				}
+			}
+		}
+	}
+		
 	@Check(NORMAL)
 	def styledElementsExistsForTag(AnyModelElement modelElement) {
 		
