@@ -74,8 +74,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="metaData" eType="#//MetaDataSection"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="implied" upperBound="-1"
-        eType="#//ImpliedRelationShip" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
+        eType="#//RelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeploymentElement" eSuperTypes="#//AnyModelElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="KeyValuePair">
@@ -99,8 +99,6 @@
         eType="#//SoftwareSystem" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
         eType="#//RelationShip" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="implied" upperBound="-1"
-        eType="#//ImpliedRelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Person" eSuperTypes="#//BasicModelElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//BasicModelElement">
@@ -123,8 +121,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="deploymentNodes" upperBound="-1"
         eType="#//DeploymentNode" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="implied" upperBound="-1"
-        eType="#//ImpliedRelationShip" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
         eType="#//RelationShip" containment="true"/>
   </eClassifiers>
@@ -143,8 +139,8 @@
         upperBound="-1" eType="#//SoftwareSystemInstance" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="containerInstances" upperBound="-1"
         eType="#//ContainerInstance" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="implied" upperBound="-1"
-        eType="#//ImpliedRelationShip" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
+        eType="#//RelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InfrastructureNode" eSuperTypes="#//DeploymentElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -152,8 +148,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="metaData" eType="#//MetaDataSection"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="implied" upperBound="-1"
-        eType="#//ImpliedRelationShip" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relationShips" upperBound="-1"
+        eType="#//RelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SoftwareSystemInstance" eSuperTypes="#//DeploymentElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="softwareSystem" eType="#//SoftwareSystem"/>
@@ -163,14 +159,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RelationShip">
     <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//AnyModelElement"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//AnyModelElement"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="taglist" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="metaData" eType="#//MetaDataSection"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ImpliedRelationShip">
     <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//AnyModelElement"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

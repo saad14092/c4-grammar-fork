@@ -100,8 +100,7 @@ Enterprise:
 		metaData=MetaDataSection
 		(	person+=Person | 
 			softwareSystems+=SoftwareSystem |
-			relationShips+=RelationShip |
-			implied+=ImpliedRelationShip
+			relationShips+=RelationShip
 		)*	
 	'}'
 ;
@@ -111,7 +110,7 @@ Person:
 	(name=ID '=')? 'person' label=STRING (description=STRING | description=STRING taglist=STRING)?
 	('{'
 		metaData=MetaDataSection
-		implied+=ImpliedRelationShip*		
+		relationShips+=RelationShip*		
 	'}')?
 	 
 ;
@@ -121,7 +120,7 @@ Component:
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
-		implied+=ImpliedRelationShip*		
+		relationShips+=RelationShip*		
 	'}')?
 ;
 
@@ -132,7 +131,8 @@ Container:
 		metaData=MetaDataSection
 		(groups+=Group |		
 		components+=Component |
-		implied+=ImpliedRelationShip)*
+		relationShips+=RelationShip
+		)*
 	'}')?
 ;
 
@@ -142,7 +142,8 @@ SoftwareSystem:
 		metaData=MetaDataSection
 		(groups+=Group |		
 		 container+=Container | 
-		 implied+=ImpliedRelationShip)*
+		 relationShips+=RelationShip
+		 )*
 	'}')?
 ;
 
@@ -151,7 +152,6 @@ DeploymentEnvironment:
 	'deploymentEnvironment' name=STRING 
 	('{'
 		deploymentNodes+=DeploymentNode+
-		implied+=ImpliedRelationShip*		
 		relationShips+=RelationShip*		
 	'}')?		
 ;
@@ -166,7 +166,7 @@ DeploymentNode:
 		infrastructureNodes+=InfrastructureNode |
 		softwareSystemInstances+=SoftwareSystemInstance |
 		containerInstances+=ContainerInstance |
-		implied+=ImpliedRelationShip
+		relationShips+=RelationShip
 		)+
 	'}')?		
 ;
@@ -176,7 +176,7 @@ InfrastructureNode:
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
-		implied+=ImpliedRelationShip*		
+		relationShips+=RelationShip*		
 	'}')?
 ;
 
@@ -192,22 +192,12 @@ ContainerInstance:
 
 // RelationShips
 RelationShip:
-	from=[AnyModelElement] "->" to=[AnyModelElement] 
+	(from=[AnyModelElement])? "->" to=[AnyModelElement] 
 		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
 	('{'
 		metaData=MetaDataSection
 	'}')?
 ;
-
-ImpliedRelationShip:
-	"->" to=[AnyModelElement] 
-		(description=STRING | description=STRING technology=STRING | description=STRING technology=STRING taglist=STRING)? 	
-	('{'
-		metaData=MetaDataSection
-	'}')?
-;
-
-
 
 // Views
 ViewSection:
