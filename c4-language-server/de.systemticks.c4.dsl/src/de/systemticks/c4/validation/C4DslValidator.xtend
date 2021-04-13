@@ -21,6 +21,7 @@ import de.systemticks.c4.c4Dsl.Component
 import de.systemticks.c4.c4Dsl.Constant
 import de.systemticks.c4.c4Dsl.Container
 import de.systemticks.c4.c4Dsl.DeploymentElement
+import de.systemticks.c4.c4Dsl.DeploymentEnvironment
 import de.systemticks.c4.c4Dsl.DeploymentNode
 import de.systemticks.c4.c4Dsl.Group
 import de.systemticks.c4.c4Dsl.Import
@@ -35,10 +36,10 @@ import de.systemticks.c4.c4Dsl.Workspace
 import java.io.File
 import java.util.List
 import java.util.regex.Pattern
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
 
 import static extension de.systemticks.c4.utils.C4Utils.*
-import de.systemticks.c4.c4Dsl.DeploymentEnvironment
 
 /**
  * This class contains custom validation rules. 
@@ -208,14 +209,58 @@ class C4DslValidator extends AbstractC4DslValidator {
 		}
 	}
 
+	private def <T extends EObject> getSiblings(EObject element, Class<T> type) {
+		element.eContainer.eContents.filter(type)
+	}
+
 	@Check
-	def uniqueLabelElement(BasicModelElement basicModelElement) {
-		if(basicModelElement.eResource.allContents.filter(BasicModelElement).map[label].filter[equals(basicModelElement.label)].size > 1) {
-			error('Element with the label '+basicModelElement.label+' is already defined', 
+	def uniqueLabelElementPerson(Person person) {		
+				
+		if( person.getSiblings(Person).map[label].filter[equals(person.label)].size > 1) {
+			error('Person with the label '+person.label+' is already defined in this model', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
 					"Already Defined Element")						
 		}
 	}
+	
+	@Check
+	def uniqueLabelElementSoftwareSystem(SoftwareSystem system) {
+		if( system.getSiblings(SoftwareSystem).map[label].filter[equals(system.label)].size > 1) {
+			error('SoftwareSystem with the label '+system.label+' is already defined in this model', 
+					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
+					"Already Defined Element")						
+		}
+	}
+
+	@Check
+	def uniqueLabelElementComponent(Component component) {
+		if( component.getSiblings(Component).map[label].filter[equals(component.label)].size > 1) {
+			error('Component with the label '+component.label+' is already defined in this container', 
+					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
+					"Already Defined Element")						
+		}
+	}
+
+	@Check
+	def uniqueLabelElementContainer(Container container) {
+		if( container.getSiblings(Container).map[label].filter[equals(container.label)].size > 1) {
+			error('Container with the label '+container.label+' is already defined in this SoftwareSystem', 
+					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
+					"Already Defined Element")						
+		}
+	}
+
+//	@Check
+//	def uniqueElementsInSoftwareSystem(SoftwareSystem system) {
+//		system.container.groupBy[label].forEach[label, list, index | 
+//			if(list.size > 1) {
+//			error('Container with the label '+label+' is already defined in this SoftwareSystem', 
+//					C4DslPackage.Literals.SOFTWARE_SYSTEM__CONTAINER, 
+//					index,
+//					"Already Defined Element")						
+//			}
+//		]
+//	}
 
 	@Check
 	def uniqueView(View view) {
