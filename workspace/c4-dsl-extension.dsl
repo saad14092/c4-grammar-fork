@@ -1,7 +1,7 @@
 workspace "C4 DSL Extension Workspace" {
     model {
 
-        architect = person "Software Architect" "Modelling the SW architecture with C4 DSL" ""   
+        architect = person "Software Architect" "Modelling the SW architecture with C4 DSL"
 
         kroki = softwareSystem "Kroki.io Server" "Creates diagrams from textual descriptions. Kroki provides a unified API with support for PlantUML, Mermaid, etc." "Extern"
         c4DslExtension = softwareSystem "C4 Dsl Extension" "The overall extension" {
