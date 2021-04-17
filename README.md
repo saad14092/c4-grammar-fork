@@ -14,7 +14,7 @@ cd extension
 yarn
 ```
 
-# Build everything and package the extesion (*.vsix)
+# Build everything and package the extension (*.vsix)
 
 ```
 yarn global add vsce
