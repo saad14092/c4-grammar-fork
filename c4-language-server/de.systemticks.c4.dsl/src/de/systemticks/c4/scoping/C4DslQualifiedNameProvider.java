@@ -4,8 +4,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.naming.SimpleNameProvider;
 
-import de.systemticks.c4.c4Dsl.StaticView;
-
 public class C4DslQualifiedNameProvider extends SimpleNameProvider {
 
 	@Override
