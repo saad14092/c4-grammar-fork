@@ -105,9 +105,9 @@
     ],
     "scripts": {
         "prepare": "yarn run clean && yarn run build",
-        "clean": "rimraf extension/lib extension/pack",
+        "clean": "rimraf extension/lib extension/pack extension/server",
         "build": "tsc && webpack --mode=development",
-        "build-server": "../c4-language-server/gradlew -p ../c4-language-server deployToVSCode",
+        "build-server": "../c4-language-server/gradlew -p ../c4-language-server build deployToVSCode",
         "clean-server": "../c4-language-server/gradlew -p ../c4-language-server clean",
         "build-all": "yarn build-server && yarn build",
         "clean-all": "yarn clean-server && yarn clean",
