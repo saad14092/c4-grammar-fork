@@ -33,6 +33,7 @@ AdditionalData:
 IncludeableSection: 
 	incStyle = IncludableStyleSection  |
 	incModel = IncludeableModelSection |
+	incViews = IncludableViewSection |
 	incSWSys = IncludableSoftwareSystemSection
 ;
 
@@ -206,7 +207,8 @@ RelationShip:
 // Views
 ViewSection:
 	{ViewSection} 'views' '{'
-		(views += View |
+		( includes+=Import |
+		views += View |
 		styles += Styles )*
 		theme=Theme?
 	'}'
@@ -366,6 +368,14 @@ IncludableStyleSection:
 		(styledElements+=StyledElement |
 		styledRelationShips+=StyledRelationShip)+	
 ;
+
+IncludableViewSection:
+    {IncludableViewSection}
+	(views += View |
+	styles += Styles)*
+	theme=Theme?
+;
+
 
 //enum StyleShape:	
 //	Box|RoundedBox|Circle|Ellipse|Hexagon|Cylinder|Pipe|Person|Robot|Folder|WebBrowser|MobileDevicePortrait|MobileDeviceLandscape|Component	;

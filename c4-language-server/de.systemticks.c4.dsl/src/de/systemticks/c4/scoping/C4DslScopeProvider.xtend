@@ -52,10 +52,11 @@ import de.systemticks.c4.c4Dsl.SystemContextView
 class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 
 	private def includedViaImports(List<Import> _imports, IEObjectDescription eobjd) {
-		_imports.map[importURI].filter[i|
-			val fs = eobjd.EObjectURI.toFileString.replace('\\', '/')
-			fs.endsWith(i.replace('"',''))
-		].size > 0		
+	//	_imports.map[importURI].filter[i|
+	//		val fs = eobjd.EObjectURI.toFileString.replace('\\', '/')
+	//		fs.endsWith(i.replace('"',''))
+	//	].size > 0		
+		true
 	}
 
 	override IScope getScope(EObject context, EReference reference) {
