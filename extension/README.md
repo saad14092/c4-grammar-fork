@@ -42,6 +42,8 @@ You can change the renderer by setting the corresponding configuration: **c4.pla
 
 Default is **StructurizrOrigin** which is integrating the origin PlantUML preview from the structurizr service. 
 
+> :warning: **StructurizrOrigin** seems to have problems with rendering dsl files, that contain !includes.
+
 As an alternative you can use a custom renderer (rendering the graph), implemented by this extension.
 But again the generators (dsl -> puml) are using the origin structurizr libraries:
 
@@ -82,6 +84,15 @@ However the Xtext grammar is a bit more strict in some points:
 
 * Double quote characters ("...") are **mandatory**, even when a property does not contain whitespaces
 * You can't use keywords like **person** or **container** as variable names
+
+The *!include* feature is not fully supported. This is due to the fact, that the !include mechanism is pretty different to standard Xtext import functionality. In the strucutizr dsl the content of any included files is simply inlined into the parent document, i.e. you can use it almost everywhere. In Xtext an import has the flavor of an _import_ like in Java.
+
+Currently !includes are only allowed in the context of
+* **model**
+* **softwaresystem**
+* **styles**
+
+Open the *big_bank_plc* folder as a workspace so see what is possible.
 
 ### Unsupported DSL Elements
 

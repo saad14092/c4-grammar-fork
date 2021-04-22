@@ -14,29 +14,34 @@
 package de.systemticks.c4.scoping
 
 import de.systemticks.c4.c4Dsl.AnimationStep
+import de.systemticks.c4.c4Dsl.BasicModelElement
 import de.systemticks.c4.c4Dsl.C4DslPackage
 import de.systemticks.c4.c4Dsl.ComponentView
 import de.systemticks.c4.c4Dsl.Container
+import de.systemticks.c4.c4Dsl.ContainerInstance
+import de.systemticks.c4.c4Dsl.DeploymentElement
+import de.systemticks.c4.c4Dsl.DeploymentEnvironment
+import de.systemticks.c4.c4Dsl.DeploymentView
+import de.systemticks.c4.c4Dsl.DynamicView
 import de.systemticks.c4.c4Dsl.Exclude
+import de.systemticks.c4.c4Dsl.FilteredRelationShip
+import de.systemticks.c4.c4Dsl.FilteredView
 import de.systemticks.c4.c4Dsl.Include
+import de.systemticks.c4.c4Dsl.Model
 import de.systemticks.c4.c4Dsl.RelationShip
+import de.systemticks.c4.c4Dsl.SoftwareSystem
 import de.systemticks.c4.c4Dsl.SoftwareSystemInstance
+import de.systemticks.c4.c4Dsl.StaticView
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
-import de.systemticks.c4.c4Dsl.SoftwareSystem
-import de.systemticks.c4.c4Dsl.ContainerInstance
-import de.systemticks.c4.c4Dsl.BasicModelElement
-import de.systemticks.c4.c4Dsl.DeploymentView
-import de.systemticks.c4.c4Dsl.DeploymentElement
-import de.systemticks.c4.c4Dsl.DeploymentEnvironment
-import de.systemticks.c4.c4Dsl.DynamicView
-import de.systemticks.c4.c4Dsl.FilteredRelationShip
-import de.systemticks.c4.c4Dsl.FilteredView
-
-import de.systemticks.c4.c4Dsl.StaticView
+import org.eclipse.xtext.scoping.impl.FilteringScope
+import de.systemticks.c4.c4Dsl.Import
+import java.util.List
+import de.systemticks.c4.c4Dsl.SystemContextView
 
 /**
  * This class contains custom scoping description.
@@ -46,20 +51,43 @@ import de.systemticks.c4.c4Dsl.StaticView
  */
 class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 
+	private def includedViaImports(List<Import> _imports, IEObjectDescription eobjd) {
+		_imports.map[importURI].filter[i|
+			val fs = eobjd.EObjectURI.toFileString.replace('\\', '/')
+			fs.endsWith(i.replace('"',''))
+		].size > 0		
+	}
+
 	override IScope getScope(EObject context, EReference reference) {
+
 
 		if ( context instanceof RelationShip &&
 			(reference == C4DslPackage.Literals.RELATION_SHIP__FROM || reference == C4DslPackage.Literals.RELATION_SHIP__TO) ) {
 			
 			val rootElement = EcoreUtil2.getRootContainer(context);
+			val localBasicElements = EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement)				
 			
-			if(context.eContainer instanceof DeploymentEnvironment) {
-				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, DeploymentElement));								
+			switch context.eContainer {
+				DeploymentEnvironment : return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, DeploymentElement))
+				Model: return new FilteringScope(super.getScope(context, reference), 
+					[e | (context.eContainer as Model).includes.includedViaImports(e) || localBasicElements.contains(e.EObjectOrProxy) ])
+				SoftwareSystem: return new FilteringScope(super.getScope(context, reference), 
+					[e | (context.eContainer as SoftwareSystem).includes.includedViaImports(e) || localBasicElements.contains(e.EObjectOrProxy) ])
+				default: return Scopes.scopeFor(localBasicElements) 	
 			}
-			else {
-				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement));												
-			}						
+						
 		} 
+
+		else if ( context instanceof SystemContextView && reference == C4DslPackage.Literals.SYSTEM_CONTEXT_VIEW__SYSTEM) {
+			
+			val rootElement = EcoreUtil2.getRootContainer(context);
+			val candidates = EcoreUtil2.getAllContentsOfType(rootElement, SoftwareSystem);
+			val model = EcoreUtil2.getAllContentsOfType(rootElement, Model).head;
+			
+			return new FilteringScope(super.getScope(context, reference), 
+					[e | model?.includes.includedViaImports(e) || candidates.contains(e.EObjectOrProxy) ])
+			
+		}
 		
 		else if ( context instanceof ComponentView && reference == C4DslPackage.Literals.COMPONENT_VIEW__CONTAINER) {
 			
@@ -105,7 +133,11 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, DeploymentElement));				
 			}
 			else {
-				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement));								
+				val model = EcoreUtil2.getAllContentsOfType(rootElement, Model).head;
+				val localBasicElements = EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement)
+				
+				return new FilteringScope(super.getScope(context, reference), 
+						[e | model?.includes.includedViaImports(e) || localBasicElements.contains(e.EObjectOrProxy) ])
 			}
 			
 		}
@@ -117,7 +149,11 @@ class C4DslScopeProvider extends AbstractC4DslScopeProvider {
 				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, DeploymentElement));				
 			}
 			else {
-				return Scopes.scopeFor(EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement));								
+				val model = EcoreUtil2.getAllContentsOfType(rootElement, Model).head;
+				val localBasicElements = EcoreUtil2.getAllContentsOfType(rootElement, BasicModelElement)
+				
+				return new FilteringScope(super.getScope(context, reference), 
+						[e | model?.includes.includedViaImports(e) || localBasicElements.contains(e.EObjectOrProxy) ])
 			}			
 		}
 

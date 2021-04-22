@@ -29,13 +29,13 @@ AdditionalData:
 
 
 // Model
-IncludeableSection:
-		{IncludeableSection} (
-			includes+=Import |
-			person+=Person | 
-			 softwareSystems+=SoftwareSystem |
-			 relationShips+=RelationShip)*		
+
+IncludeableSection: 
+	incStyle = IncludableStyleSection  |
+	incModel = IncludeableModelSection |
+	incSWSys = IncludableSoftwareSystemSection
 ;
+
 
 Import:
 	'!include' importURI=INCLUDE_PATH
@@ -45,13 +45,15 @@ INCLUDE_PATH: PATH '.dsl' | STRING;
 
 PATH: ID ('/' ID)*;
 
+
 Model:		
 	{Model} 'model'  '{'
-		includes+=Import*
 		(
 			( implied=ImpliedRelationshipsSetting )?
 			//FIXME: Only one enterprise is allowed but any numbers of other model elements. This needs to be validated
-			( enterprise=Enterprise |		
+			( 
+			  includes+=Import |
+			  enterprise=Enterprise |		
 			  person+=Person | 
 			  softwareSystems+=SoftwareSystem |
 			  groups+=Group |
@@ -140,7 +142,9 @@ SoftwareSystem:
 	(name=ID '=')? ('softwareSystem'|'softwaresystem') label=STRING (description=STRING | description=STRING taglist=STRING)?  
 	('{'
 		metaData=MetaDataSection
-		(groups+=Group |		
+		(
+		 includes+=Import |	
+		 groups+=Group |		
 		 container+=Container | 
 		 relationShips+=RelationShip
 		 )*
@@ -297,7 +301,8 @@ AnimationStep:
 
 Styles:
 	{Styles} 'styles' '{'
-		(styledElements+=StyledElement |
+		( includes+=Import |
+		styledElements+=StyledElement |
 		styledRelationShips+=StyledRelationShip)*
 	'}'
 ;
@@ -336,6 +341,30 @@ StyledRelationShip:
 			('opacity' opacity=INT)?						 
 		)
 	'}'
+;
+
+// Includeable Section
+IncludeableModelSection:
+	{IncludeableModelSection}
+			( enterprise=Enterprise |		
+			  person+=Person | 
+			  softwareSystems+=SoftwareSystem |
+			  groups+=Group |
+			  deploymentEnvironments+=DeploymentEnvironment ) +
+			  relationShips+=RelationShip*
+;
+
+IncludableSoftwareSystemSection:
+	{IncludableSoftwareSystemSection}		 
+		 container+=Container+ 
+		 relationShips+=RelationShip*		 
+		 
+;
+
+IncludableStyleSection: 
+	{IncludableStyleSection}
+		(styledElements+=StyledElement |
+		styledRelationShips+=StyledRelationShip)+	
 ;
 
 //enum StyleShape:	

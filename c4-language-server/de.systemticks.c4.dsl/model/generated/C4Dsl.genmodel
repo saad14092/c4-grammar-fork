@@ -32,17 +32,16 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//AdditionalData/path"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//IncludeableSection">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/includes"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/person"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/softwareSystems"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/relationShips"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/incStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/incModel"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableSection/incSWSys"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Import">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Import/importURI"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/includes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/implied"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/includes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/enterprise"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/person"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Model/softwareSystems"/>
@@ -94,6 +93,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Container/components"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//SoftwareSystem">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/includes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/groups"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//SoftwareSystem/container"/>
     </genClasses>
@@ -205,6 +205,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//AnimationStep/elements"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Styles">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Styles/includes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Styles/styledElements"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//Styles/styledRelationShips"/>
     </genClasses>
@@ -235,6 +236,22 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/width"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/position"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/opacity"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//IncludeableModelSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/enterprise"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/person"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/softwareSystems"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/groups"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/deploymentEnvironments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/relationShips"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//IncludableSoftwareSystemSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableSoftwareSystemSection/container"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableSoftwareSystemSection/relationShips"/>
+    </genClasses>
+    <genClasses ecoreClass="C4Dsl.ecore#//IncludableStyleSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableStyleSection/styledElements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableStyleSection/styledRelationShips"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//Theme">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//Theme/urls"/>

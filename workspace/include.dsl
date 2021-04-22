@@ -11,15 +11,7 @@ workspace "Getting Started" "This is a model of my software system." {
         }
 
         styles {
-            element "Software System" {
-                background #1168bd
-                color #ffffff
-            }
-            element "Person" {
-                shape Person
-                background #08427b
-                color #ffffff
-            }
+            !include include2/syles.dsl
         }
     }
 
