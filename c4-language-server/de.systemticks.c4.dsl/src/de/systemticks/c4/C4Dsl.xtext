@@ -29,13 +29,14 @@ AdditionalData:
 
 
 // Model
-IncludeableSection:
-		{IncludeableSection} (
-			includes+=Import |
-			person+=Person | 
-			 softwareSystems+=SoftwareSystem |
-			 relationShips+=RelationShip)*		
+
+IncludeableSection: 
+	incStyle = IncludableStyleSection  |
+	incModel = IncludeableModelSection |
+	incViews = IncludableViewSection |
+	incSWSys = IncludableSoftwareSystemSection
 ;
+
 
 Import:
 	'!include' importURI=INCLUDE_PATH
@@ -45,13 +46,15 @@ INCLUDE_PATH: PATH '.dsl' | STRING;
 
 PATH: ID ('/' ID)*;
 
+
 Model:		
 	{Model} 'model'  '{'
-		includes+=Import*
 		(
 			( implied=ImpliedRelationshipsSetting )?
 			//FIXME: Only one enterprise is allowed but any numbers of other model elements. This needs to be validated
-			( enterprise=Enterprise |		
+			( 
+			  includes+=Import |
+			  enterprise=Enterprise |		
 			  person+=Person | 
 			  softwareSystems+=SoftwareSystem |
 			  groups+=Group |
@@ -140,7 +143,9 @@ SoftwareSystem:
 	(name=ID '=')? ('softwareSystem'|'softwaresystem') label=STRING (description=STRING | description=STRING taglist=STRING)?  
 	('{'
 		metaData=MetaDataSection
-		(groups+=Group |		
+		(
+		 includes+=Import |	
+		 groups+=Group |		
 		 container+=Container | 
 		 relationShips+=RelationShip
 		 )*
@@ -202,7 +207,8 @@ RelationShip:
 // Views
 ViewSection:
 	{ViewSection} 'views' '{'
-		(views += View |
+		( includes+=Import |
+		views += View |
 		styles += Styles )*
 		theme=Theme?
 	'}'
@@ -297,7 +303,8 @@ AnimationStep:
 
 Styles:
 	{Styles} 'styles' '{'
-		(styledElements+=StyledElement |
+		( includes+=Import |
+		styledElements+=StyledElement |
 		styledRelationShips+=StyledRelationShip)*
 	'}'
 ;
@@ -337,6 +344,41 @@ StyledRelationShip:
 		)
 	'}'
 ;
+
+// Includeable Section
+IncludeableModelSection:
+	{IncludeableModelSection}
+			constants+=Constant*
+			( enterprise=Enterprise |		
+			  person+=Person | 
+			  softwareSystems+=SoftwareSystem |
+			  groups+=Group |
+			  deploymentEnvironments+=DeploymentEnvironment ) +
+			  relationShips+=RelationShip*
+;
+
+IncludableSoftwareSystemSection:
+	{IncludableSoftwareSystemSection}		 
+		 container+=Container+ 
+		 relationShips+=RelationShip*		 
+		 
+;
+
+IncludableStyleSection: 
+	{IncludableStyleSection}
+		constants+=Constant*
+		(styledElements+=StyledElement |
+		styledRelationShips+=StyledRelationShip)+	
+;
+
+IncludableViewSection:
+    {IncludableViewSection}
+	constants+=Constant*
+	(views += View |
+	styles += Styles)*
+	theme=Theme?
+;
+
 
 //enum StyleShape:	
 //	Box|RoundedBox|Circle|Ellipse|Hexagon|Cylinder|Pipe|Person|Robot|Folder|WebBrowser|MobileDevicePortrait|MobileDeviceLandscape|Component	;

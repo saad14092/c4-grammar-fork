@@ -22,16 +22,18 @@ class C4UtilSpec extends Specification {
 			def tags = C4Utils.allTags(workspace)
 			
 		then:
-			tags.size() == 9
-			tags.contains('Element')
-			tags.contains('Person')
-			tags.contains('Software System')
-			tags.contains('Container')
-			tags.contains('Component')
-			tags.contains('Deployment Node')
-			tags.contains('Infrastructure Node')
-			tags.contains('Software System Instance')
-			tags.contains('Container Instance')
+			with(tags) {
+				size() == 9
+				contains('Element')
+				contains('Person')
+				contains('Software System')
+				contains('Container')
+				contains('Component')
+				contains('Deployment Node')
+				contains('Infrastructure Node')
+				contains('Software System Instance')
+				contains('Container Instance')
+			}
 	}
 
 	def "Testing if custom tags can be retrieved" () {
@@ -45,12 +47,14 @@ class C4UtilSpec extends Specification {
 			def tags = C4Utils.allTags(workspace)
 			
 		then:
-			tags.size() == 14
-			tags.contains('Structurizr')
-			tags.contains('BuiltIn')
-			tags.contains('Extern')
-			tags.contains('Extension')
-			tags.contains('File')
+			with(tags) {
+				size() == 14
+				contains('Structurizr')
+				contains('BuiltIn')
+				contains('Extern')
+				contains('Extension')
+				contains('File')
+			}
 	}
 	
 }
