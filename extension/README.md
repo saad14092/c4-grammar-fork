@@ -85,6 +85,8 @@ However the Xtext grammar is a bit more strict in some points:
 * Double quote characters ("...") are **mandatory**, even when a property does not contain whitespaces
 * You can't use keywords like **person** or **container** as variable names
 
+**About !includes**
+
 The *!include* feature is not fully supported. This is due to the fact, that the !include mechanism is pretty different to standard Xtext import functionality. In the strucutizr dsl the content of any included files is simply inlined into the parent document, i.e. you can use it almost everywhere. In Xtext an import has the flavor of an _import_ like in Java.
 
 Currently !includes are only allowed in the context of
@@ -93,6 +95,8 @@ Currently !includes are only allowed in the context of
 * **styles**
 
 Open the *big_bank_plc* folder as a workspace so see what is possible.
+
+Be aware, that the current implementation of this feature is limited and probably instable.
 
 ### Unsupported DSL Elements
 

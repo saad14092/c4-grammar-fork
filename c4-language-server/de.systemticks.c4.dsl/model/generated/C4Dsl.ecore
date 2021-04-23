@@ -298,6 +298,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="opacity" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IncludeableModelSection">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constants" upperBound="-1"
+        eType="#//Constant" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="enterprise" eType="#//Enterprise"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="person" upperBound="-1"
@@ -318,12 +320,16 @@
         eType="#//RelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IncludableStyleSection">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constants" upperBound="-1"
+        eType="#//Constant" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="styledElements" upperBound="-1"
         eType="#//StyledElement" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="styledRelationShips" upperBound="-1"
         eType="#//StyledRelationShip" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IncludableViewSection">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constants" upperBound="-1"
+        eType="#//Constant" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="views" upperBound="-1"
         eType="#//View" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="styles" upperBound="-1"

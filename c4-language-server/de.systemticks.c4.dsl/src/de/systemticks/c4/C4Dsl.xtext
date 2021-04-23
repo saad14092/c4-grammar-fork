@@ -348,6 +348,7 @@ StyledRelationShip:
 // Includeable Section
 IncludeableModelSection:
 	{IncludeableModelSection}
+			constants+=Constant*
 			( enterprise=Enterprise |		
 			  person+=Person | 
 			  softwareSystems+=SoftwareSystem |
@@ -365,12 +366,14 @@ IncludableSoftwareSystemSection:
 
 IncludableStyleSection: 
 	{IncludableStyleSection}
+		constants+=Constant*
 		(styledElements+=StyledElement |
 		styledRelationShips+=StyledRelationShip)+	
 ;
 
 IncludableViewSection:
     {IncludableViewSection}
+	constants+=Constant*
 	(views += View |
 	styles += Styles)*
 	theme=Theme?

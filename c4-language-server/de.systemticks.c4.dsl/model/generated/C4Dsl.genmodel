@@ -240,6 +240,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute C4Dsl.ecore#//StyledRelationShip/opacity"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//IncludeableModelSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/constants"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/enterprise"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/person"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludeableModelSection/softwareSystems"/>
@@ -252,10 +253,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableSoftwareSystemSection/relationShips"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//IncludableStyleSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableStyleSection/constants"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableStyleSection/styledElements"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableStyleSection/styledRelationShips"/>
     </genClasses>
     <genClasses ecoreClass="C4Dsl.ecore#//IncludableViewSection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableViewSection/constants"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableViewSection/views"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableViewSection/styles"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference C4Dsl.ecore#//IncludableViewSection/theme"/>
