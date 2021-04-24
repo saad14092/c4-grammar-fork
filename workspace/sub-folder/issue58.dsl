@@ -1,7 +1,7 @@
 workspace "Getting Started" "This is a model of my software system." {
 
     model {
-        !include model3.dsl
+        !include model58.dsl
     }
 
     views {
