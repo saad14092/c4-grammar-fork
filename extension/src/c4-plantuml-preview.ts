@@ -1,4 +1,4 @@
-import { Uri, window, ViewColumn, WebviewPanel, workspace, WorkspaceFolder } from "vscode";
+import { Uri, window, ViewColumn, WebviewPanel, workspace, WorkspaceFolder, OutputChannel } from "vscode";
 import * as path from 'path';
 import * as pako from 'pako';
 import * as fs from 'fs';
@@ -7,9 +7,11 @@ import got from 'got';
 export class C4PlantUMLPreview {
 
     urlSVG: string;
+    logger: OutputChannel;
 
-    constructor(renderer: string) {
+    constructor(renderer: string, logger: OutputChannel) {
         this.urlSVG = renderer + "/" + "svg"
+        this.logger = logger
     }
 
     panel: WebviewPanel | undefined
@@ -30,39 +32,41 @@ export class C4PlantUMLPreview {
         return panel;
     }
 
-    determineWorkspaceFolder(fn: string): WorkspaceFolder | undefined  {
-        return workspace.workspaceFolders?.find( (folder) => { return folder.name === fn }); 
+    private determineWorkspaceFolder(fn: string): WorkspaceFolder | undefined  {
+        // Find the workspace that contains this folder
+        return workspace.workspaceFolders?.find( (folder) => { return fn.startsWith(folder.uri.toString()) }); 
     }
 
     updateWebView(fn: string, folderFromServer: string) {
 
         const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
+        if(!workspaceFolder) {
+            throw new Error("Could not find workspace for folder: " +  folderFromServer)
+        }
 
-        if (workspaceFolder) {
-            const pumlFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn)).fsPath
-            const svgUri = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn.replace('puml', 'svg')))
+        const pumlFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn)).fsPath
+        const svgUri = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn.replace('puml', 'svg')))
 
-            if (!this.panel) {
-                this.panel = this.createPanel();
-            }
+        if (!this.panel) {
+            this.panel = this.createPanel();
+        }
 
-            if (this.needsUpdate(pumlFile, svgUri.fsPath)) {
-                console.log("Create a new svg file")
-                const urlCode = this.encode(pumlFile)
-                if (urlCode) {
-                    this.toSVG(urlCode).then((svg: string) => {
-                        fs.writeFileSync(svgUri.fsPath, svg)
-                        if(this.panel) {
-                            this.panel.webview.html = this.updateViewContent(svg);    
-                        }
-                    });
-                }
+        if (this.needsUpdate(pumlFile, svgUri.fsPath)) {
+            this.logger.appendLine("Create a new svg file")
+            const urlCode = this.encode(pumlFile)
+            if (urlCode) {
+                this.toSVG(urlCode).then((svg: string) => {
+                    fs.writeFileSync(svgUri.fsPath, svg)
+                    if(this.panel) {
+                        this.panel.webview.html = this.updateViewContent(svg);    
+                    }
+                });
             }
-            else {
-                console.log("Re-use existing svg file")
-                const svg = fs.readFileSync(svgUri.fsPath, 'utf-8')
-                this.panel.webview.html = this.updateViewContent(svg);
-            }
+        }
+        else {
+            this.logger.appendLine("Re-use existing svg file")
+            const svg = fs.readFileSync(svgUri.fsPath, 'utf-8')
+            this.panel.webview.html = this.updateViewContent(svg);
         }
     }
 

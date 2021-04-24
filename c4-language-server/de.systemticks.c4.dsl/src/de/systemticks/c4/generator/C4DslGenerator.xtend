@@ -24,7 +24,8 @@ import com.structurizr.view.FilteredView
 import com.structurizr.view.SystemContextView
 import com.structurizr.view.SystemLandscapeView
 import de.systemticks.c4.c4Dsl.View
-import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Base64
 import org.eclipse.emf.ecore.resource.Resource
@@ -34,7 +35,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.eclipse.xtext.resource.SaveOptions
 import org.eclipse.xtext.resource.XtextResource
-import java.io.File
 
 /**
  * Generates code from your model files on save.
@@ -50,16 +50,21 @@ class C4DslGenerator extends AbstractGenerator {
 		val parser = new StructurizrDslParser();
 
 		// The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
-		// Therefore the we need to store the editor content in a temporary stream
+		// Therefore the we need to store the editor content in a temporary stream or file
+		// For !include references to work, this file must be in the same directory as the source file
 		val xRes = (resource as XtextResource)
-		val tmp = new ByteArrayOutputStream
+		val origFile = new File(xRes.URI.toFileString())
+		val newFile =  new File(origFile.getParentFile(), "." + origFile.getName() + ".tmp")
 
 		val views = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), View)
 		if (views !== null && views.size > 0) {
 			// FIXME Needs a proper exception handling
+			val outFileStream = new FileOutputStream(newFile)
 			try {
-				xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
-				parser.parse(tmp.toString('UTF-8'))				
+				xRes.doSave(outFileStream, SaveOptions.defaultOptions.toOptionsMap)
+				outFileStream.close()
+
+				parser.parse(newFile)				
 								
 				generateEncodedWorkspace(parser, resource, fsa)								
 				generatePlantUML(parser, resource, fsa)
@@ -70,6 +75,13 @@ class C4DslGenerator extends AbstractGenerator {
 				e.printStackTrace
 			} catch (IOException e) {
 				e.printStackTrace
+			} finally {
+				// Close if not already closed
+				outFileStream.close()
+				
+				if (newFile.exists()) {
+					newFile.delete()
+				}
 			}
 		}
 

@@ -14,7 +14,7 @@
 
 import {ExtensionContext, workspace, languages, commands, window, Range, Position } from 'vscode'
 import * as path from 'path';
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange} from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange, RevealOutputChannelOn} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
@@ -48,6 +48,9 @@ export function activate(context: ExtensionContext) {
 
     const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) !== undefined ? workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string : 'StructurizrPlantUMLWriter'
 
+    const logger = window.createOutputChannel("C4 DSL Extension");
+    logger.appendLine("Initializing");
+ 
     const serverOptions: ServerOptions = {
         run: {            
             command: serverLauncher,
@@ -60,6 +63,8 @@ export function activate(context: ExtensionContext) {
     };
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'c4' }],
+        outputChannel: logger,
+        revealOutputChannelOn: RevealOutputChannelOn.Info,
         synchronize: {
             fileEvents: workspace.createFileSystemWatcher('**/*.dsl')
         }
@@ -77,8 +82,9 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(disposable);
     
-    const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string)
-    const structurizrPanel = new C4StructurizrPreview();
+    const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string, logger)
+    const structurizrPanel = new C4StructurizrPreview(logger);
+
     
     commands.registerCommand("c4.show.diagram", (...args: string[]) => {
         if(workspace.workspaceFolders) {
@@ -86,16 +92,21 @@ export function activate(context: ExtensionContext) {
             const workspaceFolder = args[1]
             const encodedWorkspaceJson = args[2]
             const diagramKey = args[3]
-            console.log(args)
-            if( renderer == "StructurizrOrigin" ) {
-                structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
-            }
-            else {
-                svgPreviewPanel.updateWebView(uri, workspaceFolder)
+            try {
+                console.log(args)
+                if( renderer == "StructurizrOrigin" ) {
+                    structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
+                }
+                else {
+                    svgPreviewPanel.updateWebView(uri, workspaceFolder)
+                }
+            } catch (err) {
+                logger.appendLine(err)
             }
         }
     });     
 
+    logger.appendLine("Initialized");
     return languageClient;
 }
 
