@@ -86,7 +86,7 @@ export function activate(context: ExtensionContext) {
     const structurizrPanel = new C4StructurizrPreview(logger);
 
     
-    commands.registerCommand("c4.show.diagram", (...args: string[]) => {
+    commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
         if(workspace.workspaceFolders) {
             const uri = args[0]
             const workspaceFolder = args[1]
@@ -95,13 +95,13 @@ export function activate(context: ExtensionContext) {
             try {
                 console.log(args)
                 if( renderer == "StructurizrOrigin" ) {
-                    structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
+                    await structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
                 }
                 else {
-                    svgPreviewPanel.updateWebView(uri, workspaceFolder)
+                    await svgPreviewPanel.updateWebView(uri, workspaceFolder)
                 }
             } catch (err) {
-                logger.appendLine(err)
+                logger.appendLine("Error displaying preview: " + JSON.stringify(err))
             }
         }
     });     

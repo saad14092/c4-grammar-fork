@@ -37,7 +37,7 @@ export class C4PlantUMLPreview {
         return workspace.workspaceFolders?.find( (folder) => { return fn.startsWith(folder.uri.toString()) }); 
     }
 
-    updateWebView(fn: string, folderFromServer: string) {
+    async updateWebView(fn: string, folderFromServer: string) {
 
         const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
         if(!workspaceFolder) {
@@ -52,19 +52,18 @@ export class C4PlantUMLPreview {
         }
 
         if (this.needsUpdate(pumlFile, svgUri.fsPath)) {
-            this.logger.appendLine("Create a new svg file")
+            //this.logger.appendLine("Create a new svg file")
             const urlCode = this.encode(pumlFile)
             if (urlCode) {
-                this.toSVG(urlCode).then((svg: string) => {
-                    fs.writeFileSync(svgUri.fsPath, svg)
-                    if(this.panel) {
-                        this.panel.webview.html = this.updateViewContent(svg);    
-                    }
-                });
+                const svg = await this.toSVG(urlCode)
+                fs.writeFileSync(svgUri.fsPath, svg)
+                if(this.panel) {
+                    this.panel.webview.html = this.updateViewContent(svg);    
+                }
             }
         }
         else {
-            this.logger.appendLine("Re-use existing svg file")
+            //this.logger.appendLine("Re-use existing svg file")
             const svg = fs.readFileSync(svgUri.fsPath, 'utf-8')
             this.panel.webview.html = this.updateViewContent(svg);
         }
@@ -98,7 +97,7 @@ export class C4PlantUMLPreview {
     }
 
     private async toSVG(encoded: string): Promise<string> {
-
+        this.logger.appendLine("Creating new svg file via " + this.urlSVG)
         const response = await got(this.urlSVG +"/" + encoded);
         return response.body;
     }

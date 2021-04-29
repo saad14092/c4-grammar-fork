@@ -1,5 +1,7 @@
 import { WebviewPanel, window, ViewColumn, Uri, WorkspaceFolder, workspace, OutputChannel } from "vscode";
 import * as fs from 'fs';
+import { promisify } from "util";
+
 import * as path from 'path';
 
 export class C4StructurizrPreview {
@@ -35,7 +37,8 @@ export class C4StructurizrPreview {
         return workspace.workspaceFolders?.find( (folder) => { return fn.startsWith(folder.uri.toString()) }); 
     }
 
-    updateWebView(fn: string, folderFromServer: string, diagramKey: string) {
+    // Keep as async for consistency with svgPreview
+    async updateWebView(fn: string, folderFromServer: string, diagramKey: string) {
 
         const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
         if(!workspaceFolder) {
@@ -47,7 +50,7 @@ export class C4StructurizrPreview {
             throw new Error("File " + encodedJsonFile + " does not exist, may have failed to generate.")
         }
 
-        const content = fs.readFileSync(encodedJsonFile, 'utf8')
+        const content = await promisify(fs.readFile)(encodedJsonFile, { encoding: 'utf8' })
         if (!this.panel) {
             this.panel = this.createPanel();
         }
