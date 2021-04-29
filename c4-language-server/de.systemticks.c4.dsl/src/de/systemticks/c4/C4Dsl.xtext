@@ -144,6 +144,7 @@ SoftwareSystem:
 	('{'
 		metaData=MetaDataSection
 		(
+		 addOns+=AdditionalData |		
 		 includes+=Import |	
 		 groups+=Group |		
 		 container+=Container | 
