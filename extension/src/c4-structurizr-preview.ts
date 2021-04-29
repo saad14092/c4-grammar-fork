@@ -1,6 +1,7 @@
-import { WebviewPanel, window, ViewColumn, Uri, WorkspaceFolder, workspace, OutputChannel } from "vscode";
+import { WebviewPanel, window, ViewColumn, Uri, OutputChannel } from "vscode";
 import * as fs from 'fs';
 import * as path from 'path';
+import { determineWorkspaceFolder } from "./c4-utils";
 
 export class C4StructurizrPreview {
 
@@ -30,19 +31,16 @@ export class C4StructurizrPreview {
         return panel;
     }
 
-    private determineWorkspaceFolder(fn: string): WorkspaceFolder | undefined  {
-        // Find the workspace that contains this folder
-        return workspace.workspaceFolders?.find( (folder) => { return fn.startsWith(folder.uri.toString()) }); 
-    }
-
     updateWebView(fn: string, folderFromServer: string, diagramKey: string) {
 
-        const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
+        const workspaceFolder = determineWorkspaceFolder(Uri.parse(folderFromServer))
         if(!workspaceFolder) {
             throw new Error("Could not find workspace for folder: " +  folderFromServer)
         }
 
-        const encodedJsonFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn)).fsPath
+        const subFolder = Uri.parse(folderFromServer).fsPath.replace(workspaceFolder.uri.fsPath,'')
+
+        const encodedJsonFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', subFolder, fn)).fsPath
         if(!fs.existsSync(encodedJsonFile)) {
             throw new Error("File " + encodedJsonFile + " does not exist, may have failed to generate.")
         }

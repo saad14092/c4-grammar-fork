@@ -1,8 +1,9 @@
-import { Uri, window, ViewColumn, WebviewPanel, workspace, WorkspaceFolder, OutputChannel } from "vscode";
+import { window, ViewColumn, WebviewPanel, OutputChannel, Uri } from "vscode";
 import * as path from 'path';
 import * as pako from 'pako';
 import * as fs from 'fs';
 import got from 'got';
+import { determineWorkspaceFolder } from "./c4-utils";
 
 export class C4PlantUMLPreview {
 
@@ -32,20 +33,17 @@ export class C4PlantUMLPreview {
         return panel;
     }
 
-    private determineWorkspaceFolder(fn: string): WorkspaceFolder | undefined  {
-        // Find the workspace that contains this folder
-        return workspace.workspaceFolders?.find( (folder) => { return fn.startsWith(folder.uri.toString()) }); 
-    }
+    updateWebView(generatedPuml: string, folderFromServer: string) {
 
-    updateWebView(fn: string, folderFromServer: string) {
-
-        const workspaceFolder = this.determineWorkspaceFolder(folderFromServer)
+        const workspaceFolder = determineWorkspaceFolder(Uri.parse(folderFromServer))
         if(!workspaceFolder) {
             throw new Error("Could not find workspace for folder: " +  folderFromServer)
         }
 
-        const pumlFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn)).fsPath
-        const svgUri = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', fn.replace('puml', 'svg')))
+        const subFolder = Uri.parse(folderFromServer).fsPath.replace(workspaceFolder.uri.fsPath,'')
+
+        const pumlFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', subFolder, generatedPuml)).fsPath
+        const svgUri = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', subFolder, generatedPuml.replace('puml', 'svg')))
 
         if (!this.panel) {
             this.panel = this.createPanel();
