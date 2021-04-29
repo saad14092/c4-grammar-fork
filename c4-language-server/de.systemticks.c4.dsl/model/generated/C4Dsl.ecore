@@ -112,6 +112,8 @@
         eType="#//Component" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SoftwareSystem" eSuperTypes="#//BasicModelElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="addOns" upperBound="-1"
+        eType="#//AdditionalData" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="includes" upperBound="-1"
         eType="#//Import" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="groups" upperBound="-1"
