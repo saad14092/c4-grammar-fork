@@ -96,7 +96,7 @@ class C4CodeLenseService implements ICodeLensService {
 	}
 	
 	def getWorkspaceFolder(XtextResource resource) {
-		resource.URI.segments.get(resource.URI.segmentCount-2)
+		resource.URI.trimSegments(1).toString()
 	}
 	
 	def filename(Resource resource) {

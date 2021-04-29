@@ -24,7 +24,10 @@ import com.structurizr.view.FilteredView
 import com.structurizr.view.SystemContextView
 import com.structurizr.view.SystemLandscapeView
 import de.systemticks.c4.c4Dsl.View
+import de.systemticks.c4.c4Dsl.Workspace
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Base64
 import org.eclipse.emf.ecore.resource.Resource
@@ -34,7 +37,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.eclipse.xtext.resource.SaveOptions
 import org.eclipse.xtext.resource.XtextResource
-import java.io.File
 
 /**
  * Generates code from your model files on save.
@@ -50,37 +52,64 @@ class C4DslGenerator extends AbstractGenerator {
 		val parser = new StructurizrDslParser();
 
 		// The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
-		// Therefore the we need to store the editor content in a temporary stream
+		// Therefore the we need to store the editor content in a temporary stream or file
+		// For !include references to work, this file must be in the same directory as the source file
 		val xRes = (resource as XtextResource)
 		val tmp = new ByteArrayOutputStream
+		val origFile = new File(xRes.URI.toFileString())
+		val newFile =  new File(origFile.getParentFile(), "." + origFile.getName() + ".tmp")
 
-		val views = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), View)
-		if (views !== null && views.size > 0) {
-			// FIXME Needs a proper exception handling
-			try {
-				xRes.doSave(tmp, SaveOptions.defaultOptions.toOptionsMap)
-				parser.parse(tmp.toString('UTF-8'))				
-								
-				generateEncodedWorkspace(parser, resource, fsa)								
-				generatePlantUML(parser, resource, fsa)
-				
-			} catch (StructurizrDslParserException e) {
-				e.printStackTrace
-			} catch (RuntimeException e) {
-				e.printStackTrace
-			} catch (IOException e) {
-				e.printStackTrace
+		val workspace = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), Workspace)		
+		
+		if (workspace !== null && workspace.size === 1) {
+			val views = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), View)
+			if (views !== null && views.size > 0) {
+				// FIXME Needs a proper exception handling
+				val outFileStream = new FileOutputStream(newFile)
+				try {
+					xRes.doSave(outFileStream, SaveOptions.defaultOptions.toOptionsMap)
+					outFileStream.close()
+	
+					parser.parse(newFile)				
+									
+					generateEncodedWorkspace(parser, resource, fsa)								
+					generatePlantUML(parser, resource, fsa)
+					
+				} catch (StructurizrDslParserException e) {
+					e.printStackTrace
+				} catch (RuntimeException e) {
+					e.printStackTrace
+				} catch (IOException e) {
+					e.printStackTrace
+				} finally {
+					// Close if not already closed
+					outFileStream.close()
+					
+					if (newFile.exists()) {
+						newFile.delete()
+					}
+				}
+			}
+			else {
+				println("DSL file does not contain views. Probably imported views.")				
 			}
 		}
+		else {
+			println("DSL file does not contain a workspace, hence cannot be parsed by StructurizrParser as standalone file")
+		}
+	}
 
+	def toOutputFolder(Resource resource, IFileSystemAccess2 fsa) {		
+		val ws = fsa.getURI('.', C4DslOutputConfiguration.PLANTUML_OUTPUT).trimSegments(2).toFileString
+		val rs = resource.URI.toFileString.replace('.dsl','')	
+		rs.replace(ws, '') + File.separator		
 	}
 
 	def generateEncodedWorkspace(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 		val workspaceJson = WorkspaceUtils.toJson(parser.workspace, false)
 		val encodedWorkspace = Base64.getEncoder().encodeToString(workspaceJson.getBytes());
-		val fn = resource.URI.lastSegment.split('\\.').head
 		fsa.generateFile(
-			fn + File.separator+"_workspace.enc", 
+			toOutputFolder(resource, fsa)+"_workspace.enc", 
 			C4DslOutputConfiguration.PLANTUML_OUTPUT,
 			encodedWorkspace
 		)		
@@ -89,46 +118,42 @@ class C4DslGenerator extends AbstractGenerator {
 	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 
 		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
-
-		val fn = resource.URI.lastSegment.split('\\.').head
-
 		parser.workspace.views.views.forEach [ view |
-						
-			val out = createFileName(fn + File.separator, view, FILE_EXTENSION_PLANTUML)
+												
 			fsa.generateFile(
-				out,
+				toOutputFolder(resource, fsa)+view.createFileName+".puml", 				
 				C4DslOutputConfiguration.PLANTUML_OUTPUT,
 				writer.toString(view)
 			)				
 		]
 	}
 
-	def dispatch createFileName(String fn, SystemLandscapeView view, String ext) {
-		fn + '_systemLandscape_' + ext
+	def dispatch createFileName(SystemLandscapeView view) {
+		'_systemLandscape_'
 	}
 
-	def dispatch createFileName(String fn, SystemContextView view, String ext) {
-		fn + '_systemContext_' + view.softwareSystem.name + ext
+	def dispatch createFileName(SystemContextView view) {
+		'_systemContext_' + view.softwareSystem.name
 	}
 
-	def dispatch createFileName(String fn, ContainerView view, String ext) {
-		fn + '_container_' + view.softwareSystem.name + ext
+	def dispatch createFileName(ContainerView view) {
+		'_container_' + view.softwareSystem.name
 	}
 
-	def dispatch createFileName(String fn, ComponentView view, String ext) {
-		fn + '_component_' + view.container.name + ext
+	def dispatch createFileName(ComponentView view) {
+		'_component_' + view.container.name
 	}
 
-	def dispatch createFileName(String fn, FilteredView view, String ext) {
-		fn + '_filtered_' + view.baseViewKey + "_" + view.key + ext
+	def dispatch createFileName(FilteredView view) {
+		'_filtered_' + view.baseViewKey + "_" + view.key
 	}
 
-	def dispatch createFileName(String fn, DeploymentView view, String ext) {
-		fn + '_deployment_' + view.key + ext
+	def dispatch createFileName(DeploymentView view) {
+		'_deployment_' + view.key
 	}
 
-	def dispatch createFileName(String fn, DynamicView view, String ext) {
-		fn + '_dynamic_' + view.element.name + "_" + view.key + ext
+	def dispatch createFileName(DynamicView view) {
+		'_dynamic_' + view.element.name + "_" + view.key
 	}
 
 }

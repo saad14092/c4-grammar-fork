@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue
 @InjectWith(C4DslInjectorProvider)
 class C4GeneratorTest {
 
-	@Test
+	//@Test
 	def void generateEncodedWorkspace() {
 
 		val generator = new C4DslGenerator
@@ -29,6 +29,7 @@ class C4GeneratorTest {
 		if(modelDir.exists) {
 			modelDir.listFiles().filter[name.endsWith('dsl') && isFile].forEach[
 				val res = C4TestHelper.loadModel(absolutePath)
+				System.err.println('TEST '+absolutePath)
 				generator.generateEncodedWorkspace(parser, res, fsa)				
 			]
 		}
