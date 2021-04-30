@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, window, Range, Position } from 'vscode'
+import {ExtensionContext, workspace, languages, commands, window, Range, Position, StatusBarAlignment } from 'vscode'
 import * as path from 'path';
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange, RevealOutputChannelOn} from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange, RevealOutputChannelOn, StateChangeEvent, State} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
@@ -70,6 +70,26 @@ export function activate(context: ExtensionContext) {
         }
     };
     const languageClient = new LanguageClient('c4LanguageClient', 'C4 Language Server', serverOptions, clientOptions);
+
+    const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 100)
+    statusBarItem.show()
+    context.subscriptions.push(statusBarItem)
+    languageClient.onDidChangeState( (e:StateChangeEvent) => {
+        switch (e.newState) {
+            case State.Starting:
+                statusBarItem.text = "C4 DSL Language Server is starting up..."
+                statusBarItem.color = 'white'
+                break;
+            case State.Running:
+                statusBarItem.text = "C4 DSL Language Server is ready"
+                statusBarItem.color = 'white'
+                break;
+            case State.Stopped:
+                statusBarItem.text = "C4 Language Server has stopped"
+                statusBarItem.color = 'red'
+                break;                
+        }
+    })
 
     languageClient.trace = Trace.Verbose
     const disposable = languageClient.start();
