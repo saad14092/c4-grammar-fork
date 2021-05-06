@@ -14,6 +14,8 @@
 
 import {ExtensionContext, workspace, languages, commands, window, Range, Position, StatusBarAlignment } from 'vscode'
 import * as path from 'path';
+import * as os from 'os';
+
 import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange, RevealOutputChannelOn, StateChangeEvent, State} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
@@ -26,6 +28,8 @@ const CONF_PLANTUML_RENDERER = "c4.plantuml.renderer"
 export function activate(context: ExtensionContext) {
 
     const isHighlighted = workspace.getConfiguration().get(CONF_SEMANTIC_HIGHLIGHTING)
+
+    console.log("HOME DIR: "+os.homedir());
 
     if(isHighlighted !== undefined && isHighlighted === true) {
         context.subscriptions.push(languages.registerDocumentSemanticTokensProvider( {language: 'c4', scheme: 'file'}

@@ -24,6 +24,7 @@ import de.systemticks.c4.c4Dsl.Workspace
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 import de.systemticks.c4.c4Dsl.AnyModelElement
+import java.io.File
 
 class C4Utils {
 
@@ -98,6 +99,10 @@ class C4Utils {
 	def static getShapes() {
 		#['Box','RoundedBox','Circle','Ellipse','Hexagon','Cylinder','Pipe','Person','Robot','Folder',
 			'WebBrowser','MobileDevicePortrait','MobileDeviceLandscape','Component']
+	}	
+		
+	def static getBaseGenDir() {
+		System.getProperty('user.home')+File.separator+".c4dslextension"
 	}	
 		
 }
