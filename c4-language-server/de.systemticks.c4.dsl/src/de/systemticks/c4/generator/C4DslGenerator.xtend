@@ -117,9 +117,7 @@ class C4DslGenerator extends AbstractGenerator {
 			+ File.separator 
 			+ rs.replace(ws.toFileString, '')
 		)
-		
-		System.err.println("**** out: "+out.absolutePath)
-				
+						
 		return out.absolutePath
 	}
 
@@ -129,24 +127,17 @@ class C4DslGenerator extends AbstractGenerator {
 		fw.write(content)
 		fw.close
 	}
-/*
-	def toOutputFolder(Resource resource, IFileSystemAccess2 fsa) {		
-		val ws = fsa.getURI('.', C4DslOutputConfiguration.PLANTUML_OUTPUT).trimSegments(2).toFileString
-		val rs = resource.URI.toFileString.replace('.dsl','')	
-		rs.replace(ws, '') + File.separator		
-	}
-*/
+
 	def generateEncodedWorkspace(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 		val workspaceJson = WorkspaceUtils.toJson(parser.workspace, false)
 		val encodedWorkspace = Base64.getEncoder().encodeToString(workspaceJson.getBytes());
-		generateToFile(new File(determineOutputDir(resource, fsa)+"_workspace.enc"), encodedWorkspace)		
+		generateToFile(new File(determineOutputDir(resource, fsa)+File.separator+"_workspace.enc"), encodedWorkspace)		
 	}
 
 	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
 
 		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
-		parser.workspace.views.views.forEach [ view |
-			
+		parser.workspace.views.views.forEach [ view |			
 			generateToFile(new File(
 				determineOutputDir(resource, fsa)+File.separator+view.createFileName+".puml"), 
 				writer.toString(view)

@@ -1,9 +1,6 @@
-import { WebviewPanel, window, ViewColumn, Uri, OutputChannel } from "vscode";
+import { WebviewPanel, window, ViewColumn, OutputChannel } from "vscode";
 import * as fs from 'fs';
 import { promisify } from "util";
-
-import * as path from 'path';
-import { determineWorkspaceFolder } from "./c4-utils";
 
 export class C4StructurizrPreview {
 
@@ -34,16 +31,8 @@ export class C4StructurizrPreview {
     }
 
     // Keep as async for consistency with svgPreview
-    async updateWebView(fn: string, folderFromServer: string, diagramKey: string) {
+    async updateWebView(encodedJsonFile: string, diagramKey: string) {
 
-        const workspaceFolder = determineWorkspaceFolder(Uri.parse(folderFromServer))
-        if(!workspaceFolder) {
-            throw new Error("Could not find workspace for folder: " +  folderFromServer)
-        }
-
-        const subFolder = Uri.parse(folderFromServer).fsPath.replace(workspaceFolder.uri.fsPath,'')
-
-        const encodedJsonFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', subFolder, fn)).fsPath
         if(!fs.existsSync(encodedJsonFile)) {
             throw new Error("File " + encodedJsonFile + " does not exist, may have failed to generate.")
         }

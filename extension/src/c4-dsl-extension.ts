@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, window, Range, Position, StatusBarAlignment } from 'vscode'
+import {ExtensionContext, workspace, languages, commands, window, Range, Position, StatusBarAlignment, Uri } from 'vscode'
 import * as path from 'path';
 import * as os from 'os';
 
@@ -20,6 +20,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as L
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
+import { buildPath } from './c4-utils';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
 const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
@@ -108,21 +109,26 @@ export function activate(context: ExtensionContext) {
     
     const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string, logger)
     const structurizrPanel = new C4StructurizrPreview(logger);
-
     
     commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
         if(workspace.workspaceFolders) {
-            const uri = args[0]
+            const puml = args[0]
             const workspaceFolder = args[1]
             const encodedWorkspaceJson = args[2]
             const diagramKey = args[3]
+
             try {
-                console.log(args)
                 if( renderer == "StructurizrOrigin" ) {
-                    await structurizrPanel.updateWebView(encodedWorkspaceJson, workspaceFolder, diagramKey)
+                    const genEncJsonPath = buildPath(encodedWorkspaceJson, Uri.parse(workspaceFolder))
+                    if(genEncJsonPath) {
+                        await structurizrPanel.updateWebView(genEncJsonPath, diagramKey)
+                    }
                 }
                 else {
-                    await svgPreviewPanel.updateWebView(uri, workspaceFolder)
+                    const pumlPath = buildPath(puml, Uri.parse(workspaceFolder))
+                    if(pumlPath) {
+                        await svgPreviewPanel.updateWebView(pumlPath)
+                    }
                 }
             } catch (err) {
                 logger.appendLine("Error displaying preview: " + JSON.stringify(err))

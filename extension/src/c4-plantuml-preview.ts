@@ -1,9 +1,7 @@
-import { window, ViewColumn, WebviewPanel, OutputChannel, Uri } from "vscode";
-import * as path from 'path';
+import { window, ViewColumn, WebviewPanel, OutputChannel } from "vscode";
 import * as pako from 'pako';
 import * as fs from 'fs';
 import got from 'got';
-import { determineWorkspaceFolder } from "./c4-utils";
 
 export class C4PlantUMLPreview {
 
@@ -32,28 +30,20 @@ export class C4PlantUMLPreview {
 
         return panel;
     }
-    async updateWebView(generatedPuml: string, folderFromServer: string) {
+    async updateWebView(pumlFile: string) {
 
-        const workspaceFolder = determineWorkspaceFolder(Uri.parse(folderFromServer))
-        if(!workspaceFolder) {
-            throw new Error("Could not find workspace for folder: " +  folderFromServer)
-        }
-
-        const subFolder = Uri.parse(folderFromServer).fsPath.replace(workspaceFolder.uri.fsPath,'')
-
-        const pumlFile = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', subFolder, generatedPuml)).fsPath
-        const svgUri = Uri.file(path.join(workspaceFolder.uri.fsPath, 'plantuml-gen', subFolder, generatedPuml.replace('puml', 'svg')))
+        const svgUri = pumlFile.replace('puml', 'svg')
 
         if (!this.panel) {
             this.panel = this.createPanel();
         }
 
-        if (this.needsUpdate(pumlFile, svgUri.fsPath)) {
+        if (this.needsUpdate(pumlFile, svgUri)) {
             //this.logger.appendLine("Create a new svg file")
             const urlCode = this.encode(pumlFile)
             if (urlCode) {
                 const svg = await this.toSVG(urlCode)
-                fs.writeFileSync(svgUri.fsPath, svg)
+                fs.writeFileSync(svgUri, svg)
                 if(this.panel) {
                     this.panel.webview.html = this.updateViewContent(svg);    
                 }
@@ -61,7 +51,7 @@ export class C4PlantUMLPreview {
         }
         else {
             //this.logger.appendLine("Re-use existing svg file")
-            const svg = fs.readFileSync(svgUri.fsPath, 'utf-8')
+            const svg = fs.readFileSync(svgUri, 'utf-8')
             this.panel.webview.html = this.updateViewContent(svg);
         }
     }
