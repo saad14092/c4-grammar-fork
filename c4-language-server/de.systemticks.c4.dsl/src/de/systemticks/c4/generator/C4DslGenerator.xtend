@@ -57,7 +57,7 @@ class C4DslGenerator extends AbstractGenerator {
 		// Therefore the we need to store the editor content in a temporary stream or file
 		// For !include references to work, this file must be in the same directory as the source file
 		val xRes = (resource as XtextResource)
-		val tmp = new ByteArrayOutputStream
+		//val tmp = new ByteArrayOutputStream
 		val origFile = new File(xRes.URI.toFileString())
 		val newFile =  new File(origFile.getParentFile(), "." + origFile.getName() + ".tmp")
 
@@ -69,14 +69,19 @@ class C4DslGenerator extends AbstractGenerator {
 				// FIXME Needs a proper exception handling
 				val outFileStream = new FileOutputStream(newFile)
 				try {
-										
-					xRes.doSave(outFileStream, SaveOptions.defaultOptions.toOptionsMap)
+									
+					val options = SaveOptions.defaultOptions.toOptionsMap
+					options.put(XtextResource.OPTION_ENCODING, "UTF8")
+					
+					xRes.doSave(outFileStream, options)										
 					outFileStream.close()
 	
 					parser.parse(newFile)				
-									
-					generateEncodedWorkspace(parser, resource, fsa)								
-					generatePlantUML(parser, resource, fsa)
+
+					val outDir = determineOutputDir(resource, fsa)	
+													
+					generateEncodedWorkspace(parser, outDir)								
+					generatePlantUML(parser, outDir)
 					
 				} catch (StructurizrDslParserException e) {
 					e.printStackTrace
@@ -128,18 +133,18 @@ class C4DslGenerator extends AbstractGenerator {
 		fw.close
 	}
 
-	def generateEncodedWorkspace(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
+	def generateEncodedWorkspace(StructurizrDslParser parser, String outDir) {
 		val workspaceJson = WorkspaceUtils.toJson(parser.workspace, false)
 		val encodedWorkspace = Base64.getEncoder().encodeToString(workspaceJson.getBytes());
-		generateToFile(new File(determineOutputDir(resource, fsa)+File.separator+"_workspace.enc"), encodedWorkspace)		
+		generateToFile(new File(outDir+File.separator+"_workspace.enc"), encodedWorkspace)		
 	}
 
-	def generatePlantUML(StructurizrDslParser parser, Resource resource, IFileSystemAccess2 fsa) {
+	def generatePlantUML(StructurizrDslParser parser, String outDir) {
 
 		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter()
 		parser.workspace.views.views.forEach [ view |			
 			generateToFile(new File(
-				determineOutputDir(resource, fsa)+File.separator+view.createFileName+".puml"), 
+				outDir+File.separator+view.createFileName+".puml"), 
 				writer.toString(view)
 			)														
 		]
