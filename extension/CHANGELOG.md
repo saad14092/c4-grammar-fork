@@ -1,5 +1,9 @@
 # Change Log
 
+## v2.2.3
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/63
+
 ## v2.2.2
 
 The PlantUML files (*.puml), which are generated on-the-fly while editing the *.dsl are now located under $USER-HOME/.c4dslextension/$WORKSPACE-FOLDER/

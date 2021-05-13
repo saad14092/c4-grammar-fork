@@ -77,6 +77,7 @@ class C4DslGenerator extends AbstractGenerator {
 					
 					xRes.doSave(tmp, options)
 					writer.write(tmp.toString)
+					writer.close
 	
 					parser.parse(newFile)				
 
@@ -93,10 +94,10 @@ class C4DslGenerator extends AbstractGenerator {
 					e.printStackTrace
 				} finally {
 					// Close if not already closed
-					writer.close()
+					writer.close
 					
-					if (newFile.exists()) {
-						newFile.delete()
+					if (newFile.exists) {
+						newFile.delete
 					}
 				}
 			}
