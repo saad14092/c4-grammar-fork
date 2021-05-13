@@ -1,7 +1,7 @@
 workspace "CyrillicSupport"  {
 
     model {
-        bug = softwareSystem "Reproducing the bug" "When description contains cyrrilic letter"
+        bug = softwareSystem "Reproducing the bug" "When description contains UTF-8 chars like Ö Ä Ü"
     }
 
     views {

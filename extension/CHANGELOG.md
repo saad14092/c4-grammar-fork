@@ -1,5 +1,14 @@
 # Change Log
 
+## v2.2.2
+
+The PlantUML files (*.puml), which are generated on-the-fly while editing the *.dsl are now located under $USER-HOME/.c4dslextension/$WORKSPACE-FOLDER/
+The path will be made configurable via a VS Code extension property in a future release.
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/62
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/61
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/60
+
 ## v2.2.1
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/52

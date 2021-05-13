@@ -6,7 +6,7 @@ Structurizr DSL, known as [diagram as text](https://structurizr.com/help/text), 
 
 This extension is backed by an [Xtext](https://www.eclipse.org/Xtext/) grammar, which is used to represent the [Structurizr DSL language reference](https://github.com/structurizr/dsl/blob/master/docs/language-reference.md) in a formal way.
 
-A generator creates PlantUML diagrams on-the-fly, while editing. The diagrams are located in a sub-folder named *plantuml-gen*. 
+A generator creates PlantUML diagrams on-the-fly, while editing. The diagrams are located under $USERHOME/.c4dslextension/$WORKSPACEFOLDER 
 
 Every C4 view in the editor will be enriched with a code lense (Show as Plant UML). When clicking, the corresponding plantuml file will be converted into a svg file, utilizing the free service from [kroki.io](https://kroki.io). 
 The graph is then displayed in a separate window.

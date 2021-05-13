@@ -39,6 +39,9 @@ import org.eclipse.xtext.resource.SaveOptions
 import org.eclipse.xtext.resource.XtextResource
 import java.io.FileWriter
 import de.systemticks.c4.utils.C4Utils
+import java.io.OutputStream
+import java.io.OutputStreamWriter
+import java.nio.charset.StandardCharsets
 
 /**
  * Generates code from your model files on save.
@@ -51,30 +54,29 @@ class C4DslGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 
-		val parser = new StructurizrDslParser();
-
-		// The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
-		// Therefore the we need to store the editor content in a temporary stream or file
-		// For !include references to work, this file must be in the same directory as the source file
-		val xRes = (resource as XtextResource)
-		//val tmp = new ByteArrayOutputStream
-		val origFile = new File(xRes.URI.toFileString())
-		val newFile =  new File(origFile.getParentFile(), "." + origFile.getName() + ".tmp")
-
 		val workspace = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), Workspace)		
 		
 		if (workspace !== null && workspace.size === 1) {
 			val views = EcoreUtil2.getAllContentsOfType(resource.contents.get(0), View)
 			if (views !== null && views.size > 0) {
+
+				val parser = new StructurizrDslParser();
+				// The editor might be in dirty state, i.e. visible content in editor is not in sync with file content on disk
+				// Therefore the we need to store the editor content in a temporary stream or file
+				// For !include references to work, this file must be in the same directory as the source file
+				val xRes = (resource as XtextResource)
+				val tmp = new ByteArrayOutputStream
+				val origFile = new File(xRes.URI.toFileString())
+				val newFile =  new File(origFile.getParentFile(), "." + origFile.getName() + ".tmp")
 				// FIXME Needs a proper exception handling
-				val outFileStream = new FileOutputStream(newFile)
+				val writer = new OutputStreamWriter(new FileOutputStream(newFile), StandardCharsets.UTF_8)
 				try {
 									
 					val options = SaveOptions.defaultOptions.toOptionsMap
-					options.put(XtextResource.OPTION_ENCODING, "UTF8")
+					options.put(XtextResource.OPTION_ENCODING, "UTF-8")
 					
-					xRes.doSave(outFileStream, options)										
-					outFileStream.close()
+					xRes.doSave(tmp, options)
+					writer.write(tmp.toString)
 	
 					parser.parse(newFile)				
 
@@ -91,7 +93,7 @@ class C4DslGenerator extends AbstractGenerator {
 					e.printStackTrace
 				} finally {
 					// Close if not already closed
-					outFileStream.close()
+					writer.close()
 					
 					if (newFile.exists()) {
 						newFile.delete()
