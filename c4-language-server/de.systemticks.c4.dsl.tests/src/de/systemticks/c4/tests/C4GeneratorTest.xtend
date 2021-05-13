@@ -30,7 +30,7 @@ class C4GeneratorTest {
 			modelDir.listFiles().filter[name.endsWith('dsl') && isFile].forEach[
 				val res = C4TestHelper.loadModel(absolutePath)
 				System.err.println('TEST '+absolutePath)
-				generator.generateEncodedWorkspace(parser, res, fsa)				
+				generator.generateEncodedWorkspace(parser, generator.determineOutputDir(res, fsa))				
 			]
 		}
 

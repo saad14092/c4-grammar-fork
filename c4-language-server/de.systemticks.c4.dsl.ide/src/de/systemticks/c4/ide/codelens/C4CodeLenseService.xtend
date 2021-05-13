@@ -90,7 +90,12 @@ class C4CodeLenseService implements ICodeLensService {
 				command = new Command => [
 					title = "$(link-external) Show as PlantUML"
 					command = "c4.show.diagram"
-					arguments = newArrayList(view.createFilename(resource), resource.workspaceFolder, resource.filename+"_workspace.enc", view.name?:view.createDiagramKey)
+					arguments = newArrayList(
+						view.createFilename(resource), 
+						resource.workspaceFolder, 
+						resource.filename+"_workspace.enc", 
+						view.name?:view.createDiagramKey
+					)
 				]
 			]				
 	}
@@ -126,7 +131,12 @@ class C4CodeLenseService implements ICodeLensService {
 	}
 	
 	def dispatch createDiagramKey(DeploymentView view) {
-		view.system.label.clean+"-"+view.environment.name+"-Deployment"
+		if(view.system !== null) {
+			view.system.label.clean+"-"+view.environment.name.clean+"-Deployment"			
+		}
+		else {
+			view.environment.name.clean+"-Deployment"						
+		}
 	}
 	
 	def dispatch createFilename(SystemLandscape view, Resource resource) {
@@ -178,7 +188,7 @@ class C4CodeLenseService implements ICodeLensService {
 	}
 	
 	def dispatch isReady(DeploymentView view) {
-		view.system !== null
+		view.system !== null || view.all
 	}
 
 	def dispatch isReady(DynamicView view) {
@@ -190,7 +200,12 @@ class C4CodeLenseService implements ICodeLensService {
 			view.name
 		}
 		else {
-			view.system.label.clean + "-" + view.environment.name.clean + "-" + 'Deployment'
+			if(view.system !== null) {
+				view.system.label.clean + "-" + view.environment.name.clean + "-" + 'Deployment'				
+			}
+			else {
+				view.environment.name.clean + "-" + 'Deployment'								
+			}
 		}
 	}
 	
