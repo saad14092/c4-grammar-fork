@@ -31,9 +31,12 @@ import de.systemticks.c4.c4Dsl.RelationShip
 import de.systemticks.c4.c4Dsl.SoftwareSystem
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.StyledRelationShip
+import de.systemticks.c4.c4Dsl.Theme
 import de.systemticks.c4.c4Dsl.View
 import de.systemticks.c4.c4Dsl.Workspace
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.List
 import java.util.regex.Pattern
 import org.eclipse.emf.ecore.EObject
@@ -385,6 +388,24 @@ class C4DslValidator extends AbstractC4DslValidator {
 					C4DslPackage.Literals.VIEW__NAME,
 					"Key contains whitespaces")												
 		}
+	}
+	
+	@Check(NORMAL)
+	def themeIsAvailable(Theme theme) {
+
+		theme.urls.forEach[u, index|
+			val url = new URL(u); 
+			val huc = url.openConnection as HttpURLConnection;	 		
+	 		if(huc.responseCode !== HttpURLConnection.HTTP_OK) {
+	 			warning('URL does not exists', 
+	 				C4DslPackage.Literals.THEME__URLS,
+	 				index, 
+	 				"No such URL"
+	 			)
+	 		}			
+		]
+
+ 
 	}
 	
 }
