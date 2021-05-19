@@ -1,20 +1,9 @@
-image: "node:10"
-
-before_script:
-  - apt-get update
-  - apt-get install -y openjdk-8-jdk 
-  - apt-get install -y ant
-  - apt-get clean
-  - rm -rf /var/lib/apt/lists/*
-  - rm -rf /var/cache/oracle-jdk8-installer
-  - apt-get -y install openjdk-8-jdk
-  - chmod +x c4-language-server/gradlew
-
 stages:
   - server
   - client
 
 c4-language-server:
+  image: java:8-jdk
   stage: server
 
   script:
@@ -23,6 +12,7 @@ c4-language-server:
     - ./gradlew deployToVSCode
 
 c4-language-client:
+  image: node:10
   stage: client
 
   variables:
