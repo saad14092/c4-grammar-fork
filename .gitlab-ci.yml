@@ -11,6 +11,10 @@ c4-language-server:
     - ./gradlew check
     - ./gradlew deployToVSCode
 
+  artifacts:
+    paths: 
+      - extension/server/c4-language-server
+
 c4-language-client:
   image: node:10
   stage: client
@@ -22,3 +26,12 @@ c4-language-client:
     - cd extension
     - yarn install 
     - yarn build
+    - vsce package
+
+  dependencies:
+    - c4-language-server
+
+  artifacts:
+    paths:
+      - extension/*.vsix
+    expire_in: 1 day
