@@ -12,7 +12,7 @@ export function buildPath(generatedFile: string, workspaceFolder: Uri): string |
 
     if(folder) {
         const subFolder = workspaceFolder.fsPath.replace(folder.uri.fsPath, '')
-        const fullPath = path.join(BASE_DIR, folder.name,  subFolder, generatedFile)
+        const fullPath = path.join(BASE_DIR, folder.name,  subFolder, Uri.parse(generatedFile).fsPath)
         return fullPath;
     }
 
