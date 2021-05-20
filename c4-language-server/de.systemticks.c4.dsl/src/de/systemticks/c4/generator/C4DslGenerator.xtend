@@ -84,7 +84,11 @@ class C4DslGenerator extends AbstractGenerator {
 					val outDir = determineOutputDir(resource, fsa)	
 													
 					generateEncodedWorkspace(parser, outDir)								
-					generatePlantUML(parser, outDir)
+					if (C4GeneratorConfiguration.INSTANCE.getInstance().getWriterType() == C4GeneratorConfiguration.WriterType.PlantUML) {
+						generatePlantUML(parser, outDir)
+					} else {
+						generateMermaid(parser, outDir)
+					}
 					
 				} catch (StructurizrDslParserException e) {
 					e.printStackTrace
@@ -148,6 +152,17 @@ class C4DslGenerator extends AbstractGenerator {
 		parser.workspace.views.views.forEach [ view |			
 			generateToFile(new File(
 				outDir+File.separator+view.createFileName+".puml"), 
+				writer.toString(view)
+			)														
+		]
+	}
+
+	def generateMermaid(StructurizrDslParser parser, String outDir) {
+
+		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getMermaidWriter()
+		parser.workspace.views.views.forEach [ view |			
+			generateToFile(new File(
+				outDir+File.separator+view.createFileName+".mmd"), 
 				writer.toString(view)
 			)														
 		]

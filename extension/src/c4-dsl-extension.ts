@@ -20,6 +20,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as L
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
+import { MermaidPreview } from './c4-mermaid';
 import { buildPath } from './c4-utils';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
@@ -109,6 +110,7 @@ export function activate(context: ExtensionContext) {
     
     const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string, logger)
     const structurizrPanel = new C4StructurizrPreview(logger);
+    const mermaidPanel = new MermaidPreview(logger);
     
     commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
         if(workspace.workspaceFolders) {
@@ -120,15 +122,25 @@ export function activate(context: ExtensionContext) {
             try {
                 if( renderer == "StructurizrOrigin" ) {
                     const genEncJsonPath = buildPath(encodedWorkspaceJson, Uri.parse(workspaceFolder))
-                    if(genEncJsonPath) {
-                        await structurizrPanel.updateWebView(genEncJsonPath, diagramKey)
+                    if(!genEncJsonPath) {
+                        throw new Error(`Could not map to local file path for ${encodedWorkspaceJson} and ${workspaceFolder}`)
                     }
+                    await structurizrPanel.updateWebView(genEncJsonPath, diagramKey)
+                }
+                else if ( renderer == "MermaidWriter" ) {
+                    const tempPumlPath = buildPath(puml, Uri.parse(workspaceFolder))
+                    if (!tempPumlPath?.endsWith('.puml')) {
+                        throw new Error(`Invalid puml path: ${tempPumlPath}`)
+                    }
+                    const mermaidPath = tempPumlPath.substring(0, tempPumlPath.length-5) + '.mmd'
+                    await mermaidPanel.updateWebView(mermaidPath)
                 }
                 else {
                     const pumlPath = buildPath(puml, Uri.parse(workspaceFolder))
-                    if(pumlPath) {
-                        await svgPreviewPanel.updateWebView(pumlPath)
+                    if(!pumlPath) {
+                        throw new Error(`Could not map to local file path for ${pumlPath} and ${workspaceFolder}`)
                     }
+                    await svgPreviewPanel.updateWebView(pumlPath)
                 }
             } catch (err) {
                 logger.appendLine("Error displaying preview: " + JSON.stringify(err))

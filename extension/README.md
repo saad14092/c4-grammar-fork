@@ -53,6 +53,7 @@ There are three PlantUML writer implementations:
 - `StructurizrPlantUMLWriter`: most closely resembles the diagram notation used on the [C4 model website](https://c4model.com), and the [Structurizr](https://structurizr.com) web-based renderer.
 - `PlantUMLWriter`: default PlantUML styling (with UML stereotypes).
 - `C4PlantUMLWriter`: produces diagram definitions that use the [C4-PlantUML macros](https://github.com/plantuml-stdlib/C4-PlantUML).
+- `MermaidWriter`: produces mermaid files, and renders locally.
 ```
 
 ## Pre-requisites
