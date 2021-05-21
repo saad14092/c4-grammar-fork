@@ -13,7 +13,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/workspace",
+                "${workspaceFolder}/c4-language-server/de.systemticks.c4.dsl.tests/resource/dsl/issues",
                 "--extensionDevelopmentPath=${workspaceFolder}/extension"
             ],
             "outFiles": [
