@@ -87,11 +87,11 @@ class C4DslGenerator extends AbstractGenerator {
 					generatePlantUML(parser, outDir)
 					
 				} catch (StructurizrDslParserException e) {
-					e.printStackTrace
+					System.err.println(e.message)
 				} catch (RuntimeException e) {
-					e.printStackTrace
+					System.err.println(e.message)
 				} catch (IOException e) {
-					e.printStackTrace
+					System.err.println(e.message)
 				} finally {
 					// Close if not already closed
 					writer.close
@@ -117,7 +117,7 @@ class C4DslGenerator extends AbstractGenerator {
 	def determineOutputDir(Resource resource, IFileSystemAccess2 fsa) {
 
 		val ws = fsa.workspacePath
-		val rs = resource.URI.toFileString.replace('.dsl', '')
+		val rs = resource.URI.toFileString.replaceAll('\\.dsl$', '')
 		
 		val out = new File(C4Utils.baseGenDir 
 			+ File.separator 
@@ -125,7 +125,7 @@ class C4DslGenerator extends AbstractGenerator {
 			+ File.separator 
 			+ rs.replace(ws.toFileString, '')
 		)
-						
+							
 		return out.absolutePath
 	}
 

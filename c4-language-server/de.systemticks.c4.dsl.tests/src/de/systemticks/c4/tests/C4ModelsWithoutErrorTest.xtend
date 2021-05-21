@@ -14,12 +14,19 @@ class C4ModelsWithoutErrorTest {
 	@Test
 	def void modelsWithFormerIssues() {
 		
-		val modelDir = new File(C4TestHelper.TEST_FILE_DIR)
+		val modelDir = new File('./resource/dsl/issues')
 		if(modelDir.exists) {
 			modelDir.listFiles().filter[name.startsWith('issue') && isFile].forEach[
 
 				val res = C4TestHelper.loadModel(absolutePath)
 				val issues = C4TestHelper.validate(res)
+				
+				if(issues.size > 0) {
+					System.err.println('Model has unexpected errors: '+absolutePath)
+					issues.forEach[i|
+						System.err.println('   Line'+i.lineNumber+", "+i.message)
+					]
+				} 
 				
 				assertEquals(0, issues.size)				
 			]
