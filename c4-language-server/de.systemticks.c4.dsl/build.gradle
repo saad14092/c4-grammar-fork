@@ -2,6 +2,7 @@ dependencies {
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
 	implementation 'com.structurizr:structurizr-plantuml:1.6.3'	
+	implementation 'com.structurizr:structurizr-mermaid:1.4.1'	
 	implementation 'com.structurizr:structurizr-dsl:1.10.0'	
 }
 
