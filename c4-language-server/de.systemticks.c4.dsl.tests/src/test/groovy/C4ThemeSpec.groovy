@@ -12,7 +12,7 @@ class C4ThemeSpec extends Specification {
 	def "Testing if a theme object can be created from a json string" () {
 		
 		given: "A theme description as json file"
-			def file = new File("./resources/theme.json")
+			def file = new File("./resource/themes/theme.json")
 			def themeLoader = new ThemeLoader()
 			
 		when:
@@ -32,7 +32,7 @@ class C4ThemeSpec extends Specification {
 	def "Testing if a theme object can be created from an URL" () {
 		
 		given: "A theme description as URL"
-			def url = new URL("https://gitlab.com/systemticks/c4-grammar/-/raw/master/c4-language-server/de.systemticks.c4.dsl.tests/resources/theme.json")
+			def url = new URL("https://gitlab.com/systemticks/c4-grammar/-/raw/master/c4-language-server/de.systemticks.c4.dsl.tests/resource/themes/theme.json")
 			def themeLoader = new ThemeLoader()
 			
 		when:
@@ -52,7 +52,7 @@ class C4ThemeSpec extends Specification {
 	def "Testing if a theme object can be converted into a Map of theme elements" () {
 		
 		given: "A theme description as json file"
-			def file = new File("./resources/theme.json")
+			def file = new File("./resource/themes/theme.json")
 			def themeLoader = new ThemeLoader()
 			def theme = themeLoader.loadFromFile(file)
 			

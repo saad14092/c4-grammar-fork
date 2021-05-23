@@ -84,14 +84,18 @@ class C4DslGenerator extends AbstractGenerator {
 					val outDir = determineOutputDir(resource, fsa)	
 													
 					generateEncodedWorkspace(parser, outDir)								
-					generatePlantUML(parser, outDir)
+					if (C4GeneratorConfiguration.INSTANCE.getInstance().getWriterType() == C4GeneratorConfiguration.WriterType.PlantUML) {
+						generatePlantUML(parser, outDir)
+					} else {
+						generateMermaid(parser, outDir)
+					}
 					
 				} catch (StructurizrDslParserException e) {
-					e.printStackTrace
+					System.err.println(e.message)
 				} catch (RuntimeException e) {
-					e.printStackTrace
+					System.err.println(e.message)
 				} catch (IOException e) {
-					e.printStackTrace
+					System.err.println(e.message)
 				} finally {
 					// Close if not already closed
 					writer.close
@@ -117,7 +121,7 @@ class C4DslGenerator extends AbstractGenerator {
 	def determineOutputDir(Resource resource, IFileSystemAccess2 fsa) {
 
 		val ws = fsa.workspacePath
-		val rs = resource.URI.toFileString.replace('.dsl', '')
+		val rs = resource.URI.toFileString.replaceAll('\\.dsl$', '')
 		
 		val out = new File(C4Utils.baseGenDir 
 			+ File.separator 
@@ -125,7 +129,7 @@ class C4DslGenerator extends AbstractGenerator {
 			+ File.separator 
 			+ rs.replace(ws.toFileString, '')
 		)
-						
+							
 		return out.absolutePath
 	}
 
@@ -148,6 +152,17 @@ class C4DslGenerator extends AbstractGenerator {
 		parser.workspace.views.views.forEach [ view |			
 			generateToFile(new File(
 				outDir+File.separator+view.createFileName+".puml"), 
+				writer.toString(view)
+			)														
+		]
+	}
+
+	def generateMermaid(StructurizrDslParser parser, String outDir) {
+
+		val writer = C4GeneratorConfiguration.INSTANCE.getInstance().getMermaidWriter()
+		parser.workspace.views.views.forEach [ view |			
+			generateToFile(new File(
+				outDir+File.separator+view.createFileName+".mmd"), 
 				writer.toString(view)
 			)														
 		]

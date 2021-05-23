@@ -13,10 +13,42 @@ import org.junit.jupiter.api.^extension.ExtendWith
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.eclipse.xtext.xbase.testing.TemporaryFolder
 
 @ExtendWith(InjectionExtension)
 @InjectWith(C4DslInjectorProvider)
 class C4GeneratorTest {
+
+	
+	@Rule
+	TemporaryFolder tempFolder = new TemporaryFolder
+	
+	val TEST_DSL_FILES = #['amazon_web_service', 'big_bank']
+	val TEST_DIR = "./resource/dsl/examples"
+	
+	@Test
+	def void generatePuml() {
+
+		val generator = new C4DslGenerator
+
+		var parser = new StructurizrDslParser		
+		parser.parse(new File(TEST_DIR+File.separator+TEST_DSL_FILES.get(0)+'.dsl'))
+		generator.generatePlantUML(parser, tempFolder.newFolder(TEST_DSL_FILES.get(0)).absolutePath)		
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(0)).absolutePath+File.separator+'_deployment_AmazonWebServicesDeployment.puml').exists)
+
+		parser = new StructurizrDslParser
+		parser.parse(new File(TEST_DIR+File.separator+TEST_DSL_FILES.get(1)+'.dsl'))			
+		generator.generatePlantUML(parser, tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath)		
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_component_API Application.puml').exists)
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_container_Internet Banking System.puml').exists)
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_deployment_DevelopmentDeployment.puml').exists)
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_deployment_LiveDeployment.puml').exists)
+		//assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_dynamic_API Application_SignIn.puml').exists)
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_systemContext_Internet Banking System.puml').exists)
+		assertTrue(new File(tempFolder.newFolder(TEST_DSL_FILES.get(1)).absolutePath+File.separator+'_systemLandscape_.puml').exists)
+				
+	}
 
 	//@Test
 	def void generateEncodedWorkspace() {

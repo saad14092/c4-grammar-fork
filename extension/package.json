@@ -60,7 +60,8 @@
                         "StructurizrOrigin",
                         "StructurizrPlantUMLWriter",
                         "C4PlantUMLWriter",
-                        "BasicPlantUMLWriter"
+                        "BasicPlantUMLWriter",
+                        "MermaidWriter"
                     ],
                     "default": "StructurizrOrigin",
                     "scope": "application",
