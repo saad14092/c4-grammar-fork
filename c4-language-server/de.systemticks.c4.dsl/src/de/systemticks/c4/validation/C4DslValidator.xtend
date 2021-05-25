@@ -57,6 +57,10 @@ class C4DslValidator extends AbstractC4DslValidator {
 
 	val SUBSTITUTE_PATTERN = Pattern.compile("\\$\\{.*\\}")	
 	val COLOR_REGEX = "#[0-9A-Fa-f]{6}"
+	
+	public val static ISSUE_CODE_DUPLICATED_ELEMENT = "Already Defined Element"
+	public val static ISSUE_CODE_ILLEGAL_CHARS_IN_NAME = "Name contains illegal characters"
+	
 	public static String NO_STYLED_ELEMENT_FOR_TAG = "No styled element for given tag"
 	val themeMap = new HashMap<String, Map<String, ThemeModelElement>>
 	
@@ -218,7 +222,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(styledElement.eResource.allContents.filter(StyledElement).map[tag].filter[equals(styledElement.tag)].size > 1) {
 			error('Style element is already defined', 
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
-					"Already Defined Style")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 	
@@ -236,7 +240,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(anyModelElement.eResource.allContents.filter(BasicModelElement).map[name].filter[equals(anyModelElement.name)].size > 1) {
 			error('Element with the id '+anyModelElement.name+' is already defined', 
 					C4DslPackage.Literals.ANY_MODEL_ELEMENT__NAME,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -250,7 +254,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( person.getSiblings(Person).map[label].filter[equals(person.label)].size > 1) {
 			error('Person with the label '+person.label+' is already defined in this model', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 	
@@ -259,7 +263,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( system.getSiblings(SoftwareSystem).map[label].filter[equals(system.label)].size > 1) {
 			error('SoftwareSystem with the label '+system.label+' is already defined in this model', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -268,7 +272,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( component.getSiblings(Component).map[label].filter[equals(component.label)].size > 1) {
 			error('Component with the label '+component.label+' is already defined in this container', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -277,7 +281,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( container.getSiblings(Container).map[label].filter[equals(container.label)].size > 1) {
 			error('Container with the label '+container.label+' is already defined in this SoftwareSystem', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -298,7 +302,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(view.eResource.allContents.filter(View).filter[name !== null].map[name].filter[equals(view.name)].size > 1) {
 			error('A View with the name'+view.name+' is already defined', 
 					C4DslPackage.Literals.VIEW__NAME,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -373,22 +377,22 @@ class C4DslValidator extends AbstractC4DslValidator {
 		
 	@Check
 	def colorValue(StyledElement style) {
-		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
+		if(style.color !== null && !style.color.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__COLOR,
 					"Invalid Color Value")												
 		}
-		if(style.colour !== null && !style.colour.matches(COLOR_REGEX)) {
+		if(style.colour !== null && !style.colour.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__COLOUR,
 					"Invalid Color Value")												
 		}
-		if(style.backgroundColor !== null && !style.backgroundColor.matches(COLOR_REGEX)) {
+		if(style.backgroundColor !== null && !style.backgroundColor.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__BACKGROUND_COLOR,
 					"Invalid Color Value")												
 		}
-		if(style.stroke !== null && !style.stroke.matches(COLOR_REGEX)) {
+		if(style.stroke !== null && !style.stroke.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__STROKE,
 					"Invalid Color Value")												
@@ -397,12 +401,12 @@ class C4DslValidator extends AbstractC4DslValidator {
 
 	@Check
 	def colorValue(StyledRelationShip style) {
-		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
+		if(style.color !== null && !style.color.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOR,
 					"Invalid Color Value")												
 		}
-		if(style.colour !== null && !style.colour.matches(COLOR_REGEX)) {
+		if(style.colour !== null && !style.colour.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOUR,
 					"Invalid Color Value")												
@@ -414,7 +418,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(!view.name.matches("[a-zA-Z_0-9|-]+")) {
 			error('Key contains illegal characters. Must match [a-zA-Z_0-9|-]+', 
 					C4DslPackage.Literals.VIEW__NAME,
-					"Key contains whitespaces")												
+					ISSUE_CODE_ILLEGAL_CHARS_IN_NAME)												
 		}
 	}
 	
@@ -432,8 +436,10 @@ class C4DslValidator extends AbstractC4DslValidator {
 	 			)
 	 		}			
 		]
-
- 
+	}
+	
+	def isColor(String colorString) {
+		colorString.matches(COLOR_REGEX)
 	}
 	
 }
