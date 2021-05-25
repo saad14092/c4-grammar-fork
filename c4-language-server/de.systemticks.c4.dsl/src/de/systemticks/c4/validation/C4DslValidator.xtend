@@ -31,10 +31,17 @@ import de.systemticks.c4.c4Dsl.RelationShip
 import de.systemticks.c4.c4Dsl.SoftwareSystem
 import de.systemticks.c4.c4Dsl.StyledElement
 import de.systemticks.c4.c4Dsl.StyledRelationShip
+import de.systemticks.c4.c4Dsl.Theme
 import de.systemticks.c4.c4Dsl.View
 import de.systemticks.c4.c4Dsl.Workspace
+import de.systemticks.c4.themes.model.ThemeLoader
+import de.systemticks.c4.themes.model.ThemeModelElement
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.HashMap
 import java.util.List
+import java.util.Map
 import java.util.regex.Pattern
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
@@ -50,7 +57,12 @@ class C4DslValidator extends AbstractC4DslValidator {
 
 	val SUBSTITUTE_PATTERN = Pattern.compile("\\$\\{.*\\}")	
 	val COLOR_REGEX = "#[0-9A-Fa-f]{6}"
+	
+	public val static ISSUE_CODE_DUPLICATED_ELEMENT = "Already Defined Element"
+	public val static ISSUE_CODE_ILLEGAL_CHARS_IN_NAME = "Name contains illegal characters"
+	
 	public static String NO_STYLED_ELEMENT_FOR_TAG = "No styled element for given tag"
+	val themeMap = new HashMap<String, Map<String, ThemeModelElement>>
 	
 	@Check
 	def checkShape(StyledElement styledElement) {
@@ -146,17 +158,40 @@ class C4DslValidator extends AbstractC4DslValidator {
 	def styledElementsExistsForTag(AnyModelElement modelElement) {
 		
 		val styledTags = modelElement.eResource.allContents.filter(StyledElement).map[tag]
+		val themes = modelElement.eResource.allContents.filter(Theme).toList
 		
 		modelElement.customTags.forEach[
 			tag | {
-				if( !styledTags.contains(tag)) {
-					info('No Style with tag <'+tag+ '> defined yet', 
-						C4DslPackage.Literals.ANY_MODEL_ELEMENT__TAGLIST,
-						NO_STYLED_ELEMENT_FOR_TAG)								
+				if( !styledTags.contains(tag)) {					
+					// Not Style defined in the model. Maybe in a theme?
+					//FIXME This is probably an expensive check.					
+					themes.updateThemeMap
+					val tagInTheme = themeMap.entrySet.findFirst[entry|
+						entry.value.containsKey(tag)
+					]
+					// Style not found. Neither as a style element nor in a referenced theme					
+					if(tagInTheme === null) {
+						info('No Style with tag <'+tag+ '> defined yet', 
+							C4DslPackage.Literals.ANY_MODEL_ELEMENT__TAGLIST,
+							NO_STYLED_ELEMENT_FOR_TAG)														
+					}					
 				}
 			}	
 		]
 	}
+	
+	private def updateThemeMap(List<Theme> themes) {
+		themes.forEach[t|
+			t.urls.forEach[u|
+				if(!themeMap.containsKey(u)) {
+					val loader = new ThemeLoader
+					val themeModel = loader.loadFromURL(new URL(u))
+					themeMap.put(u, loader.toMap(themeModel))
+				}
+			]
+		]
+	}
+	
 
 //	@Check(NORMAL)
 	def stringSubstitutionWorkspace(Workspace workspace) {
@@ -187,7 +222,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(styledElement.eResource.allContents.filter(StyledElement).map[tag].filter[equals(styledElement.tag)].size > 1) {
 			error('Style element is already defined', 
 					C4DslPackage.Literals.STYLED_ELEMENT__TAG,
-					"Already Defined Style")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 	
@@ -205,7 +240,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(anyModelElement.eResource.allContents.filter(BasicModelElement).map[name].filter[equals(anyModelElement.name)].size > 1) {
 			error('Element with the id '+anyModelElement.name+' is already defined', 
 					C4DslPackage.Literals.ANY_MODEL_ELEMENT__NAME,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -219,7 +254,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( person.getSiblings(Person).map[label].filter[equals(person.label)].size > 1) {
 			error('Person with the label '+person.label+' is already defined in this model', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 	
@@ -228,7 +263,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( system.getSiblings(SoftwareSystem).map[label].filter[equals(system.label)].size > 1) {
 			error('SoftwareSystem with the label '+system.label+' is already defined in this model', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -237,7 +272,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( component.getSiblings(Component).map[label].filter[equals(component.label)].size > 1) {
 			error('Component with the label '+component.label+' is already defined in this container', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -246,7 +281,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if( container.getSiblings(Container).map[label].filter[equals(container.label)].size > 1) {
 			error('Container with the label '+container.label+' is already defined in this SoftwareSystem', 
 					C4DslPackage.Literals.BASIC_MODEL_ELEMENT__LABEL,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -267,7 +302,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(view.eResource.allContents.filter(View).filter[name !== null].map[name].filter[equals(view.name)].size > 1) {
 			error('A View with the name'+view.name+' is already defined', 
 					C4DslPackage.Literals.VIEW__NAME,
-					"Already Defined Element")						
+					ISSUE_CODE_DUPLICATED_ELEMENT)						
 		}
 	}
 
@@ -342,22 +377,22 @@ class C4DslValidator extends AbstractC4DslValidator {
 		
 	@Check
 	def colorValue(StyledElement style) {
-		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
+		if(style.color !== null && !style.color.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__COLOR,
 					"Invalid Color Value")												
 		}
-		if(style.colour !== null && !style.colour.matches(COLOR_REGEX)) {
+		if(style.colour !== null && !style.colour.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__COLOUR,
 					"Invalid Color Value")												
 		}
-		if(style.backgroundColor !== null && !style.backgroundColor.matches(COLOR_REGEX)) {
+		if(style.backgroundColor !== null && !style.backgroundColor.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__BACKGROUND_COLOR,
 					"Invalid Color Value")												
 		}
-		if(style.stroke !== null && !style.stroke.matches(COLOR_REGEX)) {
+		if(style.stroke !== null && !style.stroke.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_ELEMENT__STROKE,
 					"Invalid Color Value")												
@@ -366,12 +401,12 @@ class C4DslValidator extends AbstractC4DslValidator {
 
 	@Check
 	def colorValue(StyledRelationShip style) {
-		if(style.color !== null && !style.color.matches(COLOR_REGEX)) {
+		if(style.color !== null && !style.color.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOR,
 					"Invalid Color Value")												
 		}
-		if(style.colour !== null && !style.colour.matches(COLOR_REGEX)) {
+		if(style.colour !== null && !style.colour.isColor) {
 			warning(INVALID_COLOR_MESSAGE, 
 					C4DslPackage.Literals.STYLED_RELATION_SHIP__COLOUR,
 					"Invalid Color Value")												
@@ -383,8 +418,28 @@ class C4DslValidator extends AbstractC4DslValidator {
 		if(!view.name.matches("[a-zA-Z_0-9|-]+")) {
 			error('Key contains illegal characters. Must match [a-zA-Z_0-9|-]+', 
 					C4DslPackage.Literals.VIEW__NAME,
-					"Key contains whitespaces")												
+					ISSUE_CODE_ILLEGAL_CHARS_IN_NAME)												
 		}
+	}
+	
+	@Check(NORMAL)
+	def themeIsAvailable(Theme theme) {
+
+		theme.urls.forEach[u, index|
+			val url = new URL(u); 
+			val huc = url.openConnection as HttpURLConnection;	 		
+	 		if(huc.responseCode !== HttpURLConnection.HTTP_OK) {
+	 			warning('URL does not exists', 
+	 				C4DslPackage.Literals.THEME__URLS,
+	 				index, 
+	 				"No such URL"
+	 			)
+	 		}			
+		]
+	}
+	
+	def isColor(String colorString) {
+		colorString.matches(COLOR_REGEX)
 	}
 	
 }
