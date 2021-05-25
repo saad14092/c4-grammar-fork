@@ -1,5 +1,10 @@
 # Change Log
 
+## v2.2.4
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/64
+* Supports the generation of mermaid diagrams
+
 ## v2.2.3
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/63
