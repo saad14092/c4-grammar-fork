@@ -34,10 +34,14 @@ import de.systemticks.c4.c4Dsl.StyledRelationShip
 import de.systemticks.c4.c4Dsl.Theme
 import de.systemticks.c4.c4Dsl.View
 import de.systemticks.c4.c4Dsl.Workspace
+import de.systemticks.c4.themes.model.ThemeLoader
+import de.systemticks.c4.themes.model.ThemeModelElement
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.HashMap
 import java.util.List
+import java.util.Map
 import java.util.regex.Pattern
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
@@ -54,6 +58,7 @@ class C4DslValidator extends AbstractC4DslValidator {
 	val SUBSTITUTE_PATTERN = Pattern.compile("\\$\\{.*\\}")	
 	val COLOR_REGEX = "#[0-9A-Fa-f]{6}"
 	public static String NO_STYLED_ELEMENT_FOR_TAG = "No styled element for given tag"
+	val themeMap = new HashMap<String, Map<String, ThemeModelElement>>
 	
 	@Check
 	def checkShape(StyledElement styledElement) {
@@ -149,17 +154,40 @@ class C4DslValidator extends AbstractC4DslValidator {
 	def styledElementsExistsForTag(AnyModelElement modelElement) {
 		
 		val styledTags = modelElement.eResource.allContents.filter(StyledElement).map[tag]
+		val themes = modelElement.eResource.allContents.filter(Theme).toList
 		
 		modelElement.customTags.forEach[
 			tag | {
-				if( !styledTags.contains(tag)) {
-					info('No Style with tag <'+tag+ '> defined yet', 
-						C4DslPackage.Literals.ANY_MODEL_ELEMENT__TAGLIST,
-						NO_STYLED_ELEMENT_FOR_TAG)								
+				if( !styledTags.contains(tag)) {					
+					// Not Style defined in the model. Maybe in a theme?
+					//FIXME This is probably an expensive check.					
+					themes.updateThemeMap
+					val tagInTheme = themeMap.entrySet.findFirst[entry|
+						entry.value.containsKey(tag)
+					]
+					// Style not found. Neither as a style element nor in a referenced theme					
+					if(tagInTheme === null) {
+						info('No Style with tag <'+tag+ '> defined yet', 
+							C4DslPackage.Literals.ANY_MODEL_ELEMENT__TAGLIST,
+							NO_STYLED_ELEMENT_FOR_TAG)														
+					}					
 				}
 			}	
 		]
 	}
+	
+	private def updateThemeMap(List<Theme> themes) {
+		themes.forEach[t|
+			t.urls.forEach[u|
+				if(!themeMap.containsKey(u)) {
+					val loader = new ThemeLoader
+					val themeModel = loader.loadFromURL(new URL(u))
+					themeMap.put(u, loader.toMap(themeModel))
+				}
+			]
+		]
+	}
+	
 
 //	@Check(NORMAL)
 	def stringSubstitutionWorkspace(Workspace workspace) {

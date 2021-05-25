@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.google.gson.annotations.Expose;
 
-public class Theme {
+public class ThemeModel {
 
 	@Expose
 	private String name;
 	@Expose
 	private String description;
 	@Expose
-	private List<ThemeElement> elements;
+	private List<ThemeModelElement> elements;
 	
 	public String getName() {
 		return name;
@@ -29,11 +29,11 @@ public class Theme {
 		this.description = description;
 	}
 	
-	public List<ThemeElement> getElements() {
+	public List<ThemeModelElement> getElements() {
 		return elements;
 	}
 	
-	public void setElements(List<ThemeElement> elements) {
+	public void setElements(List<ThemeModelElement> elements) {
 		this.elements = elements;
 	}
 	

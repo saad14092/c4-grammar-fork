@@ -21,7 +21,7 @@ public class ThemeLoader {
 
     Gson gson = new Gson();
 	
-	public Theme loadFromFile(File file) {
+	public ThemeModel loadFromFile(File file) {
 		
         try {
 			String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
@@ -32,18 +32,14 @@ public class ThemeLoader {
 		}
 		return null;
 	}
-	
-	public Theme loadFromURL(URI uri) {
-		return null;
-	}	
-	
-	public Theme loadFromString(String json) {
 		
-		return gson.fromJson(json, Theme.class);
+	public ThemeModel loadFromString(String json) {
+		
+		return gson.fromJson(json, ThemeModel.class);
 		
 	}
 	
-	public Theme loadFromURL(URL url) {
+	public ThemeModel loadFromURL(URL url) {
 		
 		try {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -63,9 +59,9 @@ public class ThemeLoader {
 		return null;
 	}
 	
-	public Map<String, ThemeElement> toMap(Theme theme) {
+	public Map<String, ThemeModelElement> toMap(ThemeModel theme) {
 		
-		HashMap<String, ThemeElement> result = new HashMap<String, ThemeElement>();
+		HashMap<String, ThemeModelElement> result = new HashMap<String, ThemeModelElement>();
 		
 		theme.getElements().forEach( e -> result.put(e.getTag(), e));
 		

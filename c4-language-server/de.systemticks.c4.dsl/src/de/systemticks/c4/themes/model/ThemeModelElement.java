@@ -2,7 +2,7 @@ package de.systemticks.c4.themes.model;
 
 import com.google.gson.annotations.Expose;
 
-public class ThemeElement {
+public class ThemeModelElement {
 
 	@Expose
 	private String tag;
