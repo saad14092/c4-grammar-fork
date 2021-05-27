@@ -18,6 +18,12 @@ task deployToVSCode(type: Copy, dependsOn: distZip) {
 	into outputDir
 }
 
+startScripts {
+	doLast {
+		windowsScript.text = windowsScript.text.replaceAll('set CLASSPATH=.*', 'set CLASSPATH=.;%APP_HOME%/lib/*')
+	}
+}
+
 task cleanDeployedServer(type: Delete) {
 	delete fileTree("${buildDir}/../../../extension/server")
 }
