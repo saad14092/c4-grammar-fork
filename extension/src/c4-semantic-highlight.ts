@@ -21,6 +21,8 @@ export const c4Legend = new SemanticTokensLegend(tokenTypes, tokenModifiers);
 
 export class C4SemanticTokenProvider implements DocumentSemanticTokensProvider {
     
+    multiLineComment = false
+
     highlighters: C4SemanticHighlighter[] = [
             new ModelElementHighlighterWithTechnology(),
             new ModelElementHighlighterWithoutTechnology(),
@@ -31,17 +33,33 @@ export class C4SemanticTokenProvider implements DocumentSemanticTokensProvider {
             new ConstantHighlighter()
         ];
 
+    ignoreLine(line: string): boolean {
+
+        if(!this.multiLineComment && line.startsWith('/*')) {
+            this.multiLineComment = true
+        }
+
+        const result = this.multiLineComment || line.length <= 1 || line.startsWith('#') || line.startsWith('//')
+
+        if(this.multiLineComment && line.endsWith('*/')) {
+            this.multiLineComment = false
+        }
+
+        return result
+    }
+
     provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): ProviderResult<SemanticTokens> {
 
         const builder = new SemanticTokensBuilder();
         const text = document.getText();
 
         const lines = text.split(/\r\n|\r|\n/);
+        this.multiLineComment = false
 
         lines.forEach( (line, index) => {
 
             // nothing to highlight in case of an empty line
-            if(line.trim().length > 1) {
+            if(!this.ignoreLine(line.trim())) {
                 var applied = false
 
                 this.highlighters.some( ( highlighter) => {
