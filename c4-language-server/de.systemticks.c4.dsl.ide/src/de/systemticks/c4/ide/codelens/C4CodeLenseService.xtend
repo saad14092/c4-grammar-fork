@@ -210,7 +210,7 @@ class C4CodeLenseService implements ICodeLensService {
 	}
 	
 	def clean(String s) {
-		s.replace(' ', '')
+		s.replaceAll('\\W', '')
 	}
 	
 	
