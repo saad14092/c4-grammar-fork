@@ -3,7 +3,7 @@ stages:
   - client
 
 c4-language-server:
-  image: java:8-jdk
+  image: gradle:jdk11
   stage: server
 
   script:

@@ -58,8 +58,6 @@ There are three PlantUML writer implementations:
 
 Xtext requires a [Java VM](http://java.com/en/download/) for running the language server.
 
-> :warning: There seems to be runtime issues with Java 11 or higher. Please use Java 8 instead.
-
 > :warning: In some cases the language server seems to have missing execution rights. Check `<YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-1.1.0\server\c4-language-server\bin` and add +x if missing to make it executable.
 
 You must open a workspace that contains your models, which need to have the file extension `.dsl` 
@@ -104,6 +102,9 @@ As of now, the following DSL elements from the language reference are not yet su
 * **deploymentGroups**
 * **branding**
 * **configuration**
+* **!identifiers**
+* **expressions in include/exclude**
+* **default theme**
 
 
 Those elements will be provided in subsequent releases.
