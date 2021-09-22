@@ -1,5 +1,35 @@
 # Change Log
 
+## v3.0.0 
+
+This is the first version of this extension with a refactored language server.
+
+The Xtext Grammar (a formal syntax for the C4 DSL) is no longer maintained and thus its language server implementation has been removed as well.
+
+Instead the origin structurizr/dsl parser is used now and a new language server is implemented (from scratch) on top of it. This comes with some benefits and drawbacks.
+
+__Benefits__
+
+* No additional xtext grammar needs to be maintained in parallel to the structurizr/dsl
+* Due to technical reasons it was not possible to parse all c4 dsl files with the xtext based parser (e.g. Xtext does not allow identifiers with the same name as keywords). This will no longer be a problem.
+
+__Drawbacks__
+
+* Xtext comes with an excelleten out-of-the-box language server with default features for code completion, cross-referencing, validation, etc. This needs to be implemented manually now.
+
+Version v3.0.0 has also a constrained feature set:
+
+* Only the origin structurizr renderer is supported
+* Semantic highlight is incomplete
+* code completion is not yet implemented
+* hovering is not yet implemented
+
+What is working already:
+
+* Validation (using the origin structurizr parse exceptions)
+* Code Lenses for showing diagrams
+* Syntax highlighting (with some minor issues)
+
 ## v2.2.5
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/68

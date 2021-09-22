@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, window, Range, Position, StatusBarAlignment, Uri } from 'vscode'
+import {ExtensionContext, workspace, languages, commands, window, StatusBarAlignment } from 'vscode'
 import * as path from 'path';
 import * as os from 'os';
 
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, Range as LSRange, RevealOutputChannelOn, StateChangeEvent, State} from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
 import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
-import { C4PlantUMLPreview } from './c4-plantuml-preview';
+//import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
-import { MermaidPreview } from './c4-mermaid';
-import { buildPath } from './c4-utils';
+//import { MermaidPreview } from './c4-mermaid';
+//import { buildPath } from './c4-utils';
 
 const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
 const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
-const CONF_PLANTUML_RENDERER = "c4.plantuml.renderer"
+//const CONF_PLANTUML_RENDERER = "c4.plantuml.renderer"
 
 export function activate(context: ExtensionContext) {
 
@@ -42,10 +42,11 @@ export function activate(context: ExtensionContext) {
         if(event.affectsConfiguration(CONF_SEMANTIC_HIGHLIGHTING)) {
             commands.executeCommand("workbench.action.reloadWindow")
         }
+        /*
         else if(event.affectsConfiguration(CONF_PLANTUML_GENERATOR)) {
-            //TODO: cleanup existing plantum files
             commands.executeCommand("workbench.action.reloadWindow")
         }
+        */
     });
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
@@ -70,7 +71,7 @@ export function activate(context: ExtensionContext) {
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'c4' }],
         outputChannel: logger,
-        revealOutputChannelOn: RevealOutputChannelOn.Info,
+//        revealOutputChannelOn: RevealOutputChannelOn.Info,
         synchronize: {
             fileEvents: workspace.createFileSystemWatcher('**/*.dsl')
         }
@@ -100,18 +101,34 @@ export function activate(context: ExtensionContext) {
     languageClient.trace = Trace.Verbose
     const disposable = languageClient.start();
 
+    /*
     commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
         const range = new Range( new Position(_range.start.line, _range.start.character),
             new Position(_range.end.line, _range.end.character))
         window.activeTextEditor?.revealRange(range);
     });      
-
+    */
     context.subscriptions.push(disposable);
     
-    const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string, logger)
+    //const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string, logger)
     const structurizrPanel = new C4StructurizrPreview(logger);
-    const mermaidPanel = new MermaidPreview(logger);
-    
+    //const mermaidPanel = new MermaidPreview(logger);
+
+    commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
+        
+        const encodedWorkspaceJson = args[0]
+        const diagramKey = args[1]
+
+        try {
+            await structurizrPanel.updateWebView(encodedWorkspaceJson, diagramKey);
+        }
+        catch (err) {
+            logger.appendLine("Error displaying preview: " + JSON.stringify(err))
+        }
+        
+    });
+
+    /*
     commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
         if(workspace.workspaceFolders) {
             const puml = args[0]
@@ -147,7 +164,7 @@ export function activate(context: ExtensionContext) {
             }
         }
     });     
-
+    */
     logger.appendLine("Initialized");
     return languageClient;
 }

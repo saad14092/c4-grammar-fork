@@ -7,7 +7,7 @@ c4-language-server:
   stage: server
 
   script:
-    - cd c4-language-server
+    - cd language-server
     - ./gradlew check
     - ./gradlew deployToVSCode
 

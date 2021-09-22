@@ -1,5 +1,14 @@
 # A VS Code extension for C4 DSL Models
 
+**IMPORTANT**
+
+With version v3.0.0 this extension does no longer use an Xtext Grammar and its corresponding language server.
+See the CHANGELOG.md for more info.
+
+**DEPRECATED DESCRIPTION**
+
+Subsequent documentation needs to be updated
+
 This is a VS Code extension for specifying software architecture models with the [Structurizr DSL](https://github.com/structurizr/dsl).
 
 Structurizr DSL, an example of the [diagram as text](https://structurizr.com/help/text) trend, is the textual representation of the [C4 model](https://c4model.com/).
