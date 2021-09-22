@@ -1,6 +1,4 @@
 import { WebviewPanel, window, ViewColumn, OutputChannel } from "vscode";
-import * as fs from 'fs';
-import { promisify } from "util";
 
 export class C4StructurizrPreview {
 
@@ -30,19 +28,12 @@ export class C4StructurizrPreview {
         return panel;
     }
 
-    // Keep as async for consistency with svgPreview
-    async updateWebView(encodedJsonFile: string, diagramKey: string) {
-
-        if(!fs.existsSync(encodedJsonFile)) {
-            throw new Error("File " + encodedJsonFile + " does not exist, may have failed to generate.")
-        }
-
-        const content = await promisify(fs.readFile)(encodedJsonFile, { encoding: 'utf8' })
+    async updateWebView(encodedJson: string, diagramKey: string) {
         if (!this.panel) {
             this.panel = this.createPanel();
         }
 
-        const html = this.updateViewContent(content, diagramKey)
+        const html = this.updateViewContent(encodedJson, diagramKey)
         console.log(html)
 
         this.panel.webview.html = html
