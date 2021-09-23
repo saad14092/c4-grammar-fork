@@ -1,4 +1,4 @@
-package de.systemticks.c4dsl.ls;
+package de.systemticks.c4dsl.ls.service;
 
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
 import org.eclipse.lsp4j.DidChangeWatchedFilesParams;

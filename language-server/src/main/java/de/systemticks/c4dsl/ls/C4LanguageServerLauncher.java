@@ -11,21 +11,21 @@ import org.eclipse.lsp4j.services.LanguageClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.systemticks.c4dsl.ls.service.C4LanguageServer;
+
 public class C4LanguageServerLauncher {
 
     private static final Logger logger = LoggerFactory.getLogger(C4LanguageServerLauncher.class);
 
 	public static void main(String[] args) {
 		
-		// TODO Auto-generated method stub
 		try {
 			startServer(System.in, System.out);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 	}

@@ -1,8 +1,6 @@
 package de.systemticks.c4dsl.ls.provider;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.lsp4j.Hover;
 import org.eclipse.lsp4j.HoverParams;
@@ -13,7 +11,7 @@ import com.structurizr.view.View;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 
-public class HoverProvider {
+public class C4HoverProvider {
 
 	public Hover calcHover(C4DocumentModel c4, HoverParams params) {
 	

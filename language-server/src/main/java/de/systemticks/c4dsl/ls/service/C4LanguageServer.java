@@ -1,4 +1,4 @@
-package de.systemticks.c4dsl.ls;
+package de.systemticks.c4dsl.ls.service;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -32,6 +32,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 	
 	@Override
 	public void connect(LanguageClient client) {
+		logger.info("connect");		
 		this.client = client;
 	}	
 
@@ -44,6 +45,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		res.getCapabilities().setTextDocumentSync(TextDocumentSyncKind.Full);
 		res.getCapabilities().setCodeLensProvider(new CodeLensOptions());
 		//res.getCapabilities().setHoverProvider(Boolean.TRUE);
+		res.getCapabilities().setColorProvider(Boolean.TRUE);
 		res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);

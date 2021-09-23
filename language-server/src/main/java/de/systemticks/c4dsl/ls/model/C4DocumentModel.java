@@ -1,6 +1,8 @@
 package de.systemticks.c4dsl.ls.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -27,6 +29,7 @@ public class C4DocumentModel implements StructurizrDslParserListener {
     private Map<Integer, View> viewToLineNumber = new HashMap<>();
     private Map<Integer, Element> elementsToLineNumber = new HashMap<>();
     private Map<Integer, Relationship> relationShipsToLineNumber = new HashMap<>();
+    private List<Integer> colors = new ArrayList<>();
 
 	public C4DocumentModel(String rawText) {
 		this.rawText = rawText;
@@ -73,10 +76,20 @@ public class C4DocumentModel implements StructurizrDslParserListener {
 		viewToLineNumber.put(lineNumber, view);
 	}
 	
+	@Override
+	public void onParsedColor(int lineNumber) {
+		logger.debug("onParsedColor {}", lineNumber);
+		colors.add(lineNumber);
+	}
+
 	public Set<Entry<Integer, View>> getViewToLineNumbers() {
 		return viewToLineNumber.entrySet();
 	}
-	
+			
+	public List<Integer> getColors() {
+		return colors;
+	}
+
 	public View getViewAtLineNumber(int lineNumber) {
 		return viewToLineNumber.get(lineNumber);
 	}

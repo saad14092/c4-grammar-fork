@@ -44,8 +44,8 @@ sourceSets {
 
 dependencies {
 
-	implementation 'com.github.torsten-systemticks:dsl:parser_listener-SNAPSHOT'
-	//implementation 'com.github.torsten-systemticks:dsl:master-1fe4b1f73a-1'
+	//implementation 'com.github.torsten-systemticks:dsl:parser_listener-SNAPSHOT'
+	implementation 'com.github.torsten-systemticks:dsl:e856bde2e6'
 
 	//implementation 'com.structurizr:structurizr-dsl:1.13.1'
 	implementation 'com.structurizr:structurizr-plantuml:1.6.3'
@@ -78,7 +78,7 @@ task deployToVSCode(type: Copy, dependsOn: distZip) {
 }
 
 task cleanDeployedServer(type: Delete) {
-	delete fileTree("${buildDir}/../../../extension/server")
+	delete fileTree("${buildDir}/../../extension/server")
 }
 
 build.dependsOn deployToVSCode
@@ -86,10 +86,7 @@ build.dependsOn deployToVSCode
 clean.dependsOn cleanDeployedServer
 
 allprojects {
-	// In this section you declare where to find the dependencies of your project
 	repositories {
-		// Use jcenter for resolving your dependencies.
-		// You can declare any Maven/Ivy/file repository here.
 		jcenter()
 		maven { url 'https://jitpack.io' }
 	}
