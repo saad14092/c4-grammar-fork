@@ -1,5 +1,10 @@
 # Change Log
 
+## v3.0.1
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/82
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/80
+
 ## v3.0.0 
 
 This is the first version of this extension with a refactored language server.
