@@ -16,9 +16,9 @@ import de.systemticks.c4dsl.ls.generator.C4Generator;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
-public class CodeLenseProvider {
+public class C4CodeLenseProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(CodeLenseProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(C4CodeLenseProvider.class);
 
 	public List<CodeLens> calcCodeLenses(C4DocumentModel c4) {
 

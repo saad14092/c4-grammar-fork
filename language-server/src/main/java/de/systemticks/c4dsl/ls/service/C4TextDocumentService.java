@@ -1,4 +1,4 @@
-package de.systemticks.c4dsl.ls;
+package de.systemticks.c4dsl.ls.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,8 @@ import org.eclipse.lsp4j.CodeLens;
 import org.eclipse.lsp4j.CodeLensParams;
 import org.eclipse.lsp4j.Color;
 import org.eclipse.lsp4j.ColorInformation;
+import org.eclipse.lsp4j.ColorPresentation;
+import org.eclipse.lsp4j.ColorPresentationParams;
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
 import org.eclipse.lsp4j.DidChangeTextDocumentParams;
@@ -30,8 +32,9 @@ import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.dsl.StructurizrDslParserException;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
-import de.systemticks.c4dsl.ls.provider.CodeLenseProvider;
-import de.systemticks.c4dsl.ls.provider.HoverProvider;
+import de.systemticks.c4dsl.ls.provider.C4CodeLenseProvider;
+import de.systemticks.c4dsl.ls.provider.C4ColorProvider;
+import de.systemticks.c4dsl.ls.provider.C4HoverProvider;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
 public class C4TextDocumentService implements TextDocumentService {
@@ -40,8 +43,9 @@ public class C4TextDocumentService implements TextDocumentService {
 
 	private C4LanguageServer ls;
 
-	private CodeLenseProvider codeLenseProvider = new CodeLenseProvider();
-	private HoverProvider hoverProvider = new HoverProvider();
+	private C4CodeLenseProvider codeLenseProvider = new C4CodeLenseProvider();
+	private C4HoverProvider hoverProvider = new C4HoverProvider();
+	private C4ColorProvider colorProvider = new C4ColorProvider();
 	
 	private Map<String, C4DocumentModel> c4Models = new HashMap<>();
 	
@@ -50,6 +54,39 @@ public class C4TextDocumentService implements TextDocumentService {
 	}
 
 	
+
+	@Override
+	public CompletableFuture<List<ColorInformation>> documentColor(DocumentColorParams params) {
+
+		C4DocumentModel model = c4Models.get(params.getTextDocument().getUri());
+		
+		if(model != null) {
+			return CompletableFuture.supplyAsync( () -> {
+				return colorProvider.calcDocumentColors(model);
+			});
+		}
+
+		return null;
+	}
+
+
+
+	@Override
+	public CompletableFuture<List<ColorPresentation>> colorPresentation(ColorPresentationParams params) {
+		
+		C4DocumentModel model = c4Models.get(params.getTextDocument().getUri());
+		
+		if(model != null) {
+			return CompletableFuture.supplyAsync( () -> {
+				return colorProvider.calcColorPresentations(params.getColor());
+			});
+		}
+		
+		return null;
+
+	}
+
+
 
 	@Override
 	public CompletableFuture<Hover> hover(HoverParams params) {
