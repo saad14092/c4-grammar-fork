@@ -47,7 +47,6 @@ targetCompatibility = 1.8
 
 dependencies {
 
-	//implementation 'com.github.torsten-systemticks:dsl:parser_listener-SNAPSHOT'
 	implementation 'com.github.torsten-systemticks:dsl:e856bde2e6'
 
 	//implementation 'com.structurizr:structurizr-dsl:1.13.1'
