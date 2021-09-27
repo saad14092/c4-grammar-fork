@@ -8,10 +8,10 @@ import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.lsp4j.CodeLens;
 import org.eclipse.lsp4j.CodeLensParams;
-import org.eclipse.lsp4j.Color;
 import org.eclipse.lsp4j.ColorInformation;
 import org.eclipse.lsp4j.ColorPresentation;
 import org.eclipse.lsp4j.ColorPresentationParams;
+import org.eclipse.lsp4j.DefinitionParams;
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
 import org.eclipse.lsp4j.DidChangeTextDocumentParams;
@@ -21,9 +21,12 @@ import org.eclipse.lsp4j.DidSaveTextDocumentParams;
 import org.eclipse.lsp4j.DocumentColorParams;
 import org.eclipse.lsp4j.Hover;
 import org.eclipse.lsp4j.HoverParams;
+import org.eclipse.lsp4j.Location;
+import org.eclipse.lsp4j.LocationLink;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.PublishDiagnosticsParams;
 import org.eclipse.lsp4j.Range;
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,7 @@ import com.structurizr.dsl.StructurizrDslParserException;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.provider.C4CodeLenseProvider;
 import de.systemticks.c4dsl.ls.provider.C4ColorProvider;
+import de.systemticks.c4dsl.ls.provider.C4DefinitionProvider;
 import de.systemticks.c4dsl.ls.provider.C4HoverProvider;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
@@ -46,6 +50,7 @@ public class C4TextDocumentService implements TextDocumentService {
 	private C4CodeLenseProvider codeLenseProvider = new C4CodeLenseProvider();
 	private C4HoverProvider hoverProvider = new C4HoverProvider();
 	private C4ColorProvider colorProvider = new C4ColorProvider();
+	private C4DefinitionProvider definitionProvider = new C4DefinitionProvider();
 	
 	private Map<String, C4DocumentModel> c4Models = new HashMap<>();
 	
@@ -66,6 +71,22 @@ public class C4TextDocumentService implements TextDocumentService {
 			});
 		}
 
+		return null;
+	}
+
+
+	@Override
+	public CompletableFuture<Either<List<? extends Location>, List<? extends LocationLink>>> definition(
+			DefinitionParams params) {
+
+		C4DocumentModel model = c4Models.get(params.getTextDocument().getUri());
+
+		if(model != null) {
+			return CompletableFuture.supplyAsync( () -> {
+				return definitionProvider.calcDefinitions(model, params);
+			});
+		}
+		
 		return null;
 	}
 
@@ -162,7 +183,7 @@ public class C4TextDocumentService implements TextDocumentService {
 		
 		logger.debug("calcDiagnostics");
 		List<Diagnostic> errors = new ArrayList<>();
-		C4DocumentModel model = new C4DocumentModel(content);
+		C4DocumentModel model = new C4DocumentModel(content, uri);
 		StructurizrDslParser parser = new StructurizrDslParser(model); 
 //		StructurizrDslParser parser = new StructurizrDslParser(); 
 		

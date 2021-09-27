@@ -3,6 +3,7 @@ package de.systemticks.c4dsl.ls.service;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.lsp4j.CodeLensOptions;
+import org.eclipse.lsp4j.DefinitionOptions;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
 import org.eclipse.lsp4j.ServerCapabilities;
@@ -46,7 +47,8 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		res.getCapabilities().setCodeLensProvider(new CodeLensOptions());
 		//res.getCapabilities().setHoverProvider(Boolean.TRUE);
 		res.getCapabilities().setColorProvider(Boolean.TRUE);
-		res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
+		res.getCapabilities().setDefinitionProvider(Boolean.TRUE);
+		//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);
 	}
