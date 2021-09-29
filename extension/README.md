@@ -18,18 +18,27 @@ This is a VS Code extension for specifying software architecture models with the
 
 Structurizr DSL, an example of the [diagram as text](https://structurizr.com/help/text) trend, is the textual representation of the [C4 model](https://c4model.com/).
 
+## Diagram Preview
+
 Every C4 view in the editor will be enriched with a code lense (Show as Structurizr Diagram). When clicking, the corresponding view will be rendered with the origin Structurizr Viewer.
 
-Besides that, it provides all typical language editor features like:
+## PlantUML Export
 
-* syntax highlighting
+You can trigger the export of all views from one dsl file into plantuml code, either in the context view of the explorer or the editor.
+Output folder and Plant UML Renderer are configurable.
+
+## Language Server feaature
+
+* syntax highlighting (in progress)
 * syntax validation
-* code completion
-* outline
+* code completion (not yet available, but planned)
 * code lenses
 * folding
 * re-factoring
-* hover
+* formatting (not yet available, but planned)
+* hover (not yet available, but planned)
+* goto defintion (in progress)
+* show all references (not yet available, but planned)
 * semantic validation
 
 ![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/17706e9b41936def3e1a27f8289f6e138ab92707/extension/images/c4dsl-screenshot-1.png)

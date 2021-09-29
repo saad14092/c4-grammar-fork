@@ -1,6 +1,8 @@
 package de.systemticks.c4dsl.ls.utils;
 
-import java.util.function.Function;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +16,13 @@ import com.structurizr.view.View;
 public class C4Utils {
 
     public static final int NOT_FOUND_WITHIN_STRING = -1;
+
+    public static void writeContentToFile(File out, String content) throws IOException {
+        out.getParentFile().mkdirs();
+        FileWriter fw = new FileWriter(out);
+        fw.write(content);
+        fw.close();
+    }
 
     public static int getStartPosition(String line, String key) {
 
