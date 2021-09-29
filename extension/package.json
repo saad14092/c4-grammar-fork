@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -48,12 +48,6 @@
         "configuration": {
             "title": "",
             "properties": {
-                "c4.language.SemanticHighlighting": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Apply semantic highlighting to c4 dsl language elements",
-                    "scope": "application"
-                },
                 "c4.plantuml.generator": {
                     "type": "string",
                     "enum": [
@@ -69,7 +63,7 @@
                 },
                 "c4.plantuml.renderer": {
                     "type": "string",
-                    "default" : "https://kroki.io/plantuml",
+                    "default": "https://kroki.io/plantuml",
                     "description": "The server that creates diagrams from textual descriptions, e.g. from plantuml",
                     "scope": "application"
                 }
@@ -95,11 +89,11 @@
         "ts-node": "^9.1.1",
         "tslint": "^5.11.0",
         "typescript": "3.8.3",
-        "vscode-languageclient": "^5.2.1",
-        "vscode-languageserver": "^5.2.1",
+        "vsce": "^1.85.1",
+        "vscode-languageclient": "^7.0.0",
+        "vscode-languageserver": "^7.0.0",
         "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12",
-        "vsce": "^1.85.1"
+        "webpack-cli": "^3.3.12"
     },
     "scripts": {
         "prepare": "yarn run clean && yarn run build",

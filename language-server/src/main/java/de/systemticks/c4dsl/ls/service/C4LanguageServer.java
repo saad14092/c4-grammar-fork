@@ -1,11 +1,14 @@
 package de.systemticks.c4dsl.ls.service;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.lsp4j.CodeLensOptions;
 import org.eclipse.lsp4j.DefinitionOptions;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
+import org.eclipse.lsp4j.SemanticTokensLegend;
+import org.eclipse.lsp4j.SemanticTokensWithRegistrationOptions;
 import org.eclipse.lsp4j.ServerCapabilities;
 import org.eclipse.lsp4j.TextDocumentSyncKind;
 import org.eclipse.lsp4j.WorkspaceFoldersOptions;
@@ -17,6 +20,8 @@ import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.systemticks.c4dsl.ls.provider.C4SemanticTokenProvider;
 
 public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 
@@ -48,6 +53,11 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		//res.getCapabilities().setHoverProvider(Boolean.TRUE);
 		res.getCapabilities().setColorProvider(Boolean.TRUE);
 		res.getCapabilities().setDefinitionProvider(Boolean.TRUE);
+		SemanticTokensWithRegistrationOptions semanticTokenOptions = new SemanticTokensWithRegistrationOptions();
+		semanticTokenOptions.setFull(true);
+		SemanticTokensLegend legend = new SemanticTokensLegend(C4SemanticTokenProvider.TOKEN_TYPES, C4SemanticTokenProvider.TOKEN_MODIFIERS);
+		semanticTokenOptions.setLegend(legend);
+		res.getCapabilities().setSemanticTokensProvider(semanticTokenOptions);
 		//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);
