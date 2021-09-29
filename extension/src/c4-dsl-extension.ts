@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, languages, commands, window, StatusBarAlignment } from 'vscode'
+import {ExtensionContext, workspace, commands, window, StatusBarAlignment } from 'vscode'
 import * as path from 'path';
 import * as os from 'os';
 
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
-import { C4SemanticTokenProvider, c4Legend } from './c4-semantic-highlight';
+import { LanguageClientOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 //import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
 //import { MermaidPreview } from './c4-mermaid';
@@ -29,14 +29,7 @@ const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
 
 export function activate(context: ExtensionContext) {
 
-    const isHighlighted = workspace.getConfiguration().get(CONF_SEMANTIC_HIGHLIGHTING)
-
     console.log("HOME DIR: "+os.homedir());
-
-    if(isHighlighted !== undefined && isHighlighted === true) {
-        context.subscriptions.push(languages.registerDocumentSemanticTokensProvider( {language: 'c4', scheme: 'file'}
-        , new C4SemanticTokenProvider(), c4Legend ))
-    }
 
     workspace.onDidChangeConfiguration( (event) => {
         if(event.affectsConfiguration(CONF_SEMANTIC_HIGHLIGHTING)) {

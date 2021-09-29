@@ -26,6 +26,8 @@ import org.eclipse.lsp4j.LocationLink;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.PublishDiagnosticsParams;
 import org.eclipse.lsp4j.Range;
+import org.eclipse.lsp4j.SemanticTokens;
+import org.eclipse.lsp4j.SemanticTokensParams;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.slf4j.Logger;
@@ -39,6 +41,7 @@ import de.systemticks.c4dsl.ls.provider.C4CodeLenseProvider;
 import de.systemticks.c4dsl.ls.provider.C4ColorProvider;
 import de.systemticks.c4dsl.ls.provider.C4DefinitionProvider;
 import de.systemticks.c4dsl.ls.provider.C4HoverProvider;
+import de.systemticks.c4dsl.ls.provider.C4SemanticTokenProvider;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
 public class C4TextDocumentService implements TextDocumentService {
@@ -51,6 +54,7 @@ public class C4TextDocumentService implements TextDocumentService {
 	private C4HoverProvider hoverProvider = new C4HoverProvider();
 	private C4ColorProvider colorProvider = new C4ColorProvider();
 	private C4DefinitionProvider definitionProvider = new C4DefinitionProvider();
+	private C4SemanticTokenProvider semanticTokenProvider = new C4SemanticTokenProvider();
 	
 	private Map<String, C4DocumentModel> c4Models = new HashMap<>();
 	
@@ -105,6 +109,26 @@ public class C4TextDocumentService implements TextDocumentService {
 		
 		return null;
 
+	}
+
+
+
+	@Override
+	public CompletableFuture<SemanticTokens> semanticTokensFull(SemanticTokensParams params) {
+		
+		String uri = params.getTextDocument().getUri();
+		logger.info("semanticTokensFull " + uri);
+		
+		C4DocumentModel model = c4Models.get(params.getTextDocument().getUri());
+		if(model != null) {
+			List<Integer> tokens = semanticTokenProvider.calculateTokens(model);
+			return CompletableFuture.supplyAsync( () -> {
+				SemanticTokens semanticTokens = new SemanticTokens(tokens);
+				return semanticTokens;
+			});
+		}
+
+		return null;
 	}
 
 
@@ -171,12 +195,12 @@ public class C4TextDocumentService implements TextDocumentService {
 
 	@Override
 	public void didClose(DidCloseTextDocumentParams params) {
-		logger.info("didClose" + params.getTextDocument().getUri());
+		logger.info("didClose " + params.getTextDocument().getUri());
 	}
 
 	@Override
 	public void didSave(DidSaveTextDocumentParams params) {
-		logger.info("didSave" + params.getTextDocument().getUri());
+		logger.info("didSave " + params.getTextDocument().getUri());
 	}
 
 	public List<Diagnostic> calcDiagnostics(String uri, String content) {
@@ -203,9 +227,14 @@ public class C4TextDocumentService implements TextDocumentService {
 			errors.add(diagnostic);
 		}
 		
-		model.setWorkspace(parser.getWorkspace());
-		model.setValid(errors.size() == 0);		
-		c4Models.put(uri, model);
+		try {
+			model.setWorkspace(parser.getWorkspace());
+			model.setValid(errors.size() == 0);		
+			c4Models.put(uri, model);	
+		}
+		catch(Exception e) {
+			logger.error("Cannot parse workspace: {}", e.getMessage());
+		}
 		
 		return errors;
 	}

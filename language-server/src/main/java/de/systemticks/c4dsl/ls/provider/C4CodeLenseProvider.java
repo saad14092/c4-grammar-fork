@@ -30,7 +30,7 @@ public class C4CodeLenseProvider {
 		
 		try {
 			String jsonWorkspace = C4Generator.generateEncodedWorkspace(c4.getWorkspace());
-			c4.getViewToLineNumbers().forEach( entry -> {
+			c4.getAllViews().forEach( entry -> {
 				int lineNumber = entry.getKey();
 				String line = c4.getLineAt(lineNumber);
 				int pos = C4Utils.findFirstNonWhitespace(line, 0, true);
