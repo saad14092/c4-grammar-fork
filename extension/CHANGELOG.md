@@ -1,5 +1,12 @@
 # Change Log
 
+## v3.0.3
+
+Provides the capability to export all views inside a dsl file into plantuml code
+Output Directory and Plant UML Renderer are configurable.
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/86
+
 ## v3.0.2
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/85

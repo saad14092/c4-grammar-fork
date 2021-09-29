@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.lsp4j.CodeLensOptions;
 import org.eclipse.lsp4j.DefinitionOptions;
+import org.eclipse.lsp4j.ExecuteCommandOptions;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
 import org.eclipse.lsp4j.SemanticTokensLegend;
@@ -21,6 +22,7 @@ import org.eclipse.lsp4j.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.systemticks.c4dsl.ls.provider.C4ExecuteCommandProvider;
 import de.systemticks.c4dsl.ls.provider.C4SemanticTokenProvider;
 
 public class C4LanguageServer implements LanguageServer, LanguageClientAware {
@@ -58,6 +60,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		SemanticTokensLegend legend = new SemanticTokensLegend(C4SemanticTokenProvider.TOKEN_TYPES, C4SemanticTokenProvider.TOKEN_MODIFIERS);
 		semanticTokenOptions.setLegend(legend);
 		res.getCapabilities().setSemanticTokensProvider(semanticTokenOptions);
+		res.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML)));
 		//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);

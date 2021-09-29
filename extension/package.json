@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -26,6 +26,22 @@
         "xtext"
     ],
     "contributes": {
+        "commands": [
+            {
+                "command": "c4.export.puml",
+                "title": "Export Views to PlantUML"
+            }
+        ],
+        "menus": {
+            "explorer/context": [ {
+                "when": "resourceLangId == c4",
+                "command": "c4.export.puml"
+            }],
+            "editor/context": [{
+                "when": "editorLangId == c4",
+                "command": "c4.export.puml"
+            }]
+        },
         "languages": [
             {
                 "id": "c4",
@@ -48,23 +64,21 @@
         "configuration": {
             "title": "",
             "properties": {
-                "c4.plantuml.generator": {
+                "c4.export.plantuml.generator": {
                     "type": "string",
                     "enum": [
-                        "StructurizrOrigin",
                         "StructurizrPlantUMLWriter",
                         "C4PlantUMLWriter",
-                        "BasicPlantUMLWriter",
-                        "MermaidWriter"
+                        "BasicPlantUMLWriter"
                     ],
-                    "default": "StructurizrOrigin",
+                    "default": "StructurizrPlantUMLWriter",
                     "scope": "application",
                     "description": "The flavor of the generated Plant UML"
                 },
-                "c4.plantuml.renderer": {
+                "c4.export.plantuml.dir": {
                     "type": "string",
-                    "default": "https://kroki.io/plantuml",
-                    "description": "The server that creates diagrams from textual descriptions, e.g. from plantuml",
+                    "default": "./export",
+                    "description": "The folder for the exported plantuml files. Can be relative or absolute",
                     "scope": "application"
                 }
             }

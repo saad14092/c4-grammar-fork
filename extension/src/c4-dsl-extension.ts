@@ -12,41 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, commands, window, StatusBarAlignment } from 'vscode'
+import {ExtensionContext, workspace, commands, window, StatusBarAlignment, Uri } from 'vscode'
 import * as path from 'path';
-import * as os from 'os';
 
 import { LanguageClientOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-//import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
-//import { MermaidPreview } from './c4-mermaid';
-//import { buildPath } from './c4-utils';
 
-const CONF_SEMANTIC_HIGHLIGHTING = "c4.language.SemanticHighlighting"
-const CONF_PLANTUML_GENERATOR = "c4.plantuml.generator"
-//const CONF_PLANTUML_RENDERER = "c4.plantuml.renderer"
+const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
+const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
 
 export function activate(context: ExtensionContext) {
-
-    console.log("HOME DIR: "+os.homedir());
-
-    workspace.onDidChangeConfiguration( (event) => {
-        if(event.affectsConfiguration(CONF_SEMANTIC_HIGHLIGHTING)) {
-            commands.executeCommand("workbench.action.reloadWindow")
-        }
-        /*
-        else if(event.affectsConfiguration(CONF_PLANTUML_GENERATOR)) {
-            commands.executeCommand("workbench.action.reloadWindow")
-        }
-        */
-    });
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
     const languageServerPath =  path.join('server', 'c4-language-server', 'bin', executable);
     const serverLauncher = context.asAbsolutePath(languageServerPath);
-
-    const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) !== undefined ? workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string : 'StructurizrPlantUMLWriter'
 
     const logger = window.createOutputChannel("C4 DSL Extension");
     logger.appendLine("Initializing");
@@ -54,11 +34,11 @@ export function activate(context: ExtensionContext) {
     const serverOptions: ServerOptions = {
         run: {            
             command: serverLauncher,
-            args: ['-log', '-trace', '-renderer', renderer]
+            args: ['-log', '-trace']
         },
         debug: {
             command: serverLauncher,
-            args: ['-log', '-trace', '-renderer', renderer]
+            args: ['-log', '-trace']
         }
     };
     const clientOptions: LanguageClientOptions = {
@@ -103,9 +83,7 @@ export function activate(context: ExtensionContext) {
     */
     context.subscriptions.push(disposable);
     
-    //const svgPreviewPanel = new C4PlantUMLPreview(workspace.getConfiguration().get(CONF_PLANTUML_RENDERER) as string, logger)
     const structurizrPanel = new C4StructurizrPreview(logger);
-    //const mermaidPanel = new MermaidPreview(logger);
 
     commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
         
@@ -121,43 +99,17 @@ export function activate(context: ExtensionContext) {
         
     });
 
-    /*
-    commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
-        if(workspace.workspaceFolders) {
-            const puml = args[0]
-            const workspaceFolder = args[1]
-            const encodedWorkspaceJson = args[2]
-            const diagramKey = args[3]
+    commands.registerCommand("c4.export.puml", ( uri: Uri ) => {
 
-            try {
-                if( renderer == "StructurizrOrigin" ) {
-                    const genEncJsonPath = buildPath(encodedWorkspaceJson, Uri.parse(workspaceFolder))
-                    if(!genEncJsonPath) {
-                        throw new Error(`Could not map to local file path for ${encodedWorkspaceJson} and ${workspaceFolder}`)
-                    }
-                    await structurizrPanel.updateWebView(genEncJsonPath, diagramKey)
-                }
-                else if ( renderer == "MermaidWriter" ) {
-                    const tempPumlPath = buildPath(puml, Uri.parse(workspaceFolder))
-                    if (!tempPumlPath?.endsWith('.puml')) {
-                        throw new Error(`Invalid puml path: ${tempPumlPath}`)
-                    }
-                    const mermaidPath = tempPumlPath.substring(0, tempPumlPath.length-5) + '.mmd'
-                    await mermaidPanel.updateWebView(mermaidPath)
-                }
-                else {
-                    const pumlPath = buildPath(puml, Uri.parse(workspaceFolder))
-                    if(!pumlPath) {
-                        throw new Error(`Could not map to local file path for ${pumlPath} and ${workspaceFolder}`)
-                    }
-                    await svgPreviewPanel.updateWebView(pumlPath)
-                }
-            } catch (err) {
-                logger.appendLine("Error displaying preview: " + JSON.stringify(err))
-            }
-        }
-    });     
-    */
+        const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string; 
+        const exportDir = workspace.getConfiguration().get(CONF_PLANTUML_EXPORT_DIR) as string; 
+
+        commands.executeCommand("c4-server.export.puml", uri.fsPath, renderer, exportDir).then( result => {
+            logger.appendLine("Result = "+result);
+        });
+    });
+
+
     logger.appendLine("Initialized");
     return languageClient;
 }
