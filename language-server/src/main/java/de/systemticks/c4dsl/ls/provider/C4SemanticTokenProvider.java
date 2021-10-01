@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.structurizr.model.ContainerInstance;
 import com.structurizr.model.Element;
 import com.structurizr.model.SoftwareSystemInstance;
@@ -16,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
-import de.systemticks.c4dsl.ls.model.C4WithId;
+import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
 public class C4SemanticTokenProvider {
@@ -82,7 +81,7 @@ public class C4SemanticTokenProvider {
     }
 
     private C4SemanticToken createToken(String referenceId, C4DocumentModel c4Model, int line) {
-        List<Entry<Integer, C4WithId<Element>>> elements = c4Model.findElementsById(referenceId);
+        List<Entry<Integer, C4ObjectWithContext<Element>>> elements = c4Model.findElementsById(referenceId);
         if(elements.size() == 1) {
             String identifier = elements.get(0).getValue().getIdentifier();
             if(identifier != null) {

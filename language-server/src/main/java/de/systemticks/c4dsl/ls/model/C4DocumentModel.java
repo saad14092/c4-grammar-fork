@@ -28,8 +28,8 @@ public class C4DocumentModel implements StructurizrDslParserListener {
     private static final Logger logger = LoggerFactory.getLogger(C4DocumentModel.class);
     
     private Map<Integer, View> viewToLineNumber = new HashMap<>();
-    private Map<Integer, C4WithId<Element>> elementsToLineNumber = new HashMap<>();
-    private Map<Integer, C4WithId<Relationship>> relationShipsToLineNumber = new HashMap<>();
+    private Map<Integer, C4ObjectWithContext<Element>> elementsToLineNumber = new HashMap<>();
+    private Map<Integer, C4ObjectWithContext<Relationship>> relationShipsToLineNumber = new HashMap<>();
     private List<Integer> colors = new ArrayList<>();
 	private String uri;
 
@@ -67,14 +67,19 @@ public class C4DocumentModel implements StructurizrDslParserListener {
 
 	@Override
 	public void onParsedRelationShip(int lineNumber, String identifier, Relationship relationship) {
-		logger.debug("onParsedRelationShip identifier: {}, at linenumber: {}", identifier, lineNumber);
-		relationShipsToLineNumber.put(lineNumber, new C4WithId<Relationship>(identifier, relationship));
+		if(relationship != null) {
+			logger.debug("onParsedRelationShip {}->{}, identifier: {}, at linenumber: {}", relationship.getSourceId(), relationship.getDestinationId(), identifier, lineNumber);
+			relationShipsToLineNumber.put(lineNumber, new C4ObjectWithContext<Relationship>(identifier, relationship));	
+		}
+		else {
+			logger.error("onParsedRelationShip in line {}", lineNumber);
+		}
 	}
 
 	@Override
 	public void onParsedModelElement(int lineNumber, String identifier, Element item) {
 		logger.debug("onParsedModelElement identifier: {}, modelId: {} at linenumber: {}", identifier, item.getId(), lineNumber);
-		elementsToLineNumber.put(lineNumber, new C4WithId<Element>(identifier, item));
+		elementsToLineNumber.put(lineNumber, new C4ObjectWithContext<Element>(identifier, item));
 	}
 
 	@Override
@@ -87,6 +92,12 @@ public class C4DocumentModel implements StructurizrDslParserListener {
 	public void onParsedColor(int lineNumber) {
 		logger.debug("onParsedColor at linenumber {}", lineNumber);
 		colors.add(lineNumber);
+	}
+	
+	
+	@Override
+	public void onEndContext(int linenumber, String context) {
+		logger.debug("onEndContext {} at linenumber {}", context, linenumber);
 	}
 
 	public Set<Entry<Integer, View>> getAllViews() {
@@ -101,23 +112,23 @@ public class C4DocumentModel implements StructurizrDslParserListener {
 		return viewToLineNumber.get(lineNumber);
 	}
 
-	public C4WithId<Element> getElementAtLineNumber(int lineNumber) {
+	public C4ObjectWithContext<Element> getElementAtLineNumber(int lineNumber) {
 		return elementsToLineNumber.get(lineNumber);
 	}
 
-	public Set<Entry<Integer, C4WithId<Element>>> getAllElements() {
+	public Set<Entry<Integer, C4ObjectWithContext<Element>>> getAllElements() {
 		return elementsToLineNumber.entrySet();
 	}
 
-	public C4WithId<Relationship> getRelationshipAtLineNumber(int lineNumber) {
+	public C4ObjectWithContext<Relationship> getRelationshipAtLineNumber(int lineNumber) {
 		return relationShipsToLineNumber.get(lineNumber);
 	}
 
-	public Set<Entry<Integer, C4WithId<Relationship>>> getAllRelationships() {
+	public Set<Entry<Integer, C4ObjectWithContext<Relationship>>> getAllRelationships() {
 		return relationShipsToLineNumber.entrySet();
 	}
 
-	public List<Entry<Integer, C4WithId<Element>>> findElementsById(String id) {
+	public List<Entry<Integer, C4ObjectWithContext<Element>>> findElementsById(String id) {
 		return elementsToLineNumber.entrySet().stream().filter( entry -> entry.getValue().getObject().getId().equals(id)).collect(Collectors.toList());
 	}
 	

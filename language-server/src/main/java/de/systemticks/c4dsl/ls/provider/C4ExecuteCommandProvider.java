@@ -1,11 +1,10 @@
 package de.systemticks.c4dsl.ls.provider;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonObject;
 import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.dsl.StructurizrDslParserException;
 import com.structurizr.io.plantuml.BasicPlantUMLWriter;
@@ -29,14 +28,16 @@ public class C4ExecuteCommandProvider {
 
         switch (command) {
             case EXPORT_FILE_TO_PUML:
-                if(arguments.size() != 3) {
-                    logger.error("Command does not contain an File URI");
+                if(arguments.size() != 1) {
+                    logger.error("Command {} does not contain any options", command);
                 }
                 else {
-                    JsonPrimitive uri = (JsonPrimitive)arguments.get(0);
-                    JsonPrimitive renderer = (JsonPrimitive)arguments.get(1);
-                    JsonPrimitive exportDir = (JsonPrimitive)arguments.get(2);
-                    exportFileToPuml(uri.getAsString(), renderer.getAsString(), exportDir.getAsString());
+                    JsonObject options = (JsonObject) arguments.get(0);
+                    logger.info("Execute Command {} with options {}",command,options);
+                    String uri = options.get("uri").getAsString();
+                    String renderer = options.get("renderer").getAsString();
+                    String exportDir = options.get("outDir").getAsString();
+                    exportFileToPuml(uri, renderer, exportDir);
                 }
                 break;
         
@@ -50,7 +51,6 @@ public class C4ExecuteCommandProvider {
     private void exportFileToPuml(String path, String renderer, String outDir) {
 
         //TODO provide a result code as return value
-        logger.info("exportFileToPuml {}", path);
 
         File dslFile = new File(path);
         StructurizrDslParser parser = new StructurizrDslParser();

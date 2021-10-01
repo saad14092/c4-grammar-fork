@@ -20,7 +20,7 @@ import com.structurizr.model.SoftwareSystemInstance;
 import com.structurizr.view.View;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
-import de.systemticks.c4dsl.ls.model.C4WithId;
+import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
 public class C4DefinitionProvider {
@@ -46,7 +46,7 @@ public class C4DefinitionProvider {
 				}
 			}
 		}
-		C4WithId<Relationship> relationship = c4Model.getRelationshipAtLineNumber(currentLineNumner);
+		C4ObjectWithContext<Relationship> relationship = c4Model.getRelationshipAtLineNumber(currentLineNumner);
 		if(relationship != null) {
 			logger.debug("Selected Line has relationship {}, {}", relationship.getObject().getSourceId(), relationship.getObject().getDestinationId());
 			String sourceId = relationship.getObject().getSourceId();
@@ -64,7 +64,7 @@ public class C4DefinitionProvider {
 				}
 			}
 		}
-		C4WithId<Element> element = c4Model.getElementAtLineNumber(currentLineNumner);
+		C4ObjectWithContext<Element> element = c4Model.getElementAtLineNumber(currentLineNumner);
 		if(element != null) {
 			if(element.getObject() instanceof ContainerInstance) {
 				String containerId = ((ContainerInstance) element.getObject()).getContainerId();
@@ -91,10 +91,10 @@ public class C4DefinitionProvider {
 
 	private Location findModelElementById(C4DocumentModel c4Model, String id, DefinitionParams params) {
 
-		List<Entry<Integer, C4WithId<Element>>> refs = c4Model.findElementsById(id);
+		List<Entry<Integer, C4ObjectWithContext<Element>>> refs = c4Model.findElementsById(id);
 		if(refs.size() == 1) {
 			int refLineNumber = refs.get(0).getKey();
-			C4WithId<Element> element = c4Model.getElementAtLineNumber(refLineNumber);
+			C4ObjectWithContext<Element> element = c4Model.getElementAtLineNumber(refLineNumber);
 			logger.debug("Found referenced element in line {} for usage in line {}", refLineNumber, params.getPosition().getLine());
 			logger.debug("    Details: {}",element.getIdentifier());
 			final int startPos = C4Utils.getStartPosition(c4Model.getLineAt(params.getPosition().getLine()), element.getIdentifier());
