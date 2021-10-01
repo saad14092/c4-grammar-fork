@@ -209,7 +209,6 @@ public class C4TextDocumentService implements TextDocumentService {
 		List<Diagnostic> errors = new ArrayList<>();
 		C4DocumentModel model = new C4DocumentModel(content, uri);
 		StructurizrDslParser parser = new StructurizrDslParser(model); 
-//		StructurizrDslParser parser = new StructurizrDslParser(); 
 		
 		try {
 			parser.parse(content);

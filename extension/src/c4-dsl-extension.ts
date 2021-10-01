@@ -22,6 +22,12 @@ import { C4StructurizrPreview } from './c4-structurizr-preview';
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
 
+type PlantUmlExportOptions = {
+    uri: string;
+    outDir: string;
+    renderer: string;
+}
+
 export function activate(context: ExtensionContext) {
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
@@ -104,7 +110,9 @@ export function activate(context: ExtensionContext) {
         const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string; 
         const exportDir = workspace.getConfiguration().get(CONF_PLANTUML_EXPORT_DIR) as string; 
 
-        commands.executeCommand("c4-server.export.puml", uri.fsPath, renderer, exportDir).then( result => {
+        const exportOptions: PlantUmlExportOptions = { uri: uri.path, renderer: renderer, outDir: exportDir };
+
+        commands.executeCommand("c4-server.export.puml", exportOptions).then( result => {
             logger.appendLine("Result = "+result);
         });
     });
