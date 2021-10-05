@@ -46,10 +46,10 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		
 		logger.info("initialize");		
 		final InitializeResult res = new InitializeResult(new ServerCapabilities());
-		//res.getCapabilities().setCompletionProvider(new CompletionOptions());
+			//res.getCapabilities().setCompletionProvider(new CompletionOptions());
 		res.getCapabilities().setTextDocumentSync(TextDocumentSyncKind.Full);
 		res.getCapabilities().setCodeLensProvider(new CodeLensOptions());
-		//res.getCapabilities().setHoverProvider(Boolean.TRUE);
+			//res.getCapabilities().setHoverProvider(Boolean.TRUE);
 		res.getCapabilities().setColorProvider(Boolean.TRUE);
 		res.getCapabilities().setDefinitionProvider(Boolean.TRUE);
 		SemanticTokensWithRegistrationOptions semanticTokenOptions = new SemanticTokensWithRegistrationOptions();
@@ -58,7 +58,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		semanticTokenOptions.setLegend(legend);
 		res.getCapabilities().setSemanticTokensProvider(semanticTokenOptions);
 		res.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML)));
-		//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
+			//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);
 	}

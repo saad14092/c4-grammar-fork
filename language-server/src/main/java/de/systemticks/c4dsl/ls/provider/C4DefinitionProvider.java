@@ -2,6 +2,7 @@ package de.systemticks.c4dsl.ls.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Map.Entry;
 
 import org.eclipse.lsp4j.DefinitionParams;
@@ -15,9 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.structurizr.model.ContainerInstance;
 import com.structurizr.model.Element;
-import com.structurizr.model.Relationship;
 import com.structurizr.model.SoftwareSystemInstance;
-import com.structurizr.view.View;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
@@ -36,86 +35,61 @@ public class C4DefinitionProvider {
 		logger.debug("calcDefinitions for line {}", currentLineNumner);
 
 		// search for references in views
-		View view = c4Model.getViewAtLineNumber(currentLineNumner);
-		if(view != null) {
-			String referencedId = C4Utils.getIdentifierOfView(view);
-			if(referencedId != null && !referencedId.equals(IDENTIFIER_WILDCARD)) {
-				Location location = findModelElementById(c4Model, referencedId, params);
-				if(location != null) {
-					locations.add(location);
-				}
+		c4Model.getViewAtLineNumber(currentLineNumner).ifPresent( v -> {
+			findModelElementById(c4Model, C4Utils.getIdentifierOfView(v), params).ifPresent( loc -> locations.add(loc));
+		});
+
+		c4Model.getRelationshipAtLineNumber(currentLineNumner).ifPresent( r -> {
+			findModelElementById(c4Model, r.getObject().getSourceId(), params).ifPresent( loc -> locations.add(loc));
+			findModelElementById(c4Model, r.getObject().getDestinationId(), params).ifPresent( loc -> locations.add(loc));
+		});
+
+		c4Model.getElementAtLineNumber(currentLineNumner).ifPresent( e -> {
+			if(e.getObject() instanceof ContainerInstance) {
+				findModelElementById(c4Model, ((ContainerInstance) e.getObject()).getContainerId(), params).ifPresent( loc -> locations.add(loc));
 			}
-		}
-		C4ObjectWithContext<Relationship> relationship = c4Model.getRelationshipAtLineNumber(currentLineNumner);
-		if(relationship != null) {
-			logger.debug("Selected Line has relationship {}, {}", relationship.getObject().getSourceId(), relationship.getObject().getDestinationId());
-			String sourceId = relationship.getObject().getSourceId();
-			if(sourceId != null && !sourceId.equals(IDENTIFIER_WILDCARD)) {
-				Location location = findModelElementById(c4Model, sourceId, params);
-				if(location != null) {
-					locations.add(location);
-				}
-			}
-			String destinationId = relationship.getObject().getDestinationId();
-			if(destinationId != null && !destinationId.equals(IDENTIFIER_WILDCARD)) {
-				Location location = findModelElementById(c4Model, destinationId, params);
-				if(location != null) {
-					locations.add(location);
-				}
-			}
-		}
-		C4ObjectWithContext<Element> element = c4Model.getElementAtLineNumber(currentLineNumner);
-		if(element != null) {
-			if(element.getObject() instanceof ContainerInstance) {
-				String containerId = ((ContainerInstance) element.getObject()).getContainerId();
-				if(containerId != null && !containerId.equals(IDENTIFIER_WILDCARD)) {
-					Location location = findModelElementById(c4Model, containerId, params);
-					if(location != null) {
-						locations.add(location);
-					}
-				}
-			}
-			else if(element.getObject() instanceof SoftwareSystemInstance) {
-				String softwareSystemId = ((SoftwareSystemInstance) element.getObject()).getSoftwareSystemId();
-				if(softwareSystemId != null && !softwareSystemId.equals(IDENTIFIER_WILDCARD)) {
-					Location location = findModelElementById(c4Model, softwareSystemId, params);
-					if(location != null) {
-						locations.add(location);
-					}
-				}
-			}
-		}
+			else if(e.getObject() instanceof SoftwareSystemInstance) {
+				findModelElementById(c4Model, ((SoftwareSystemInstance) e.getObject()).getSoftwareSystemId(), params).ifPresent( loc -> locations.add(loc));
+			}	
+		});
 
 		return Either.forLeft(locations);
 	}
 
-	private Location findModelElementById(C4DocumentModel c4Model, String id, DefinitionParams params) {
+	private Optional<Location> findModelElementById(C4DocumentModel hostModel, String id, DefinitionParams params) {
 
-		List<Entry<Integer, C4ObjectWithContext<Element>>> refs = c4Model.findElementsById(id);
+		if(id == null || id.equals(IDENTIFIER_WILDCARD)) {
+			return Optional.empty();
+		}
+
+		Optional<Location> result = Optional.empty();
+		List<Entry<Integer, C4ObjectWithContext<Element>>> refs = hostModel.findElementsById(id);
 		if(refs.size() == 1) {
+			C4DocumentModel refModel = refs.get(0).getValue().getContainer();
 			int refLineNumber = refs.get(0).getKey();
-			C4ObjectWithContext<Element> element = c4Model.getElementAtLineNumber(refLineNumber);
+			C4ObjectWithContext<Element> element = refModel.getElementAtLineNumber(refLineNumber).get();
 			logger.debug("Found referenced element in line {} for usage in line {}", refLineNumber, params.getPosition().getLine());
 			logger.debug("    Details: {}",element.getIdentifier());
-			final int startPos = C4Utils.getStartPosition(c4Model.getLineAt(params.getPosition().getLine()), element.getIdentifier());
+			final int startPos = C4Utils.getStartPosition(hostModel.getLineAt(params.getPosition().getLine()), element.getIdentifier());
 			if(startPos == C4Utils.NOT_FOUND_WITHIN_STRING) {
 				logger.error("Identifier {} not found in line {} ", element.getIdentifier(), params.getPosition().getLine());
-				return null;
-			}
-			final int endPos = startPos + element.getIdentifier().length();
-			if(params.getPosition().getCharacter() >= startPos && params.getPosition().getCharacter() <= endPos) {
-				logger.debug("    Cursor {} within range [{}, {}]", params.getPosition().getCharacter(), startPos, endPos);			
-				return createLocationForReferencedIdentifier(c4Model, refLineNumber-1, element.getIdentifier());
 			}
 			else {
-				logger.debug("    Cursor {} out of range [{}, {}]", params.getPosition().getCharacter(), startPos, endPos);			
+				final int endPos = startPos + element.getIdentifier().length();
+				if(params.getPosition().getCharacter() >= startPos && params.getPosition().getCharacter() <= endPos) {
+					logger.debug("    Cursor {} within range [{}, {}]", params.getPosition().getCharacter(), startPos, endPos);
+					result = Optional.of(createLocation(refModel, refLineNumber-1, element.getIdentifier()));
+				}
+				else {
+					logger.debug("    Cursor {} out of range [{}, {}]", params.getPosition().getCharacter(), startPos, endPos);			
+				}	
 			}
 		}
 
-		return null;
+		return result;
 	}
 
-	private Location createLocationForReferencedIdentifier(C4DocumentModel c4Model, int lineNumber, String referencedId) {
+	private Location createLocation(C4DocumentModel c4Model, int lineNumber, String referencedId) {
 
 		Location location = new Location();
 

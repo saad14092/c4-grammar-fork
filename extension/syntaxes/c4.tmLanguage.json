@@ -10,7 +10,11 @@
         },
         {
             "name": "keyword.control.c4",
-            "match": "\\b(workspace|model|enterprise|views|styles|group|constant|adrs|docs|impliedRelationships)\\b"        
+            "match": "\\b(workspace|model|enterprise|views|styles|group)\\b"        
+        },
+        {
+            "name": "storage.type.c4",
+            "match": "\\b(constant|docs|adrs|impliedRelationships|refs)\\b"        
         },
         {
             "name": "keyword.other.c4",

@@ -48,12 +48,12 @@ targetCompatibility = 1.8
 dependencies {
 
 	//implementation 'com.github.torsten-systemticks:dsl:e856bde2e6'
-	implementation 'com.github.torsten-systemticks:dsl:a9d0dffcc7'	
+	implementation 'com.github.torsten-systemticks:dsl:d9cc622705'	
 
 	//implementation 'com.structurizr:structurizr-dsl:1.13.1'
 	implementation 'com.structurizr:structurizr-plantuml:1.6.3'
 	implementation 'com.structurizr:structurizr-mermaid:1.4.1'
-	implementation 'com.structurizr:structurizr-client:1.9.7'
+	implementation 'com.structurizr:structurizr-client:1.9.8'
 	
 	implementation group: 'org.eclipse.lsp4j', name: 'org.eclipse.lsp4j', version: '0.12.0'
 	
