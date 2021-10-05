@@ -10,13 +10,15 @@ Be aware that many features are not yet (fully) available.
 
 Currently it is not running under linux, see (https://gitlab.com/systemticks/c4-grammar/-/issues/81)
 
-The !include is not yet supported, i.e. it only works when the entire model is self-contained in one file.
+The !include is not yet fully supported, i.e. it might not work correctly, in case the entire model is not self-contained in one file.
 
 **DESCRIPTION**
 
 This is a VS Code extension for specifying software architecture models with the [Structurizr DSL](https://github.com/structurizr/dsl).
 
 Structurizr DSL, an example of the [diagram as text](https://structurizr.com/help/text) trend, is the textual representation of the [C4 model](https://c4model.com/).
+
+Technically there is language server built on top of the origin [Structurizr DSL](https://github.com/structurizr/dsl) parser.
 
 ## Diagram Preview
 
@@ -41,7 +43,7 @@ Output folder and Plant UML Renderer are configurable.
 * show all references (not yet available, but planned)
 * semantic validation
 
-![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/17706e9b41936def3e1a27f8289f6e138ab92707/extension/images/c4dsl-screenshot-1.png)
+![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-screenshot-1.png)
 
 ## Semantic Highlighting
 
@@ -67,3 +69,8 @@ The architecture (i.e. its diagrams) of this extension is modeled with - guess w
 Just open `../workspace/c4-dsl-extension.dsl` in your VS Code.
 
 The workspace folder also contains some basic examples from the structurizr dsl website.
+
+**Issues**
+
+Feel free to submit an issue in case you recognize a shortcoming or if you want to request a feature.
+Please attach the corresponding dsl file or its content to the issue, so that the problem can be reproduced.

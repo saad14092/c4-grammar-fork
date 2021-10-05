@@ -1,3 +1,5 @@
+!constant  c4 "c4.dsl"
+
 workspace "C4 DSL Extension Workspace" {
     model {
 
@@ -8,8 +10,8 @@ workspace "C4 DSL Extension Workspace" {
 
             languageServer = container "Language Server" "The Language Server provides C$ DSL specific features via JSON-RPC based protocol to the code editor" "Java Application" {
 
-                dsl_core = component "c4.dsl" "The core xtext-based grammar features, including syntax checks, validation and scoping. Triggers the creation of plantuml files" "Library/JAR"
-                dsl_ide = component "c4.dsl.ide" "Provides enhanced editor features like, code lenses, tooltips, content assist, etc." "Library/JAR"
+                dsl_core = component "${c4}" "The core xtext-based grammar features, including syntax checks, validation and scoping. Triggers the creation of plantuml files" "Library/JAR"
+                dsl_ide = component "${c4}.ide" "Provides enhanced editor features like, code lenses, tooltips, content assist, etc." "Library/JAR"
                 structurizr_dsl = component "structurizr.dsl" " a way to create Structurizr software architecture models based upon the C4 model using a textual domain specific language" "Library/JAR" "Structurizr"
                 structurizr_plantuml = component "structurizr.plantuml" "Exports the views in a Structurizr workspace to diagram definitions that are compatible with PlantUML" "Library/JAR" "Structurizr"
                 xtext = component "org.eclipse.xtext.*" "Framework for development of domain-specific languages, including parser, linker, typechecker" "Library/JAR" "Extern"
@@ -26,7 +28,7 @@ workspace "C4 DSL Extension Workspace" {
                 editor = component "VS Code Editor" "The built-in VS Code Editor" "VS Code component" "BuiltIn"
                 command_service = component "VS Code Command Service" "The built-in VS Code command service. Provides registry and routing of commands" "VS Code component" "BuiltIn"
 
-                commands = component "c4.dsl.commands" "Commands are used to trigger actions in Visual Studio Code" "VS Code component"
+                commands = component "${c4}.commands" "Commands are used to trigger actions in Visual Studio Code" "VS Code component"
 
                 language_client = component "language client" "Wire C4 DSL features provided by the language server with the VS Code editor" "VS Code component"
                 color_highlight = component "color highlight extension" "This extension styles css/web colors found in your document" "VS Code Extension" "Extension"

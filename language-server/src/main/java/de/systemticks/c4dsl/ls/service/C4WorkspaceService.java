@@ -2,6 +2,10 @@ package de.systemticks.c4dsl.ls.service;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
 import org.eclipse.lsp4j.DidChangeWatchedFilesParams;
 import org.eclipse.lsp4j.DidChangeWorkspaceFoldersParams;
@@ -36,12 +40,13 @@ public class C4WorkspaceService implements WorkspaceService{
 	@Override
 	public CompletableFuture<Object> executeCommand(ExecuteCommandParams params) {
 		logger.info("executeCommand {}", params.getCommand());	
-		commandProvider.execute( params.getCommand(), params.getArguments());
-
+		
 		return CompletableFuture.supplyAsync( () -> {
-			return Boolean.TRUE;	
+			JsonObject result = commandProvider.execute( params.getCommand(), params.getArguments()).toJson();
+			logger.info("executeCommand {}, {}", params.getCommand(), result);	
+			return result;	
 		});
-		//return WorkspaceService.super.executeCommand(params);
+
 	}
 	
 	

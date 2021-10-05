@@ -11,6 +11,7 @@ import com.structurizr.io.plantuml.BasicPlantUMLWriter;
 import com.structurizr.io.plantuml.C4PlantUMLWriter;
 import com.structurizr.io.plantuml.PlantUMLWriter;
 import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
+import com.structurizr.view.View;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class C4ExecuteCommandProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(C4ExecuteCommandProvider.class);
 
-    public void execute(String command, List<Object> arguments) {
+    public C4ExecuteCommandResult execute(String command, List<Object> arguments) {
 
         switch (command) {
             case EXPORT_FILE_TO_PUML:
@@ -37,20 +38,20 @@ public class C4ExecuteCommandProvider {
                     String uri = options.get("uri").getAsString();
                     String renderer = options.get("renderer").getAsString();
                     String exportDir = options.get("outDir").getAsString();
-                    exportFileToPuml(uri, renderer, exportDir);
+                    return exportFileToPuml(uri, renderer, exportDir);
                 }
                 break;
         
             default:
             logger.error("Unknown command {}", command);
-            break;
+            return C4ExecuteCommandResult.UNKNOWN_COMMAND.setMessage(command);
         }
+
+        return C4ExecuteCommandResult.UNKNOWN_FAILURE;
 
     }
     
-    private void exportFileToPuml(String path, String renderer, String outDir) {
-
-        //TODO provide a result code as return value
+    private C4ExecuteCommandResult exportFileToPuml(String path, String renderer, String outDir) {
 
         File dslFile = new File(path);
         StructurizrDslParser parser = new StructurizrDslParser();
@@ -59,19 +60,24 @@ public class C4ExecuteCommandProvider {
         try {
             parser.parse(dslFile);
 
-            parser.getWorkspace().getViews().getViews().forEach( view -> {
+            for(View view: parser.getWorkspace().getViews().getViews()) {
                 String puml = writer.toString(view);
                 File out = new File(outDir+File.separator+view.getKey()+PLANTUML_FILE_EXT);
                 logger.info("exportFileToPuml to File {}", out.getAbsolutePath());
                 try {
                     C4Utils.writeContentToFile(out, puml);
-                } catch (IOException e) {
+                } 
+                catch (IOException e) {
                     logger.error("exportFileToPuml {}", e.getMessage());
-                }
-            });
+                    return C4ExecuteCommandResult.IO_EXCEPTION.setMessage(e.getMessage());
+                }                
+            }
+
+            return C4ExecuteCommandResult.OK.setMessage("PlantUML files successfully exported to "+outDir);
 
         } catch (StructurizrDslParserException e) {
             logger.error("exportFileToPuml {}", e.getMessage());
+            return C4ExecuteCommandResult.STRUCTURIZR_PARSER_EXCEPTION.setMessage(e.getMessage());
         }
     }
 

@@ -28,6 +28,11 @@ type PlantUmlExportOptions = {
     renderer: string;
 }
 
+type CommandResultCode = {
+    resultcode: number;
+    message: string;
+}
+
 export function activate(context: ExtensionContext) {
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
@@ -112,8 +117,14 @@ export function activate(context: ExtensionContext) {
 
         const exportOptions: PlantUmlExportOptions = { uri: uri.path, renderer: renderer, outDir: exportDir };
 
-        commands.executeCommand("c4-server.export.puml", exportOptions).then( result => {
-            logger.appendLine("Result = "+result);
+        commands.executeCommand("c4-server.export.puml", exportOptions).then( callback => {
+            const result = callback as CommandResultCode
+            if(result.resultcode == 100) {
+                window.showInformationMessage(result.message);
+            }      
+            else {
+                window.showErrorMessage("(Code:"+result.resultcode+") "+result.message);
+            }
         });
     });
 
@@ -121,7 +132,6 @@ export function activate(context: ExtensionContext) {
     logger.appendLine("Initialized");
     return languageClient;
 }
-
 
 export function deactivate() {
     

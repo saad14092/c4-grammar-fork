@@ -4,18 +4,12 @@ public class C4ObjectWithContext<T> {
     
     private String identifier;
     private T object;
-    private int endLine;
+    private C4DocumentModel container;
 
-    public C4ObjectWithContext(String identifier, T object) {
+    public C4ObjectWithContext(String identifier, T object, C4DocumentModel container) {
         this.identifier = identifier;
         this.object = object;
-        this.endLine = -1;
-    }
-
-    public C4ObjectWithContext(String identifier, T object, int endLine) {
-        this.identifier = identifier;
-        this.object = object;
-        this.endLine = endLine;
+        this.container = container;
     }
 
     public String getIdentifier() {
@@ -26,13 +20,8 @@ public class C4ObjectWithContext<T> {
         return object;
     }
 
-    public int getEndLine() {
-        return endLine;
+    public C4DocumentModel getContainer() {
+        return container;
     }
-
-    public void setEndLine(int endLine) {
-        this.endLine = endLine;
-    }
-
 
 }

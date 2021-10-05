@@ -23,7 +23,8 @@ public class C4ColorProvider {
 
 	public List<ColorInformation> calcDocumentColors(C4DocumentModel model) {
 
-		logger.debug("calcDocumentColors");
+		logger.debug("calcDocumentColors {}", model.getUri());
+		logger.debug("                   {}", model.getColors().toString());
 		
 		try  {
 			List<ColorInformation> result = model.getColors().stream().map( lineNmbr -> {

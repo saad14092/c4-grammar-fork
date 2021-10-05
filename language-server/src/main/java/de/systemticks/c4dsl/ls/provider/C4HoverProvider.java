@@ -14,7 +14,7 @@ import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 public class C4HoverProvider {
 
 	public Hover calcHover(C4DocumentModel c4, HoverParams params) {
-	
+	/*
 		View view = c4.getViewAtLineNumber(params.getPosition().getLine()+1);
 
 		if(view != null) {
@@ -27,7 +27,7 @@ public class C4HoverProvider {
 				return new Hover(content);
 			}		
 		}
-		
+	*/	
 		return null;		
 	}
 
