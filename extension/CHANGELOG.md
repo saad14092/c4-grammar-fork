@@ -1,5 +1,9 @@
 # Change Log
 
+## v3.1.1
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/81
+
 ## v3.1.0
 
 Initial support for !include feature
