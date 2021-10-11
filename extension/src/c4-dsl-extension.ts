@@ -14,13 +14,17 @@
 
 import {ExtensionContext, workspace, commands, window, StatusBarAlignment, Uri } from 'vscode'
 import * as path from 'path';
+import * as net from 'net';
+import * as cp from 'child_process'
+import * as readline from 'readline'
 
 import { LanguageClientOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
-import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { LanguageClient, ServerOptions, StreamInfo } from 'vscode-languageclient/node';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
 
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
+const CONF_LANGUAGESERVER_CONNECTIONTYPE = "c4.languageserver.connectiontype"
 
 type PlantUmlExportOptions = {
     uri: string;
@@ -33,6 +37,8 @@ type CommandResultCode = {
     message: string;
 }
 
+var proc: cp.ChildProcess
+
 export function activate(context: ExtensionContext) {
 
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
@@ -42,25 +48,46 @@ export function activate(context: ExtensionContext) {
     const logger = window.createOutputChannel("C4 DSL Extension");
     logger.appendLine("Initializing");
  
-    const serverOptions: ServerOptions = {
-        run: {            
-            command: serverLauncher,
-            args: ['-log', '-trace']
-        },
-        debug: {
-            command: serverLauncher,
-            args: ['-log', '-trace']
-        }
-    };
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'c4' }],
         outputChannel: logger,
-//        revealOutputChannelOn: RevealOutputChannelOn.Info,
         synchronize: {
             fileEvents: workspace.createFileSystemWatcher('**/*.dsl')
         }
     };
-    const languageClient = new LanguageClient('c4LanguageClient', 'C4 Language Server', serverOptions, clientOptions);
+    const connectionType = workspace.getConfiguration().get(CONF_LANGUAGESERVER_CONNECTIONTYPE) as string; 
+
+    //
+    const getServerOptions = function (): ServerOptions {
+
+
+        if(connectionType === "process-io" || (connectionType === "auto" && process.platform === 'win32')) {
+            return {
+                run: {            
+                    command: serverLauncher,
+                    args: ['-log', '-trace']
+                },
+                debug: {
+                    command: serverLauncher,
+                    args: ['-log', '-trace']
+                }    
+            }    
+        }
+        else {
+            const serverDebugOptions = () => {
+                let socket = net.connect( { port: 5008 });
+                let result: StreamInfo = {
+                    writer: socket,
+                    reader: socket
+                };
+                return Promise.resolve(result);
+            }  
+            return serverDebugOptions            
+        }
+    }
+    //
+
+    const languageClient = new LanguageClient('c4LanguageClient', 'C4 Language Server', getServerOptions(), clientOptions);
 
     const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 100)
     statusBarItem.show()
@@ -83,7 +110,32 @@ export function activate(context: ExtensionContext) {
     })
 
     languageClient.trace = Trace.Verbose
-    const disposable = languageClient.start();
+
+    if(connectionType === "socket" || (connectionType === "auto" && process.platform !== 'win32')) {
+        
+        const READY_ECHO = "READY_TO_CONNECT"
+
+        statusBarItem.text = "C4 DSL Socket Server is starting up..."
+        statusBarItem.color = 'white'
+
+        proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
+        
+        readline.createInterface({
+            input     : proc.stdout,
+            terminal  : false
+          }).on('line', function(line: string) {
+            if(line.endsWith(READY_ECHO)) {
+                const disposable = languageClient.start();
+                context.subscriptions.push(disposable);
+            }
+          });
+
+    }
+
+    else {
+        const disposable = languageClient.start();
+        context.subscriptions.push(disposable);
+    }
 
     /*
     commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
@@ -92,7 +144,6 @@ export function activate(context: ExtensionContext) {
         window.activeTextEditor?.revealRange(range);
     });      
     */
-    context.subscriptions.push(disposable);
     
     const structurizrPanel = new C4StructurizrPreview(logger);
 
@@ -135,4 +186,8 @@ export function activate(context: ExtensionContext) {
 
 export function deactivate() {
     
+    if(proc) {
+        proc.kill('SIGINT');
+    }
+
 } 

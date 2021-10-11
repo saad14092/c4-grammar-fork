@@ -1,7 +1,14 @@
 package de.systemticks.c4dsl.ls;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -20,13 +27,30 @@ public class C4LanguageServerLauncher {
 	public static void main(String[] args) {
 		
 		try {
-			startServer(System.in, System.out);
-		} catch (ExecutionException e) {
+            if(args != null && args.length > 1 && args[0].equals("--socket")) {
+                logger.info("Starting Socket Connection");
+                final AsynchronousServerSocketChannel serverSocket = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress("0.0.0.0", 5008));
+                // echo to the client, that server is ready to receive incoming connections
+                logger.info(args[1]);   
+                final AsynchronousSocketChannel  socketChannel = serverSocket.accept().get();
+                InputStream socketin = Channels.newInputStream(socketChannel);
+                OutputStream socketOut = Channels.newOutputStream(socketChannel);
+                startServer(socketin, socketOut);
+            }
+            else {
+                logger.info("Starting ProcessIO Connection");
+                startServer(System.in, System.out);
+            }
+		} 
+        catch (ExecutionException e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} 
+        catch (InterruptedException e) {
 			logger.error(e.getMessage());
-		}
+		} 
+        catch (IOException e) {
+			logger.error(e.getMessage());
+        }
 		
 	}
 	

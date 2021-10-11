@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -80,6 +80,16 @@
                     "default": "./export",
                     "description": "The folder for the exported plantuml files. Can be relative or absolute",
                     "scope": "application"
+                },
+                "c4.languageserver.connectiontype": {
+                    "type": "string",
+                    "enum": [
+                        "auto",
+                        "process-io",
+                        "socket"                    ],
+                    "default": "auto",
+                    "scope": "application",
+                    "description": "Determines how language client and language server are connected"
                 }
             }
         }

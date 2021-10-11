@@ -8,8 +8,6 @@ Use on your own risk.
 The Xtext Grammar has been removed and thus the language server needs to be reimplemented from scratch. 
 Be aware that many features are not yet (fully) available.
 
-Currently it is not running under linux, see (https://gitlab.com/systemticks/c4-grammar/-/issues/81)
-
 The !include is not yet fully supported, i.e. it might not work correctly, in case the entire model is not self-contained in one file.
 
 **DESCRIPTION**
