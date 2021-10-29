@@ -20,7 +20,10 @@ Technically there is language server built on top of the origin [Structurizr DSL
 
 ## Diagram Preview
 
-Every C4 view in the editor will be enriched with a code lense (Show as Structurizr Diagram). When clicking, the corresponding view will be rendered with the origin Structurizr Viewer.
+Every C4 view in the editor will be enriched with a code lense (Show as Structurizr Diagram). When clicking the workspace of your c4 model will be sent as a Base64-encoded string to www.structurizr.com for rendering purposes. This feature is deactivated by default, in case of you have concerns making your diagrams public.
+You can activate the feature by setting the corresponding configuration property *c4.diagram.structurizr.enabled* to true.
+
+> :info: I am working on supporting local plantuml rendering as an alternative solution.
 
 ## PlantUML Export
 
@@ -50,6 +53,15 @@ When describing C4 models textually, there are plenty of raw strings describing 
 Therefore a semantic highlighting option is provided, in order to highlight the different aspects in different colors (see screenshot below).
 
 ![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-semantic-highlighting.png)
+
+## Configuration
+
+|Name | Values | Default  | Description|
+--- | --- | --- | ---
+|c4.export.plantuml.generator|<ul><li>StructurizrPlantUMLWriter</li><li>C4PlantUMLWriter</li><li>BasicPlantUMLWriter</li></ul>|StructurizrPlantUMLWriter|The flavor of the generated Plant UML
+|c4.export.plantuml.dir||./export|The folder for the exported plantuml files. Can be relative or absolute
+|c4.languageserver.connectiontype|<ul><li>auto</li><li>process-io</li><li>socket</li></ul>|auto|Determines how language client and language server are connected
+|c4.diagram.structurizr.enabled|true/false|false|If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns
 
 ## Pre-requisites
 

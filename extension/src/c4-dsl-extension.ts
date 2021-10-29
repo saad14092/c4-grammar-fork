@@ -25,6 +25,7 @@ import { C4StructurizrPreview } from './c4-structurizr-preview';
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
 const CONF_LANGUAGESERVER_CONNECTIONTYPE = "c4.languageserver.connectiontype"
+const CONF_DIAGRAM_STRUCTURIZR_ENABLED = "c4.diagram.structurizr.enabled"
 
 type PlantUmlExportOptions = {
     uri: string;
@@ -149,14 +150,22 @@ export function activate(context: ExtensionContext) {
 
     commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
         
-        const encodedWorkspaceJson = args[0]
-        const diagramKey = args[1]
+        const diagramEnabled = workspace.getConfiguration().get(CONF_DIAGRAM_STRUCTURIZR_ENABLED) as boolean
 
-        try {
-            await structurizrPanel.updateWebView(encodedWorkspaceJson, diagramKey);
+        if(!diagramEnabled) {
+            window.showInformationMessage("You have to set the config item 'c4.diagram.structurizr.enabled' to true, if you want to use the public structurizr renderer");
         }
-        catch (err) {
-            logger.appendLine("Error displaying preview: " + JSON.stringify(err))
+
+        else {
+            const encodedWorkspaceJson = args[0]
+            const diagramKey = args[1]
+    
+            try {
+                await structurizrPanel.updateWebView(encodedWorkspaceJson, diagramKey);
+            }
+            catch (err) {
+                logger.appendLine("Error displaying preview: " + JSON.stringify(err))
+            }    
         }
         
     });
