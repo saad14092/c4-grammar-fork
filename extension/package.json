@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -90,7 +90,12 @@
                     "default": "auto",
                     "scope": "application",
                     "description": "Determines how language client and language server are connected"
-                }
+                },
+                "c4.diagram.structurizr.enabled": {
+                    "type": "boolean",
+                    "default": false,          
+                    "description": "If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."                    
+                }                
             }
         }
     },
