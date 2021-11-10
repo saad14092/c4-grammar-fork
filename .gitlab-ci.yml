@@ -17,7 +17,7 @@ c4-language-server:
     expire_in: 60 min
 
 c4-language-client:
-  image: node:10
+  image: node:14
   stage: client
 
   variables:

@@ -7,9 +7,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.dsl.StructurizrDslParserException;
@@ -32,7 +32,7 @@ public class C4DocumentManager implements StructurizrDslParserListener {
     
     private static final Logger logger = LoggerFactory.getLogger(C4DocumentManager.class);
 
-    private Map<String, C4DocumentModel> c4Models = new HashMap<>();
+    private Map<String, C4DocumentModel> c4Models = new ConcurrentHashMap<>();
 
 	private File currentFile;
 
@@ -117,7 +117,9 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 		
 		try {
 			currentFile = file;
-			parser.parse(content);
+			synchronized( this ) {
+				parser.parse(content);
+			}
 		} catch (StructurizrDslParserException e) {
 			logger.error("calcDiagnostics {}", e.getMessage());
 
