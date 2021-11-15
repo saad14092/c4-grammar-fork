@@ -86,7 +86,9 @@
                     "enum": [
                         "auto",
                         "process-io",
-                        "socket"                    ],
+                        "socket",
+                        "socket-debug"
+                    ],
                     "default": "auto",
                     "scope": "application",
                     "description": "Determines how language client and language server are connected"

@@ -119,8 +119,10 @@ export function activate(context: ExtensionContext) {
         statusBarItem.text = "C4 DSL Socket Server is starting up..."
         statusBarItem.color = 'white'
 
-        proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
+        //proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
         
+        proc = cp.exec( '"' + serverLauncher + '" '+ ['--socket', READY_ECHO].join(' '))
+
         readline.createInterface({
             input     : proc.stdout,
             terminal  : false
@@ -129,8 +131,7 @@ export function activate(context: ExtensionContext) {
                 const disposable = languageClient.start();
                 context.subscriptions.push(disposable);
             }
-          });
-
+        });
     }
 
     else {

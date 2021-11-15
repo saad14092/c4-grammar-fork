@@ -5,7 +5,13 @@
 {
 	"version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "java",
+            "name": "Language Server",
+            "request": "launch",
+            "mainClass": "de.systemticks.c4dsl.ls.C4LanguageServerLauncher",
+            "args": "--socket READY_TO_CONNECT"
+        },
         {
             "preLaunchTask": "npm: build - extension",
             "name": "C4 DSL Extension",

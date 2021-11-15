@@ -34,24 +34,19 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 
     private Map<String, C4DocumentModel> c4Models = new ConcurrentHashMap<>();
 
-	private File currentFile;
+	private String currentFile;
 
-    public C4DocumentModel getDocument(TextDocumentIdentifier documentId) {
-        
-        try {
-            return getModel(new File(new URI(documentId.getUri())));
-        } 
-        catch (URISyntaxException e) {
-            logger.error(e.getMessage());
-        }
-        return null;
+    public C4DocumentModel getDocument(TextDocumentIdentifier documentId) throws URISyntaxException {
+                    
+		return getModel(new File(new URI(documentId.getUri())));
     }
 
 	@Override
 	public void onParsedRelationShip(File file, int lineNumber, String identifier, Relationship relationship) {
 		if(relationship != null) {
 			logger.debug("onParsedRelationShip {}->{}, identifier: {}, at linenumber: {}, {}", relationship.getSourceId(), relationship.getDestinationId(), identifier,  file.getName(), lineNumber);
-            getModel(file).addRelationship(lineNumber, new C4ObjectWithContext<Relationship>(identifier, relationship, getModel(file)));
+			C4DocumentModel c4Model = getModel(file);
+			c4Model.addRelationship(lineNumber, new C4ObjectWithContext<Relationship>(identifier, relationship, c4Model));
 		}
 		else {
 			logger.error("onParsedRelationShip at linenumber {}, {}", file.getName(), lineNumber);
@@ -61,7 +56,8 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 	@Override
 	public void onParsedModelElement(File file, int lineNumber, String identifier, Element item) {
 		logger.debug("onParsedModelElement identifier: {}, modelId: {} at linenumber: {}, {}", identifier, item.getId(), file.getName(), lineNumber);
-        getModel(file).addElement(lineNumber, new C4ObjectWithContext<Element>(identifier, item, getModel(file)));
+		C4DocumentModel c4Model = getModel(file);
+        c4Model.addElement(lineNumber, new C4ObjectWithContext<Element>(identifier, item, c4Model));
 	}
 
 	@Override
@@ -91,12 +87,15 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 
 	private C4DocumentModel getModel(File _file) {
 
-		File file = (currentFile != null && _file.getName().equals(".")) ? currentFile : _file;
-	
-        return c4Models.computeIfAbsent(file.getAbsolutePath(), (key) -> {
+		String file = (currentFile != null && _file.getName().equals(".")) ? currentFile : _file.getAbsolutePath();
+
+		logger.debug("getModel _file: {}, currentFile: {} -> {}", _file.getName(), currentFile, file);
+
+        return c4Models.computeIfAbsent(file, (key) -> {
             try {
+                logger.error("getModel - created through internal include {}", file);
                 String content = new String(Files.readAllBytes( Paths.get(key)));
-                C4DocumentModel model = new C4DocumentModel(content, file.getAbsolutePath(), true);
+                C4DocumentModel model = new C4DocumentModel(content, file, true);
                 return model;
             } 
             catch (IOException e) {
@@ -106,22 +105,32 @@ public class C4DocumentManager implements StructurizrDslParserListener {
         });
     }
 
-	public List<Diagnostic> calcDiagnostics(File file, String content) {
+	private C4DocumentModel createModel(File file, String content) {
+
+		currentFile = file.getAbsolutePath();
+
+		logger.debug("createModel {}", currentFile);
+
+		C4DocumentModel model = new C4DocumentModel(content, currentFile);
 		
+		return c4Models.compute(file.getAbsolutePath(), (k, v) -> model);	
+
+	}
+
+	public List<Diagnostic> calcDiagnostics(File file, String content) {
+
 		logger.debug("calcDiagnostics");
+		StructurizrDslParser parser = new StructurizrDslParser(this); 	
 		List<Diagnostic> errors = new ArrayList<>();
-		C4DocumentModel model = new C4DocumentModel(content, file.getAbsolutePath());
-        c4Models.put(file.getAbsolutePath(), model);	
-		logger.debug("Add new Document for {}", file.getAbsolutePath());
-		StructurizrDslParser parser = new StructurizrDslParser(this); 
+		C4DocumentModel model = createModel(file, content);
 		
 		try {
-			currentFile = file;
-			synchronized( this ) {
-				parser.parse(content);
-			}
+			logger.debug("Parsing... {}", content);
+			parser.parse(content);
+			logger.debug("Parsing finished");
 		} catch (StructurizrDslParserException e) {
-			logger.error("calcDiagnostics {}", e.getMessage());
+			logger.debug("Parsing failed");
+			logger.info("ParserException {}", e.getMessage());
 
 			int startPos = C4Utils.findFirstNonWhitespace(e.getLine(), 0, true);
 			int endPos = e.getLine().length();
@@ -132,14 +141,12 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 			diagnostic.setMessage(e.getMessage());
 			diagnostic.setRange(new Range(new Position(row, startPos), new Position(row, endPos)));
 			errors.add(diagnostic);
+		} catch (Exception e) {
+			logger.error("calcDiagnostics {}"+e.getMessage());
 		}
-		
-		try {
+		finally {
 			model.setWorkspace(parser.getWorkspace());
 			model.setValid(errors.size() == 0);		
-		}
-		catch(Exception e) {
-			logger.error("Cannot parse workspace: {}", e.getMessage());
 		}
 		
 		return errors;
