@@ -14,7 +14,7 @@ c4-language-server:
   artifacts:
     when: always
     reports:
-      junit: build/test-results/test/**/TEST-*.xml
+      junit: language-server/build/test-results/test/**/TEST-*.xml
     paths: 
       - extension/server/c4-language-server
     expire_in: 60 min
