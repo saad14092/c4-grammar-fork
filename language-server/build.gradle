@@ -10,6 +10,7 @@ plugins {
     id 'java-library'
     id 'eclipse'
 	id 'application'
+	id 'jacoco'
 }
 
 application {
@@ -60,7 +61,13 @@ dependencies {
 	implementation 'ch.qos.logback:logback-classic:1.2.6'
 	
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+	testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+}
+
+test {
+  useJUnitPlatform()
 }
 
 task deployToVSCode(type: Copy, dependsOn: distZip) {
@@ -82,6 +89,10 @@ task deployToVSCode(type: Copy, dependsOn: distZip) {
 
 task cleanDeployedServer(type: Delete) {
 	delete fileTree("${buildDir}/../../extension/server")
+}
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 build.dependsOn deployToVSCode

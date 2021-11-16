@@ -32,7 +32,7 @@ public class C4CodeLenseProvider {
 			String jsonWorkspace = C4Generator.generateEncodedWorkspace(c4.getWorkspace());
 			c4.getAllViews().forEach( entry -> {
 				int lineNumber = entry.getKey();
-				String line = c4.getLineAt(lineNumber);
+				String line = c4.getLineAt(lineNumber-1);
 				int pos = C4Utils.findFirstNonWhitespace(line, 0, true);
 				Range range = new Range(new Position(lineNumber-1, pos), new Position(lineNumber-1, pos));
 				Command command = new Command("$(link-external) Show as Structurizr Diagram", "c4.show.diagram");
