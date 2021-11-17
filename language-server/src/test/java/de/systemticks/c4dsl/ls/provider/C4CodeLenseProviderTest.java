@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.lsp4j.CodeLens;

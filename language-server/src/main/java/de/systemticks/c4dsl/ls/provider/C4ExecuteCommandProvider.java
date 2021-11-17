@@ -29,16 +29,26 @@ public class C4ExecuteCommandProvider {
 
         switch (command) {
             case EXPORT_FILE_TO_PUML:
-                if(arguments.size() != 1) {
+
+                if(arguments == null) {
+                    return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
+                }
+                else if(arguments.size() != 1) {
                     logger.error("Command {} does not contain any options", command);
                 }
                 else {
-                    JsonObject options = (JsonObject) arguments.get(0);
-                    logger.info("Execute Command {} with options {}",command,options);
-                    String uri = options.get("uri").getAsString();
-                    String renderer = options.get("renderer").getAsString();
-                    String exportDir = options.get("outDir").getAsString();
-                    return exportFileToPuml(uri, renderer, exportDir);
+                    try {
+                        JsonObject options = (JsonObject) arguments.get(0);
+                        logger.info("Execute Command {} with options {}",command,options);
+                        String uri = options.get("uri").getAsString();
+                        String renderer = options.get("renderer").getAsString();
+                        String exportDir = options.get("outDir").getAsString();
+                        return exportFileToPuml(uri, renderer, exportDir);    
+                    }
+                    catch(ClassCastException | NullPointerException e) {
+                        logger.error("execute {}", e.getMessage());
+                        return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
+                    }
                 }
                 break;
         
