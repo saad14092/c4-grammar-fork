@@ -9,7 +9,9 @@ import com.structurizr.Workspace;
 import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.io.mermaid.MermaidWriter;
 import com.structurizr.io.plantuml.PlantUMLWriter;
+import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
 import com.structurizr.util.WorkspaceUtils;
+import com.structurizr.view.View;
 
 public class C4Generator {
 
@@ -21,6 +23,11 @@ public class C4Generator {
 
 	public static String generateEncodedWorkspace(Workspace workspace) throws Exception {
 		return Base64.getEncoder().encodeToString(WorkspaceUtils.toJson(workspace, false).getBytes());
+	}
+
+	public static String generateEncodedPlantUml(View view, PlantUMLWriter writer) throws Exception {
+		String puml = writer.toString(view);
+		return Base64.getEncoder().encodeToString(puml.getBytes());
 	}
 
 //	public void generatePlantUML(StructurizrDslParser parser, String outDir) {

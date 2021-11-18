@@ -12,6 +12,9 @@ c4-language-server:
     - ./gradlew deployToVSCode
 
   artifacts:
+    when: always
+    reports:
+      junit: language-server/build/test-results/test/**/TEST-*.xml
     paths: 
       - extension/server/c4-language-server
     expire_in: 60 min
