@@ -125,7 +125,7 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 		C4DocumentModel model = createModel(file, content);
 		
 		try {
-			logger.debug("Parsing... {}", content);
+			logger.debug("Parsing...");
 			parser.parse(content);
 			logger.debug("Parsing finished");
 		} catch (StructurizrDslParserException e) {

@@ -25,7 +25,7 @@ public class C4CodeLenseProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(C4CodeLenseProvider.class);
 
-	BiFunction<Workspace, View, Command> toStructurizr = (workspace, view) -> {
+	public static BiFunction<Workspace, View, Command> toStructurizr = (workspace, view) -> {
 		Command command = new Command("$(link-external) Show as Structurizr Diagram", "c4.show.diagram");
 		command.setArguments(new ArrayList<Object>());
 		try {
@@ -37,7 +37,7 @@ public class C4CodeLenseProvider {
 		return command;
 	};
 
-	BiFunction<Workspace, View, Command> toPlantUML = (workspace, view) -> {
+	public static BiFunction<Workspace, View, Command> toPlantUML = (workspace, view) -> {
 		Command command = new Command("$(link-external) Show as PlantUML Diagram", "c4.show.plantuml");
 		command.setArguments(new ArrayList<Object>());
 		try {
@@ -48,8 +48,10 @@ public class C4CodeLenseProvider {
 		return command;
 	};
 
-	public List<CodeLens> calcCodeLenses(C4DocumentModel c4) {
+	public List<CodeLens> calcCodeLenses(C4DocumentModel c4, String renderer) {
 		
+		BiFunction<Workspace, View, Command> func = renderer.contentEquals(C4Utils.RENDERER_STRUCTURIZR) ? C4CodeLenseProvider.toStructurizr : C4CodeLenseProvider.toPlantUML;
+
 		if(!c4.isValid()) {
 			return Collections.emptyList();
 		}
@@ -59,8 +61,7 @@ public class C4CodeLenseProvider {
 			String line = c4.getLineAt(lineNumber-1);
 			int pos = C4Utils.findFirstNonWhitespace(line, 0, true);
 			Range range = new Range(new Position(lineNumber-1, pos), new Position(lineNumber-1, pos));
-			toStructurizr.apply(c4.getWorkspace(), entry.getValue());
-			return new CodeLens(range, toStructurizr.apply(c4.getWorkspace(), entry.getValue()), null);				
+			return new CodeLens(range, func.apply(c4.getWorkspace(), entry.getValue()), null);				
 		}).collect(Collectors.toList());
 	}
 

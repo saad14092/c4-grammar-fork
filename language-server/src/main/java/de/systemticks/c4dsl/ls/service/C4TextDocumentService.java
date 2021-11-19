@@ -140,7 +140,7 @@ public class C4TextDocumentService implements TextDocumentService {
 	
 			C4DocumentModel model = getDocument(params.getTextDocument());
 			if(model != null && model.isValid()) {
-				return codeLenseProvider.calcCodeLenses(model);
+				return codeLenseProvider.calcCodeLenses(model, this.ls.getRenderer());
 			}
 			else {
 				return Collections.emptyList();

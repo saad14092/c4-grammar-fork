@@ -17,6 +17,9 @@ public class C4Utils {
 
     public static final int NOT_FOUND_WITHIN_STRING = -1;
 
+    public static final String RENDERER_STRUCTURIZR = "structurizr";
+    public static final String RENDERER_PLANTUML = "plantuml";
+
     public static void writeContentToFile(File out, String content) throws IOException {
         out.getParentFile().mkdirs();
         FileWriter fw = new FileWriter(out);

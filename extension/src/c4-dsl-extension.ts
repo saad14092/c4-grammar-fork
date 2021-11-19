@@ -20,17 +20,27 @@ import * as readline from 'readline'
 
 import { LanguageClientOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
 import { LanguageClient, ServerOptions, StreamInfo } from 'vscode-languageclient/node';
+//import { C4StructurizrPreview } from './c4-structurizr-preview';
+import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
 
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
 const CONF_LANGUAGESERVER_CONNECTIONTYPE = "c4.languageserver.connectiontype"
 const CONF_DIAGRAM_STRUCTURIZR_ENABLED = "c4.diagram.structurizr.enabled"
+const CONF_DIAGRAM_PLANTUML_ENABLED = "c4.diagram.plantuml.enabled"
+const CONF_PLANTUML_SERVER = "c4.show.plantuml.server"
+const CONF_INLINE_RENDERER = "c4.diagram.renderer"
 
 type PlantUmlExportOptions = {
     uri: string;
     outDir: string;
     renderer: string;
+}
+
+type ConfigurationOptions = {
+    renderer: string
+    flavour?: string
 }
 
 type CommandResultCode = {
@@ -102,6 +112,7 @@ export function activate(context: ExtensionContext) {
             case State.Running:
                 statusBarItem.text = "C4 DSL Language Server is ready"
                 statusBarItem.color = 'white'
+                updateServerConfiguration()
                 break;
             case State.Stopped:
                 statusBarItem.text = "C4 Language Server has stopped"
@@ -120,8 +131,9 @@ export function activate(context: ExtensionContext) {
         statusBarItem.color = 'white'
 
         //proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
-        
-        proc = cp.exec( '"' + serverLauncher + '" '+ ['--socket', READY_ECHO].join(' '))
+        const renderer = workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string
+
+        proc = cp.exec( '"' + serverLauncher + '" '+ ['-c=socket', '-e='+READY_ECHO, '-ir='+renderer].join(' '))
 
         readline.createInterface({
             input     : proc.stdout,
@@ -147,10 +159,10 @@ export function activate(context: ExtensionContext) {
     });      
     */
     
-    const structurizrPanel = new C4StructurizrPreview(logger);
+    const structurizrPanel = new C4StructurizrPreview(logger)
+    const svgPreviewPanel = new C4PlantUMLPreview( workspace.getConfiguration().get(CONF_PLANTUML_SERVER) as string)
 
-    commands.registerCommand("c4.show.diagram", async(...args: string[]) => {
-        
+    commands.registerCommand("c4.show.diagram", async(...args: string[]) => {        
         const diagramEnabled = workspace.getConfiguration().get(CONF_DIAGRAM_STRUCTURIZR_ENABLED) as boolean
 
         if(!diagramEnabled) {
@@ -167,10 +179,28 @@ export function activate(context: ExtensionContext) {
             catch (err) {
                 logger.appendLine("Error displaying preview: " + JSON.stringify(err))
             }    
-        }
-        
+        }        
     });
 
+    commands.registerCommand("c4.show.plantuml", async(...args: string[]) => {        
+
+        const diagramEnabled = workspace.getConfiguration().get(CONF_DIAGRAM_PLANTUML_ENABLED) as boolean
+
+        if(!diagramEnabled) {
+            window.showInformationMessage("You have to set the config item 'c4.diagram.plantuml.enabled' to true, if you want to use the public kroki rendering service");
+        }
+        else {
+            const encodedPlantUML = args[0]
+    
+            try {
+                await svgPreviewPanel.updateWebView(encodedPlantUML);
+            }
+            catch (err) {
+                logger.appendLine("Error displaying preview: " + JSON.stringify(err))
+            } 
+        }   
+    });
+    
     commands.registerCommand("c4.export.puml", ( uri: Uri ) => {
 
         const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string; 
@@ -192,6 +222,16 @@ export function activate(context: ExtensionContext) {
 
     logger.appendLine("Initialized");
     return languageClient;
+}
+
+function updateServerConfiguration() {
+
+    const configOptions: ConfigurationOptions = { renderer:  workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string};
+
+    commands.executeCommand("c4-server.configuration", configOptions).then( callback => {
+        window.showInformationMessage("Configuration Updated")
+    });
+
 }
 
 export function deactivate() {
