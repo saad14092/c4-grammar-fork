@@ -112,7 +112,7 @@ export function activate(context: ExtensionContext) {
             case State.Running:
                 statusBarItem.text = "C4 DSL Language Server is ready"
                 statusBarItem.color = 'white'
-                updateServerConfiguration()
+                //updateServerConfiguration()
                 break;
             case State.Stopped:
                 statusBarItem.text = "C4 Language Server has stopped"
@@ -224,7 +224,7 @@ export function activate(context: ExtensionContext) {
     return languageClient;
 }
 
-function updateServerConfiguration() {
+export function updateServerConfiguration() {
 
     const configOptions: ConfigurationOptions = { renderer:  workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string};
 
