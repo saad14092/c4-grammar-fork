@@ -67,7 +67,8 @@ export function activate(context: ExtensionContext) {
         }
     };
     const connectionType = workspace.getConfiguration().get(CONF_LANGUAGESERVER_CONNECTIONTYPE) as string; 
-
+    const renderer = workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string
+    
     //
     const getServerOptions = function (): ServerOptions {
 
@@ -76,11 +77,11 @@ export function activate(context: ExtensionContext) {
             return {
                 run: {            
                     command: serverLauncher,
-                    args: ['-log', '-trace']
+                    args: ['-ir='+renderer]
                 },
                 debug: {
                     command: serverLauncher,
-                    args: ['-log', '-trace']
+                    args: ['-ir='+renderer]
                 }    
             }    
         }
@@ -131,8 +132,6 @@ export function activate(context: ExtensionContext) {
         statusBarItem.color = 'white'
 
         //proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
-        const renderer = workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string
-
         proc = cp.exec( '"' + serverLauncher + '" '+ ['-c=socket', '-e='+READY_ECHO, '-ir='+renderer].join(' '))
 
         readline.createInterface({

@@ -35,6 +35,12 @@ public class C4LanguageServerLauncher implements Callable<Integer> {
     @Option(names = {"-ir", "--inlineRenderer"}, description = "Echo to the client, to inform that socket can now accept incoming connections")
     private String renderer = C4Utils.RENDERER_STRUCTURIZR;
 
+    @Option(names = "-log") 
+    private boolean logActivated;
+
+    @Option(names = "-trace") 
+    private boolean traceActivated;
+
     @Override
     public Integer call() throws Exception {		
 		try {

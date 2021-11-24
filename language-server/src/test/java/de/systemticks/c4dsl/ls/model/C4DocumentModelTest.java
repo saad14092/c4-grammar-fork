@@ -1,6 +1,7 @@
 package de.systemticks.c4dsl.ls.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class C4DocumentModelTest {
             assertTrue(model.getViewAtLineNumber(80).isPresent());
             assertTrue(model.getViewAtLineNumber(86).isPresent());
 
-            assertTrue(model.getViewAtLineNumber(90).isEmpty());
+            assertFalse(model.getViewAtLineNumber(90).isPresent());
 
             assertEquals(2, model.getAllElements().stream().filter(ele -> (ele.getValue().getObject() instanceof SoftwareSystem)).collect(Collectors.toList()).size());
 
