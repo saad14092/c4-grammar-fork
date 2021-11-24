@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.zip.Deflater;
 
 import com.structurizr.Workspace;
 import com.structurizr.dsl.StructurizrDslParser;
@@ -27,9 +28,21 @@ public class C4Generator {
 
 	public static String generateEncodedPlantUml(View view, PlantUMLWriter writer) throws Exception {
 		String puml = writer.toString(view);
-		return Base64.getEncoder().encodeToString(puml.getBytes());
+		return new String(Base64.getUrlEncoder().encode(compress(puml.getBytes())));
+//		return Base64.getEncoder().encodeToString(puml.getBytes());
 	}
 
+	private static byte[] compress(byte[] source) throws IOException {
+		Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
+		deflater.setInput(source);
+		deflater.finish();
+	
+		byte[] buffer = new byte[32768];
+		int compressedLength = deflater.deflate(buffer);
+		byte[] result = new byte[compressedLength];
+		System.arraycopy(buffer, 0, result, 0, compressedLength);
+		return result;
+	}	
 //	public void generatePlantUML(StructurizrDslParser parser, String outDir) {
 //
 //		PlantUMLWriter writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter();

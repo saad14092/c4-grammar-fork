@@ -21,6 +21,7 @@ import de.systemticks.c4dsl.ls.utils.C4Utils;
 public class C4ExecuteCommandProvider {
 
     public static final String EXPORT_FILE_TO_PUML = "c4-server.export.puml";
+    public static final String UPDATE_CONFIGURATION = "c4-server.configuration";
     private static final String PLANTUML_FILE_EXT = ".puml";
 
     private static final Logger logger = LoggerFactory.getLogger(C4ExecuteCommandProvider.class);
@@ -51,7 +52,11 @@ public class C4ExecuteCommandProvider {
                     }
                 }
                 break;
-        
+            
+            case UPDATE_CONFIGURATION:
+                logger.info("Update configuration {}", arguments.get(0).toString());
+                return C4ExecuteCommandResult.OK;
+
             default:
             logger.error("Unknown command {}", command);
             return C4ExecuteCommandResult.UNKNOWN_COMMAND.setMessage(command);

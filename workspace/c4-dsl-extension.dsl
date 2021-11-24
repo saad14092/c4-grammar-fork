@@ -6,15 +6,18 @@ workspace "C4 DSL Extension Workspace" {
         architect = person "Software Architect" "Modelling the SW architecture with C4 DSL"
 
         kroki = softwareSystem "Kroki.io Server" "Creates diagrams from textual descriptions. Kroki provides a unified API with support for PlantUML, Mermaid, etc." "Extern"
+        structurizr = softwareSystem "Structurizr Server" "Origin structurizr webservice for rendering c4 models" "Extern"
+  
         c4DslExtension = softwareSystem "C4 Dsl Extension" "The overall extension" {
 
             languageServer = container "Language Server" "The Language Server provides C$ DSL specific features via JSON-RPC based protocol to the code editor" "Java Application" {
 
-                dsl_core = component "${c4}" "The core xtext-based grammar features, including syntax checks, validation and scoping. Triggers the creation of plantuml files" "Library/JAR"
-                dsl_ide = component "${c4}.ide" "Provides enhanced editor features like, code lenses, tooltips, content assist, etc." "Library/JAR"
+                c4_dsl_service = component "C4 Language Service" "Serves the language service protocol. Handles connected clients"
+                c4_dsl_generator = component "C4 Generator" "Generates different from content from c4 models, e.g. PlantUML files"
+                c4_dsl_provider = component "C4 Provider" "Provides enhanced editor features like, code lenses, tooltips, content assist, etc."
+
                 structurizr_dsl = component "structurizr.dsl" " a way to create Structurizr software architecture models based upon the C4 model using a textual domain specific language" "Library/JAR" "Structurizr"
                 structurizr_plantuml = component "structurizr.plantuml" "Exports the views in a Structurizr workspace to diagram definitions that are compatible with PlantUML" "Library/JAR" "Structurizr"
-                xtext = component "org.eclipse.xtext.*" "Framework for development of domain-specific languages, including parser, linker, typechecker" "Library/JAR" "Extern"
                 lsp4j = component "org.eclipse.lsp4j.*" "Java binding for the Language Server Protocol" "LSP" "Extern"
 
                 puml = component "plantuml-gen/*.puml" "Plant UML file" "File System" "File"
@@ -23,17 +26,15 @@ workspace "C4 DSL Extension Workspace" {
 
             languageClient = container "C4 DSL Client" "A C4 DSL language extension, connecting the C4 language features to the VS Code Editor. Previews the generated Plant UML diagrams" "VS Code Extension" {
 
-
-                semantic_highlight = component "semantic highlighter" "Semantic highlighting is an addition to syntax highlighting. It provides additional token information based on the context of the model" "VS Code component"
                 editor = component "VS Code Editor" "The built-in VS Code Editor" "VS Code component" "BuiltIn"
                 command_service = component "VS Code Command Service" "The built-in VS Code command service. Provides registry and routing of commands" "VS Code component" "BuiltIn"
 
                 commands = component "${c4}.commands" "Commands are used to trigger actions in Visual Studio Code" "VS Code component"
 
                 language_client = component "language client" "Wire C4 DSL features provided by the language server with the VS Code editor" "VS Code component"
-                color_highlight = component "color highlight extension" "This extension styles css/web colors found in your document" "VS Code Extension" "Extension"
 
                 plantuml_preview = component "Plant UML Preview" "A built-in Webview showing the Plant UML diagram of a corresponding c4 view"
+                structurizr_preview = component "Structurizr Preview" "A built-in Webview showing the structurizr diagram of a corresponding c4 view"
 
             }
 
@@ -45,28 +46,29 @@ workspace "C4 DSL Extension Workspace" {
         # communication inside vs code
         commands -> command_service "Register command"
 
-        color_highlight -> editor "Scans for color strings and highlights them accordingly"
-
-        semantic_highlight -> editor "Enriches text with semantic highlighting tokens"
         editor -> language_client "Connected to *.dsl files via language client/server technique"
         editor -> commands "Trigger command to jump to PlantUML preview via embedded code lenses, which are indirectly provided by the language server" "Execute Command" "Runtime"
 
-        language_client -> dsl_ide "Launches and communicates with language server" "JSON-RPC/LSP" "Runtime"
-        dsl_ide -> language_client "Provides requested language capabilities" "JSON-RPC/LSP" "Runtime"
+        language_client -> c4_dsl_service "Launches and communicates with language server" "JSON-RPC/LSP" "Runtime"
+        c4_dsl_service -> language_client "Provides requested language capabilities" "JSON-RPC/LSP" "Runtime"
  
         # communication inside the language server
-        dsl_ide -> lsp4j "Uses"
-        dsl_ide -> dsl_core "Uses"
-        dsl_ide -> xtext "Uses"
+        c4_dsl_service -> lsp4j "Uses"
+        c4_dsl_service -> c4_dsl_provider "Re-directs basic language feature requests"
+        c4_dsl_service -> c4_dsl_generator "Re-directs generator commands"
+        c4_dsl_provider -> structurizr_dsl "Calls the structurizr parser and manages the resulting model"
+        c4_dsl_provider -> structurizr_plantuml "Creates content for the code lenses"
 
-        dsl_core -> structurizr_dsl "Parses the raw text into a structurizr compliant data model"
-        dsl_core -> structurizr_plantuml "Transforms the structurizr compliant data model into puml files"
-        dsl_core -> xtext "Uses"
+        //dsl_core -> structurizr_dsl "Parses the raw text into a structurizr compliant data model"
+        c4_dsl_generator -> structurizr_plantuml "Transforms the structurizr compliant data model into puml files"
 
-        structurizr_plantuml -> puml "Writes continuously *.puml files (Plant UML code) into a folder. One puml for each view."
+        structurizr_plantuml -> puml "Writes *.puml files (Plant UML code) into a folder on request. One puml for each view."
 
         commands -> plantuml_preview "Triggers Plant UML View via code lense"
-        plantuml_preview -> kroki "Requests SVG representation from a given Plant UML code" "HTTP" "Runtime"
+        commands -> structurizr_preview "Triggers Structurizr View via code lense"
+
+        plantuml_preview -> kroki "Requests SVG representation from a given encoded Plant UML string" "HTTP" "Runtime"
+        structurizr_preview -> structurizr "Requests SVG representation from a given encoded workspace" "HTTP" "Runtime"
     }
 
     views {

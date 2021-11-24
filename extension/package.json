@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.1.3",
+    "version": "3.1.4",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -33,14 +33,18 @@
             }
         ],
         "menus": {
-            "explorer/context": [ {
-                "when": "resourceLangId == c4",
-                "command": "c4.export.puml"
-            }],
-            "editor/context": [{
-                "when": "editorLangId == c4",
-                "command": "c4.export.puml"
-            }]
+            "explorer/context": [
+                {
+                    "when": "resourceLangId == c4",
+                    "command": "c4.export.puml"
+                }
+            ],
+            "editor/context": [
+                {
+                    "when": "editorLangId == c4",
+                    "command": "c4.export.puml"
+                }
+            ]
         },
         "languages": [
             {
@@ -75,6 +79,12 @@
                     "scope": "application",
                     "description": "The flavor of the generated Plant UML"
                 },
+                "c4.show.plantuml.server": {
+                    "type": "string",
+                    "default": "https://kroki.io",
+                    "description": "The server where the kroki diagram server is hosted",
+                    "scope": "application"
+                },
                 "c4.export.plantuml.dir": {
                     "type": "string",
                     "default": "./export",
@@ -95,9 +105,24 @@
                 },
                 "c4.diagram.structurizr.enabled": {
                     "type": "boolean",
-                    "default": false,          
-                    "description": "If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."                    
-                }                
+                    "default": false,
+                    "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."
+                },
+                "c4.diagram.plantuml.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://kroki.io/ for rendering purposes. Do not enable, if you have concerns."
+                },
+                "c4.diagram.renderer": {
+                    "type": "string",
+                    "enum": [
+                        "structurizr",
+                        "plantuml"
+                    ],
+                    "default": "plantuml",
+                    "scope": "application",
+                    "description": "Detmerines which inline renderer is used for displaying views"
+                }
             }
         }
     },
@@ -140,7 +165,6 @@
         "publish": "vsce publish"
     },
     "dependencies": {
-        "@types/pako": "^1.0.1",
         "global": "^4.4.0",
         "got": "^11.8.2"
     }

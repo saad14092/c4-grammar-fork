@@ -2,8 +2,6 @@ package de.systemticks.c4dsl.ls.service;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import org.eclipse.lsp4j.DidChangeConfigurationParams;

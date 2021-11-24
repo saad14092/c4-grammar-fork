@@ -24,7 +24,7 @@ public class C4CodeLenseProviderTest {
         C4TestHelper.MODELS_TO_TEST.forEach( model -> {
             File testFile = new File(C4TestHelper.PATH_INVALID_MODELS + File.separator + model);
             try {
-                List<CodeLens> codeLenses = codeLenseProvider.calcCodeLenses(C4TestHelper.createDocumentFromFile(testFile));
+                List<CodeLens> codeLenses = codeLenseProvider.calcCodeLenses(C4TestHelper.createDocumentFromFile(testFile), "structurizr");
                 assertEquals(0, codeLenses.size());
             } 
             catch (IOException | URISyntaxException e) {
@@ -34,13 +34,13 @@ public class C4CodeLenseProviderTest {
     }
 
     @Test
-    public void codeLenses() {
+    public void codeLensesStrcuturizr() {
 
         C4CodeLenseProvider codeLenseProvider = new C4CodeLenseProvider();
         
         File testFile = new File(C4TestHelper.PATH_VALID_MODELS + File.separator + "amazon_web_service.dsl");
         try {
-            List<CodeLens> codeLenses = codeLenseProvider.calcCodeLenses(C4TestHelper.createDocumentFromFile(testFile));
+            List<CodeLens> codeLenses = codeLenseProvider.calcCodeLenses(C4TestHelper.createDocumentFromFile(testFile), "structurizr");
             assertEquals(1, codeLenses.size());
 
             assertEquals("c4.show.diagram", codeLenses.get(0).getCommand().getCommand());
@@ -52,6 +52,28 @@ public class C4CodeLenseProviderTest {
             assertNotNull(codeLenses.get(0).getCommand().getArguments().get(0));
 
             assertEquals("AmazonWebServicesDeployment",codeLenses.get(0).getCommand().getArguments().get(1));
+
+        } 
+        catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void codeLensesPlantUml() {
+
+        C4CodeLenseProvider codeLenseProvider = new C4CodeLenseProvider();
+        
+        File testFile = new File(C4TestHelper.PATH_VALID_MODELS + File.separator + "amazon_web_service.dsl");
+        try {
+            List<CodeLens> codeLenses = codeLenseProvider.calcCodeLenses(C4TestHelper.createDocumentFromFile(testFile), "plantuml");
+            assertEquals(1, codeLenses.size());
+
+            assertEquals("c4.show.plantuml", codeLenses.get(0).getCommand().getCommand());
+
+            assertNotNull(codeLenses.get(0).getCommand().getArguments().get(0));
+
+            assertEquals(1, codeLenses.get(0).getCommand().getArguments().size());
 
         } 
         catch (IOException | URISyntaxException e) {

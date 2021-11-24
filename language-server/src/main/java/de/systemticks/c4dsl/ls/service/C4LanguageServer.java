@@ -29,12 +29,18 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 	private LanguageClient client;
 	private C4TextDocumentService documentService;
 	private C4WorkspaceService workspaceService;
+	private String renderer;
 
-	public C4LanguageServer() {
+	public C4LanguageServer(String renderer) {
 		this.documentService = new C4TextDocumentService(this);
 		this.workspaceService = new C4WorkspaceService();
+		this.renderer = renderer;
 	}
 	
+	public String getRenderer() {
+		return renderer;
+	}
+
 	@Override
 	public void connect(LanguageClient client) {
 		logger.info("connect");		
@@ -57,7 +63,8 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		SemanticTokensLegend legend = new SemanticTokensLegend(C4SemanticTokenProvider.TOKEN_TYPES, C4SemanticTokenProvider.TOKEN_MODIFIERS);
 		semanticTokenOptions.setLegend(legend);
 		res.getCapabilities().setSemanticTokensProvider(semanticTokenOptions);
-		res.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML)));
+		res.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(
+			Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML, C4ExecuteCommandProvider.UPDATE_CONFIGURATION)));
 			//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);

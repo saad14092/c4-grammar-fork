@@ -20,8 +20,8 @@ Technically there is language server built on top of the origin [Structurizr DSL
 
 ## Diagram Preview
 
-Every C4 view in the editor will be enriched with a code lense (Show as Structurizr Diagram). When clicking the workspace of your c4 model will be sent as a Base64-encoded string to www.structurizr.com for rendering purposes. This feature is deactivated by default, in case of you have concerns making your diagrams public.
-You can activate the feature by setting the corresponding configuration property *c4.diagram.structurizr.enabled* to true.
+Every C4 view in the editor will be enriched with a code lense in order to render the corresponding view, either with a kroki.io server (if rendering type is 'plantuml' or with the structurizr.com  server (if rendering type is 'structurizr'). In either way your c4 model will be sent as a Base64-encoded string to any of the public webservices for rendering purposes. This feature is deactivated by default, in case of you have concerns making your diagrams public.
+You can activate the feature by setting the corresponding configuration property *c4.diagram.structurizr.enabled* or *c4.diagram.plantuml.enabled* to true.
 
 > :info: I am working on supporting local plantuml rendering as an alternative solution.
 
@@ -59,9 +59,12 @@ Therefore a semantic highlighting option is provided, in order to highlight the 
 |Name | Values | Default  | Description|
 --- | --- | --- | ---
 |c4.export.plantuml.generator|<ul><li>StructurizrPlantUMLWriter</li><li>C4PlantUMLWriter</li><li>BasicPlantUMLWriter</li></ul>|StructurizrPlantUMLWriter|The flavor of the generated Plant UML
-|c4.export.plantuml.dir||./export|The folder for the exported plantuml files. Can be relative or absolute
+|c4.diagram.renderer|<ul><li>plantuml</li><li>structurizr</li></ul>|plantuml|Detmerines which inline renderer (at the code lenses) is used for displaying views
+|c4.export.plantuml.dir|<i>PLANTUML_EXPORT_FOLDER</i>|./export|The folder for the exported plantuml files. Can be relative or absolute
+|c4.show.plantuml.server|<i>KROKI_SERVER_URI</i>|https://kroki.io|The server where the kroki diagram rendering service is hosted. Is used when 'plantuml' is selected as renderer (see c4.diagram.renderer)
 |c4.languageserver.connectiontype|<ul><li>auto</li><li>process-io</li><li>socket</li></ul>|auto|Determines how language client and language server are connected
 |c4.diagram.structurizr.enabled|true/false|false|If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns
+|c4.diagram.plantuml.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns.
 
 ## Pre-requisites
 
