@@ -1,16 +1,12 @@
 package de.systemticks.c4dsl.ls.generator;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.Deflater;
 
 import com.structurizr.Workspace;
-import com.structurizr.dsl.StructurizrDslParser;
-import com.structurizr.io.mermaid.MermaidWriter;
 import com.structurizr.io.plantuml.PlantUMLWriter;
-import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
 import com.structurizr.util.WorkspaceUtils;
 import com.structurizr.view.View;
 
