@@ -16,6 +16,7 @@ plugins {
 application {
 	mainClassName = 'de.systemticks.c4dsl.ls.C4LanguageServerLauncher'
 	applicationName = 'c4-language-server'
+	applicationDefaultJvmArgs = ["-Dfile.encoding=UTF8"]
 }
 
 startScripts {
@@ -48,8 +49,8 @@ targetCompatibility = 1.8
 
 dependencies {
 
-	//implementation 'com.github.torsten-systemticks:dsl:e856bde2e6'
-	implementation 'com.github.torsten-systemticks:dsl:d9cc622705'	
+	//implementation 'com.github.torsten-systemticks:dsl:d9cc622705'	
+	implementation 'com.github.torsten-systemticks:dsl:fad1fc4e64'	
 
 	//implementation 'com.structurizr:structurizr-dsl:1.13.1'
 	implementation 'com.structurizr:structurizr-plantuml:1.6.3'
