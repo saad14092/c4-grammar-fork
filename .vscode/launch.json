@@ -10,7 +10,7 @@
             "name": "Language Server",
             "request": "launch",
             "mainClass": "de.systemticks.c4dsl.ls.C4LanguageServerLauncher",
-            "args": "--socket READY_TO_CONNECT"
+            "args": "-c=socket -e=READY_TO_CONNECT"
         },
         {
             "preLaunchTask": "npm: build - extension",
