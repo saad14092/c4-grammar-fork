@@ -32,6 +32,7 @@ public class C4DocumentModel {
     private Map<Integer, View> viewToLineNumber = new HashMap<>();
     private Map<Integer, C4ObjectWithContext<Element>> elementsToLineNumber = new HashMap<>();
     private Map<Integer, C4ObjectWithContext<Relationship>> relationShipsToLineNumber = new HashMap<>();
+	private Map<Integer, String> includesToLineNumber = new HashMap<>();
     private List<Integer> colors = new ArrayList<>();
 	private List<C4DocumentModel> referencedModels = new ArrayList<>();
 	private String uri;
@@ -102,6 +103,10 @@ public class C4DocumentModel {
 		return Optional.ofNullable(relationShipsToLineNumber.get(lineNumber));
 	}
 
+	public Optional<String> getIncludeAtLineNumber(int lineNumber) {
+		return Optional.ofNullable(includesToLineNumber.get(lineNumber));
+	}
+
 	public Set<Entry<Integer, C4ObjectWithContext<Relationship>>> getAllRelationships() {
 		return relationShipsToLineNumber.entrySet();
 	}
@@ -136,8 +141,17 @@ public class C4DocumentModel {
 		colors.add(lineNumber);
     }
 
-    public void addReferencedModel(C4DocumentModel referencedModel) {
+	private void addInclude(int lineNumber, String path) {
+		includesToLineNumber.put(lineNumber, path);
+	}
+
+    public void addReferencedModel(C4DocumentModel referencedModel, int lineNumber, String path) {
 		referencedModels.add(referencedModel);
+		addInclude(lineNumber, path);
     }
+
+	public List<C4DocumentModel> getReferencedModels() {
+		return this.referencedModels;
+	}
 
 }

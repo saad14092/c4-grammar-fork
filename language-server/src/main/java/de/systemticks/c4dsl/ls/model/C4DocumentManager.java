@@ -80,9 +80,9 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 
 	
     @Override
-	public void onInclude(File hostFile, File referencedFile) {
-		logger.debug("onInclude: {} includes {}", hostFile.getName(), referencedFile.getName());
-		getModel(hostFile).addReferencedModel(getModel(referencedFile));
+	public void onInclude(File hostFile, int lineNumber, File referencedFile, String path) {
+		logger.debug("onInclude: {} includes {} at linenumber {}", hostFile.getName(), referencedFile.getName(), lineNumber);
+		getModel(hostFile).addReferencedModel(getModel(referencedFile), lineNumber, path);
 	}
 
 	private C4DocumentModel getModel(File _file) {
@@ -112,9 +112,8 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 		logger.debug("createModel {}", currentFile);
 
 		C4DocumentModel model = new C4DocumentModel(content, currentFile);
-		
-		return c4Models.compute(file.getAbsolutePath(), (k, v) -> model);	
 
+		return c4Models.compute(file.getAbsolutePath(), (k, v) -> model);	
 	}
 
 	public List<Diagnostic> calcDiagnostics(File file, String content) {
@@ -126,7 +125,7 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 		
 		try {
 			logger.debug("Parsing...");
-			parser.parse(content);
+			parser.parse(content, file);
 			logger.debug("Parsing finished");
 		} catch (StructurizrDslParserException e) {
 			logger.debug("Parsing failed");
@@ -147,8 +146,24 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 		finally {
 			model.setWorkspace(parser.getWorkspace());
 			model.setValid(errors.size() == 0);		
+		/*
+			if(parser.getWorkspace() != null) {
+				model.setWorkspace(parser.getWorkspace());
+				model.setValid(errors.size() == 0);		
+			}
+			else {
+				errors.clear();
+				c4Models.entrySet().stream().forEach( e -> {
+					e.getValue().getReferencedModels().stream().forEach( ref -> {
+						if(ref.getUri().equals(file.toURI().toString())) {
+							errors.addAll(calcDiagnostics(new File(e.getKey()), e.getValue().getRawText()));
+						}
+					});
+				});	
+			}
+			*/
 		}
-		
+
 		return errors;
 	}
 
