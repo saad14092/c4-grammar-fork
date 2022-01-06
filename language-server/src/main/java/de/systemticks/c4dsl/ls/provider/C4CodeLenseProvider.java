@@ -52,7 +52,7 @@ public class C4CodeLenseProvider {
 		
 		BiFunction<Workspace, View, Command> func = renderer.contentEquals(C4Utils.RENDERER_STRUCTURIZR) ? C4CodeLenseProvider.toStructurizr : C4CodeLenseProvider.toPlantUML;
 
-		if(!c4.isValid()) {
+		if(!c4.isValid() && c4.getWorkspace() != null) {
 			return Collections.emptyList();
 		}
 		

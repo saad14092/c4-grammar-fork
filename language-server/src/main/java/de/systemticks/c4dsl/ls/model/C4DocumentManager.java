@@ -21,6 +21,7 @@ import com.structurizr.view.View;
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
 import org.eclipse.lsp4j.Position;
+import org.eclipse.lsp4j.PublishDiagnosticsParams;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.slf4j.Logger;
@@ -33,8 +34,6 @@ public class C4DocumentManager implements StructurizrDslParserListener {
     private static final Logger logger = LoggerFactory.getLogger(C4DocumentManager.class);
 
     private Map<String, C4DocumentModel> c4Models = new ConcurrentHashMap<>();
-
-	private String currentFile;
 
     public C4DocumentModel getDocument(TextDocumentIdentifier documentId) throws URISyntaxException {
                     
@@ -87,9 +86,9 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 
 	private C4DocumentModel getModel(File _file) {
 
-		String file = (currentFile != null && _file.getName().equals(".")) ? currentFile : _file.getAbsolutePath();
+		String file = _file.getAbsolutePath();
 
-		logger.debug("getModel _file: {}, currentFile: {} -> {}", _file.getName(), currentFile, file);
+		logger.debug("getModel file: {}", file);
 
         return c4Models.computeIfAbsent(file, (key) -> {
             try {
@@ -107,65 +106,72 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 
 	private C4DocumentModel createModel(File file, String content) {
 
-		currentFile = file.getAbsolutePath();
+		logger.debug("createModel {}", file.getAbsolutePath());
 
-		logger.debug("createModel {}", currentFile);
-
-		C4DocumentModel model = new C4DocumentModel(content, currentFile);
+		C4DocumentModel model = new C4DocumentModel(content, file.getAbsolutePath());
 
 		return c4Models.compute(file.getAbsolutePath(), (k, v) -> model);	
 	}
 
-	public List<Diagnostic> calcDiagnostics(File file, String content) {
+	private PublishDiagnosticsParams calcDiagnosticsForFile(File file, String content) {
 
-		logger.debug("calcDiagnostics");
 		StructurizrDslParser parser = new StructurizrDslParser(this); 	
 		List<Diagnostic> errors = new ArrayList<>();
 		C4DocumentModel model = createModel(file, content);
-		
+
 		try {
 			logger.debug("Parsing...");
 			parser.parse(content, file);
 			logger.debug("Parsing finished");
 		} catch (StructurizrDslParserException e) {
-			logger.debug("Parsing failed");
 			logger.info("ParserException {}", e.getMessage());
-
-			int startPos = C4Utils.findFirstNonWhitespace(e.getLine(), 0, true);
-			int endPos = e.getLine().length();
-			int row = e.getLineNumber()-1;
-						
-			Diagnostic diagnostic = new Diagnostic();
-			diagnostic.setSeverity(DiagnosticSeverity.Error);
-			diagnostic.setMessage(e.getMessage());
-			diagnostic.setRange(new Range(new Position(row, startPos), new Position(row, endPos)));
-			errors.add(diagnostic);
+			errors.add(createError(e));
 		} catch (Exception e) {
 			logger.error("calcDiagnostics {}"+e.getMessage());
 		}
 		finally {
-			model.setWorkspace(parser.getWorkspace());
-			model.setValid(errors.size() == 0);		
-		/*
 			if(parser.getWorkspace() != null) {
-				model.setWorkspace(parser.getWorkspace());
-				model.setValid(errors.size() == 0);		
+				model.setWorkspace(parser.getWorkspace());				
 			}
 			else {
-				errors.clear();
-				c4Models.entrySet().stream().forEach( e -> {
-					e.getValue().getReferencedModels().stream().forEach( ref -> {
-						if(ref.getUri().equals(file.toURI().toString())) {
-							errors.addAll(calcDiagnostics(new File(e.getKey()), e.getValue().getRawText()));
-						}
-					});
-				});	
+				errors.clear();				
 			}
-			*/
+			model.setValid(errors.size() == 0);
+			
 		}
 
-		return errors;
+		return new PublishDiagnosticsParams(file.toURI().toString(), errors);
 	}
 
+	public List<PublishDiagnosticsParams> calcDiagnostics(File file, String content) {
+
+		List<PublishDiagnosticsParams> diagnostics = new ArrayList<>();
+		
+		diagnostics.add( calcDiagnosticsForFile(file, content));
+
+		c4Models.entrySet().stream().forEach( e -> {
+			e.getValue().getReferencedModels().stream().forEach( ref -> {
+				if(ref.getUri().equals(file.toURI().toString())) {					
+					//diagnostics.add(calcDiagnosticsForFile(new File(e.getKey()), e.getValue().getRawText()));
+				}
+			});
+		});	
+
+		return diagnostics;
+	}
+
+	private Diagnostic createError(StructurizrDslParserException e) {
+
+		int startPos = C4Utils.findFirstNonWhitespace(e.getLine(), 0, true);
+		int endPos = e.getLine().length();
+		int row = e.getLineNumber()-1;
+					
+		Diagnostic diagnostic = new Diagnostic();
+		diagnostic.setSeverity(DiagnosticSeverity.Error);
+		diagnostic.setMessage(e.getMessage());
+		diagnostic.setRange(new Range(new Position(row, startPos), new Position(row, endPos)));
+
+		return diagnostic;
+	}
     
 }
