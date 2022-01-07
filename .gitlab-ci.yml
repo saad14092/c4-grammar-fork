@@ -10,6 +10,7 @@ c4-language-server:
     - cd language-server
     - ./gradlew check
     - ./gradlew deployToVSCode
+    - cat build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
 
   artifacts:
     when: always
