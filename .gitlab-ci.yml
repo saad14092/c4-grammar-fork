@@ -17,6 +17,7 @@ c4-language-server:
       junit: language-server/build/test-results/test/**/TEST-*.xml
     paths: 
       - extension/server/c4-language-server
+      - language-server/build/reports/jacoco/test/html
     expire_in: 60 min
 
 c4-language-client:
@@ -32,6 +33,7 @@ c4-language-client:
     - yarn build
     - yarn global add vsce
     - vsce package
+    - cat ../language-server/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
 
   dependencies:
     - c4-language-server
