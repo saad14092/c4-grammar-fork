@@ -16,7 +16,6 @@ import org.eclipse.lsp4j.ColorInformation;
 import org.eclipse.lsp4j.ColorPresentation;
 import org.eclipse.lsp4j.ColorPresentationParams;
 import org.eclipse.lsp4j.DefinitionParams;
-import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DidChangeTextDocumentParams;
 import org.eclipse.lsp4j.DidCloseTextDocumentParams;
 import org.eclipse.lsp4j.DidOpenTextDocumentParams;
@@ -153,10 +152,13 @@ public class C4TextDocumentService implements TextDocumentService {
 
 		String uri = params.getTextDocument().getUri();
 		logger.info("didOpen " + uri);
-
-		CompletableFuture.runAsync( () -> ls.getClient().publishDiagnostics(new PublishDiagnosticsParams(uri, 
-				getDiagnostics(uri, params.getTextDocument().getText()))));		
-
+		
+		CompletableFuture.runAsync( () -> {
+			getDiagnostics(uri, params.getTextDocument().getText()).forEach( d -> {
+				ls.getClient().publishDiagnostics(d);
+			});
+		});	
+	
 	}
 
 	@Override
@@ -165,12 +167,16 @@ public class C4TextDocumentService implements TextDocumentService {
 		String uri = params.getTextDocument().getUri();
 		logger.info("didChange " + uri);
 		
-		CompletableFuture.runAsync( () -> ls.getClient().publishDiagnostics(new PublishDiagnosticsParams(uri, 
-			getDiagnostics(uri, params.getContentChanges().get(0).getText()))));		
+		CompletableFuture.runAsync( () -> {
+			getDiagnostics(uri, params.getContentChanges().get(0).getText()).forEach( d -> {
+				ls.getClient().publishDiagnostics(d);
+			});
+		});	
+	
 	}
 
-	private List<Diagnostic> getDiagnostics(String uri, String content) {
-
+	private List<PublishDiagnosticsParams> getDiagnostics(String uri, String content) {
+		
 		logger.info("--> getDiagnostics {}", changeCount++);
 		lock.writeLock().lock();
 
@@ -216,5 +222,5 @@ public class C4TextDocumentService implements TextDocumentService {
 	private File uriToFile(String uri) throws URISyntaxException {
 		return new File(new URI(uri));
 	}
-	
+
 }

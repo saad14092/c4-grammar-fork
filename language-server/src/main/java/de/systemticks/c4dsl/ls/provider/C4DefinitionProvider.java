@@ -53,6 +53,19 @@ public class C4DefinitionProvider {
 			}	
 		});
 
+		c4Model.getIncludeAtLineNumber(currentLineNumner).ifPresent( path -> {
+			final int startPos = C4Utils.getStartPosition(c4Model.getLineAt(params.getPosition().getLine()), path);
+			final int endPos = startPos + path.length();
+			if(params.getPosition().getCharacter() >= startPos && params.getPosition().getCharacter() <= endPos) {
+				C4DocumentModel ref = c4Model.getReferencedModels().stream().filter( r -> r.getUri().endsWith(path)).findFirst().get();
+				final Location location = new Location();
+				location.setRange(new Range( new Position(0,0), new Position(0,0)));
+				location.setUri(ref.getUri());
+				locations.add(location);
+			}
+			logger.debug("**** START_POS INCLUDE "+startPos);
+		});
+
 		return Either.forLeft(locations);
 	}
 

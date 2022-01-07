@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import com.structurizr.model.SoftwareSystem;
 
-import org.eclipse.lsp4j.Diagnostic;
+import org.eclipse.lsp4j.PublishDiagnosticsParams;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +32,8 @@ public class C4DocumentModelTest {
             String content;
             try {
                 content = new String(Files.readAllBytes(Paths.get(testFile.getAbsolutePath())));
-                List<Diagnostic> errors = c4.calcDiagnostics(testFile, content);
-                assertEquals(0, errors.size());
+                List<PublishDiagnosticsParams> errors = c4.calcDiagnostics(testFile, content);
+                assertEquals(0, errors.get(0).getDiagnostics().size());
             } 
             catch (IOException e) {
                 e.printStackTrace();
@@ -52,8 +52,8 @@ public class C4DocumentModelTest {
             String content;
             try {
                 content = new String(Files.readAllBytes(Paths.get(testFile.getAbsolutePath())));
-                List<Diagnostic> errors = c4.calcDiagnostics(testFile, content);
-                assertEquals(1, errors.size());
+                List<PublishDiagnosticsParams> errors = c4.calcDiagnostics(testFile, content);
+                assertEquals(1, errors.get(0).getDiagnostics().size());
             } 
             catch (IOException e) {
                 e.printStackTrace();
