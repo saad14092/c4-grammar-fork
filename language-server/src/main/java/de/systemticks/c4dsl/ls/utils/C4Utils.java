@@ -29,6 +29,10 @@ public class C4Utils {
 
     public static int getStartPosition(String line, String key) {
 
+        if(line == null || line.length()==0 || key == null || key.length() == 0) {
+            return NOT_FOUND_WITHIN_STRING;
+        }
+
 		Matcher m = Pattern.compile("\\b"+key+"\\b", Pattern.CASE_INSENSITIVE).matcher(line);
 		if (m.find()) {
    			return m.start();
@@ -55,14 +59,12 @@ public class C4Utils {
 
     public static int findFirstNonWhitespace(final CharSequence line, int startPos,
             boolean treatNewLineAsWhitespace) {
-        if (line == null)
+        
+        if (line == null || line.length() == 0 || startPos < 0 || startPos >= line.length()) {
             return NOT_FOUND_WITHIN_STRING;
-        int len = line.length();
-        if (len == 0)
-            return NOT_FOUND_WITHIN_STRING;
-        if (startPos >= len)
-            return NOT_FOUND_WITHIN_STRING;
+        }
 
+        int len = line.length();
         int pos = startPos;
         char c = line.charAt(pos);
 

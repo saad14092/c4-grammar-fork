@@ -62,8 +62,4 @@ public class C4Generator {
 //		fw.close();
 //	}
 
-	public static String getBaseGenDir() {
-		return System.getProperty("user.home")+File.separator+".c4dslextension"+File.separator+"new";
-	}	
-
 }
