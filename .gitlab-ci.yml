@@ -1,6 +1,7 @@
 stages:
   - server
   - client
+  - deploy
 
 c4-language-server:
   image: gradle:jdk11
@@ -42,3 +43,16 @@ c4-language-client:
     paths:
       - extension/*.vsix
     expire_in: 1 day
+
+pages:
+  stage: deploy
+  dependencies:
+    -  c4-language-server
+  script:
+    - mv language-server/build/reports/jacoco/test/html/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
