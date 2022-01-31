@@ -16,7 +16,7 @@ plugins {
 application {
 	mainClassName = 'de.systemticks.c4dsl.ls.C4LanguageServerLauncher'
 	applicationName = 'c4-language-server'
-	applicationDefaultJvmArgs = ["-Dfile.encoding=UTF8"]
+	applicationDefaultJvmArgs = ["-Dfile.encoding=UTF8", "-Dapple.awt.UIElement=true"]
 }
 
 startScripts {
