@@ -1,5 +1,9 @@
 # Change Log
 
+## v3.1.8
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/111
+
 ## v3.1.7
 
 Improvements regarding !include feature
