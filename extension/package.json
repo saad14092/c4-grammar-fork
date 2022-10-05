@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.1.7",
+    "version": "3.1.8",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -108,6 +108,11 @@
                     "default": false,
                     "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."
                 },
+                "c4.diagram.structurizr.uri": {
+                        "type": "string",
+                        "default": "https://structurizr.com/json",
+                        "description": "If Structurizr rendering is enabled, specify the URI that your c4 model will be sent to for rendering."
+                    },
                 "c4.diagram.plantuml.enabled": {
                     "type": "boolean",
                     "default": false,

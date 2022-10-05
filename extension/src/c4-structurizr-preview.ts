@@ -28,12 +28,12 @@ export class C4StructurizrPreview {
         return panel;
     }
 
-    async updateWebView(encodedJson: string, diagramKey: string) {
+    async updateWebView(encodedJson: string, diagramKey: string, structurizrUri: string) {
         if (!this.panel) {
             this.panel = this.createPanel();
         }
 
-        const html = this.updateViewContent(encodedJson, diagramKey)
+        const html = this.updateViewContent(encodedJson, diagramKey, structurizrUri)
         console.log(html)
 
         this.panel.webview.html = html
@@ -43,7 +43,7 @@ export class C4StructurizrPreview {
         }    
     }
 
-    private updateViewContent(encodedJson: string, diagramKey: string) {
+    private updateViewContent(encodedJson: string, diagramKey: string, renderUri: string) {
 
         return `<!DOCTYPE html>
         <html>
@@ -63,7 +63,7 @@ export class C4StructurizrPreview {
             <body>
                 <iframe id="structurizrPreview" name="structurizrPreview" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
         
-                <form id="structurizrPreviewForm" method="post" action="https://structurizr.com/json" target="structurizrPreview" style="display: none;">
+                <form id="structurizrPreviewForm" method="post" action="${renderUri}" target="structurizrPreview" style="display: none;">
                     <input type="hidden" name="iframe" value="structurizrPreview" />
                     <input type="hidden" name="preview" value="true" />
                     <input type="hidden" name="source" value="${encodedJson}" />
