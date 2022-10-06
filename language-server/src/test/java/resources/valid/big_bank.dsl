@@ -1,14 +1,21 @@
+/*
+ * This is a combined version of the following workspaces:
+ *
+ * - "Big Bank plc - System Landscape" (https://structurizr.com/share/28201/)
+ * - "Big Bank plc - Internet Banking System" (https://structurizr.com/share/36141/)
+*/
 workspace "Big Bank plc" "This is an example workspace to illustrate the key features of Structurizr, via the DSL, based around a fictional online banking system." {
 
     model {
+        customer = person "Personal Banking Customer" "A customer of the bank, with personal bank accounts." "Customer"
 
         enterprise "Big Bank plc" {
             supportStaff = person "Customer Service Staff" "Customer service staff within the bank." "Bank Staff"
-            backoffice = person "Back Office Staff" "Administration and support staff within the bank."
+            backoffice = person "Back Office Staff" "Administration and support staff within the bank." "Bank Staff"
 
             mainframe = softwaresystem "Mainframe Banking System" "Stores all of the core banking information about customers, accounts, transactions, etc." "Existing System"
-            email = softwaresystem "E-mail System" "The internal Microsoft Exchange e-mail system" "Existing System"
-            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"            
+            email = softwaresystem "E-mail System" "The internal Microsoft Exchange e-mail system." "Existing System"
+            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"
 
             internetBankingSystem = softwaresystem "Internet Banking System" "Allows customers to view information about their bank accounts, and make payments." {
                 singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
@@ -24,9 +31,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 }
                 database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
             }
-
         }
-        customer = person "Personal" "A customer of the bank, with personal bank accounts."
 
         # relationships between people and software systems
         customer -> internetBankingSystem "Views account balances, and makes payments using"
@@ -60,7 +65,6 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
         mainframeBankingSystemFacade -> mainframe "Makes API calls to" "XML/HTTPS"
         emailComponent -> email "Sends e-mail using"
 
-
         deploymentEnvironment "Development" {
             deploymentNode "Developer Laptop" "" "Microsoft Windows 10 or Apple macOS" {
                 deploymentNode "Web Browser" "" "Chrome, Firefox, Safari, or Edge" {
@@ -86,7 +90,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
         }
 
-       deploymentEnvironment "Live" {
+        deploymentEnvironment "Live" {
             deploymentNode "Customer's mobile device" "" "Apple iOS or Android" {
                 liveMobileAppInstance = containerInstance mobileApp
             }
@@ -123,9 +127,8 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 }
             }
 
-         primaryDatabaseServer -> secondaryDatabaseServer "Replicates data to"
+            primaryDatabaseServer -> secondaryDatabaseServer "Replicates data to"
         }
-
     }
 
     views {
@@ -136,31 +139,36 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
         systemcontext internetBankingSystem "SystemContext" {
             include *
-            animationStep internetBankingSystem
-            animationStep customer
-            animationStep mainframe
-            animationStep email
+            animation {
+                internetBankingSystem
+                customer
+                mainframe
+                email
+            }
             autoLayout
         }
 
         container internetBankingSystem "Containers" {
             include *
-            exclude customer -> email
-            animationStep customer mainframe email
-            animationStep webApplication
-            animationStep singlePageApplication
-            animationStep mobileApp
-            animationStep apiApplication
-            animationStep database
+            animation {
+                customer mainframe email
+                webApplication
+                singlePageApplication
+                mobileApp
+                apiApplication
+                database
+            }
             autoLayout
         }
 
         component apiApplication "Components" {
             include *
-            animationStep singlePageApplication mobileApp database email mainframe
-            animationStep signinController securityComponent
-            animationStep accountsSummaryController mainframeBankingSystemFacade
-            animationStep resetPasswordController emailComponent
+            animation {
+                singlePageApplication mobileApp database email mainframe
+                signinController securityComponent
+                accountsSummaryController mainframeBankingSystemFacade
+                resetPasswordController emailComponent
+            }
             autoLayout
         }
 
@@ -176,32 +184,37 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
         deployment internetBankingSystem "Development" "DevelopmentDeployment" {
             include *
-            animationStep developerSinglePageApplicationInstance
-            animationStep developerWebApplicationInstance developerApiApplicationInstance
-            animationStep developerDatabaseInstance
+            animation {
+                developerSinglePageApplicationInstance
+                developerWebApplicationInstance developerApiApplicationInstance
+                developerDatabaseInstance
+            }
             autoLayout
         }
 
         deployment internetBankingSystem "Live" "LiveDeployment" {
             include *
-            animationStep liveSinglePageApplicationInstance
-            animationStep liveMobileAppInstance
-            animationStep liveWebApplicationInstance liveApiApplicationInstance
-            animationStep livePrimaryDatabaseInstance
-            animationStep liveSecondaryDatabaseInstance
+            animation {
+                liveSinglePageApplicationInstance
+                liveMobileAppInstance
+                liveWebApplicationInstance liveApiApplicationInstance
+                livePrimaryDatabaseInstance
+                liveSecondaryDatabaseInstance
+            }
             autoLayout
         }
 
         styles {
             element "Person" {
-                background #08427b
                 color #ffffff
                 fontSize 22
                 shape Person
             }
+            element "Customer" {
+                background #08427b
+            }
             element "Bank Staff" {
                 background #999999
-                color #ffffff
             }
             element "Software System" {
                 background #1168bd
@@ -222,7 +235,6 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 shape MobileDeviceLandscape
             }
             element "Database" {
-                background #007700
                 shape Cylinder
             }
             element "Component" {
