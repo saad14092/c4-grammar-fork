@@ -10,3 +10,7 @@ USER gitpod
 #     sudo rm -rf /var/lib/apt/lists/*
 #
 # More information: https://www.gitpod.io/docs/config-docker/
+RUN sudo apt-get -q update && \
+    sudo sdkman java
+
+ENV JDK_HOME="/home/gitpod/.sdkman/candidates/java/17.0.4.1-tem"git add .
