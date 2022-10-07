@@ -13,4 +13,4 @@ USER gitpod
 RUN sudo apt-get -q update && \
     sudo sdk java
 
-ENV JDK_HOME="/home/gitpod/.sdkman/candidates/java/17.0.4.1-tem"git add .
+ENV JDK_HOME="/home/gitpod/.sdkman/candidates/java/17.0.4.1-tem"
