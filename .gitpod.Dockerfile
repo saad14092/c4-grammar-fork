@@ -11,6 +11,7 @@ USER gitpod
 #
 # More information: https://www.gitpod.io/docs/config-docker/
 RUN sudo apt-get -q update && \
-    sudo sdk install java
+    sed -i 's/sdkman_auto_answer=false/sdkman_auto_answer=true/g' /home/gitpod/.sdkman/etc/config && \
+    /bin/bash -c "source /home/gitpod/.sdkman/bin/sdkman-init.sh; sdk install java 17.0.4.1.fx-zulu -n"
 
-ENV JDK_HOME="/home/gitpod/.sdkman/candidates/java/17.0.4.1-tem"
+ENV JDK_HOME="/home/gitpod/.sdkman/candidates/java/17.0.4.1.fx-zulu"
