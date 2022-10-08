@@ -33,7 +33,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 
 	public C4LanguageServer(String renderer) {
 		this.documentService = new C4TextDocumentService(this);
-		this.workspaceService = new C4WorkspaceService();
+		this.workspaceService = new C4WorkspaceService(documentService.getDocumentManager());
 		this.renderer = renderer;
 	}
 	
@@ -64,7 +64,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		semanticTokenOptions.setLegend(legend);
 		res.getCapabilities().setSemanticTokensProvider(semanticTokenOptions);
 		res.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(
-			Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML, C4ExecuteCommandProvider.UPDATE_CONFIGURATION)));
+			Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML, C4ExecuteCommandProvider.UPDATE_CONFIGURATION, C4ExecuteCommandProvider.CALCULATE_TEXT_DECORATIONS )));
 			//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);

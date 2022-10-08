@@ -59,6 +59,10 @@ public class C4TextDocumentService implements TextDocumentService {
 		this.ls = c4LanguageServer;
 	}
 
+	public C4DocumentManager getDocumentManager() {
+		return documentManager;
+	}
+
 	@Override
 	public CompletableFuture<List<ColorInformation>> documentColor(DocumentColorParams params) {
 

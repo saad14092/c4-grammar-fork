@@ -109,10 +109,10 @@
                     "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."
                 },
                 "c4.diagram.structurizr.uri": {
-                        "type": "string",
-                        "default": "https://structurizr.com/json",
-                        "description": "If Structurizr rendering is enabled, specify the URI that your c4 model will be sent to for rendering."
-                    },
+                    "type": "string",
+                    "default": "https://structurizr.com/json",
+                    "description": "If Structurizr rendering is enabled, specify the URI that your c4 model will be sent to for rendering."
+                },
                 "c4.diagram.plantuml.enabled": {
                     "type": "boolean",
                     "default": false,
@@ -142,18 +142,18 @@
     ],
     "main": "./pack/c4-dsl-extension",
     "devDependencies": {
-        "@types/node": "^8.0.0",
+        "@types/node": "^10.0.0",
         "@types/vscode": "1.46.0",
         "rimraf": "^2.6.3",
-        "source-map-loader": "^1.0.2",
+        "source-map-loader": "^4.0.0",
         "ts-loader": "^8.0.3",
         "ts-node": "^9.1.1",
         "tslint": "^5.11.0",
         "typescript": "3.8.3",
         "vsce": "^1.85.1",
-        "vscode-languageclient": "^7.0.0",
-        "vscode-languageserver": "^7.0.0",
-        "webpack": "^4.44.1",
+        "vscode-languageclient": "^8.0.0",
+        "vscode-languageserver": "^8.0.0",
+        "webpack": "^5.74.0",
         "webpack-cli": "^3.3.12"
     },
     "scripts": {

@@ -18,11 +18,12 @@ import * as net from 'net';
 import * as cp from 'child_process'
 import * as readline from 'readline'
 
-import { LanguageClientOptions, Trace, StateChangeEvent, State} from 'vscode-languageclient';
+import { LanguageClientOptions, StateChangeEvent, State } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions, StreamInfo } from 'vscode-languageclient/node';
 //import { C4StructurizrPreview } from './c4-structurizr-preview';
 import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
+import { toTextDecorations, CommandResultTextDecorations } from './c4-decorator';
 
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
@@ -32,6 +33,8 @@ const CONF_DIAGRAM_STRUCTURZR_URI = "c4.diagram.structurizr.uri"
 const CONF_DIAGRAM_PLANTUML_ENABLED = "c4.diagram.plantuml.enabled"
 const CONF_PLANTUML_SERVER = "c4.show.plantuml.server"
 const CONF_INLINE_RENDERER = "c4.diagram.renderer"
+
+const decType = window.createTextEditorDecorationType({});
 
 type PlantUmlExportOptions = {
     uri: string;
@@ -123,7 +126,6 @@ export function activate(context: ExtensionContext) {
         }
     })
 
-    languageClient.trace = Trace.Verbose
 
     if(connectionType === "socket" || (connectionType === "auto" && process.platform !== 'win32')) {
         
@@ -140,15 +142,15 @@ export function activate(context: ExtensionContext) {
             terminal  : false
           }).on('line', function(line: string) {
             if(line.endsWith(READY_ECHO)) {
-                const disposable = languageClient.start();
-                context.subscriptions.push(disposable);
+                languageClient.start();
+//                context.subscriptions.push(disposable);
             }
         });
     }
 
     else {
-        const disposable = languageClient.start();
-        context.subscriptions.push(disposable);
+        languageClient.start();
+//        context.subscriptions.push(disposable);
     }
 
     /*
@@ -220,6 +222,17 @@ export function activate(context: ExtensionContext) {
         });
     });
 
+    workspace.onDidSaveTextDocument( e => {
+        commands.executeCommand("c4-server.text-decorations", { uri: e.uri.path }).then( callback => {
+            window.activeTextEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
+        })
+    })
+
+    workspace.onDidOpenTextDocument( e => {
+        commands.executeCommand("c4-server.text-decorations", { uri: e.uri.path }).then( callback => {
+            window.activeTextEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
+        })
+    })
 
     logger.appendLine("Initialized");
     return languageClient;
