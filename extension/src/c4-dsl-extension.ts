@@ -228,12 +228,6 @@ export function activate(context: ExtensionContext) {
         })
     })
 
-    workspace.onDidOpenTextDocument( e => {
-        commands.executeCommand("c4-server.text-decorations", { uri: e.uri.path }).then( callback => {
-            window.activeTextEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
-        })
-    })
-
     logger.appendLine("Initialized");
     return languageClient;
 }

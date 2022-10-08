@@ -1,19 +1,24 @@
 import { DecorationOptions, Range  } from "vscode";
 
+type DecoratedRange = {
+    type: string
+    range: Range
+}
+
 export type CommandResultTextDecorations = {
     resultcode: number;
     message: string;
-    resultdata: Range[]
+    resultdata: DecoratedRange[]
 }
 
-export function nameDecoration(range: Range): DecorationOptions {
+export function nameDecoration(decoRange: DecoratedRange): DecorationOptions {
     return {
-        range,
+        range: decoRange.range,
         renderOptions : {
             before: {
                 color: 'gray',
                 fontStyle: 'italic',
-                contentText: 'name: '
+                contentText: decoRange.type
             }
         }
     }
