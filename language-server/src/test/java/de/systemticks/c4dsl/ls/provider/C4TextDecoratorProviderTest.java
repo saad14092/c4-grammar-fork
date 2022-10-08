@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.systemticks.c4dsl.ls.helper.C4TestHelper;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
+import de.systemticks.c4dsl.ls.provider.C4TextDecoratorProvider.DecoratorRange;
 
 public class C4TextDecoratorProviderTest {
     
@@ -27,7 +28,7 @@ public class C4TextDecoratorProviderTest {
 
     @Test
     public void decorationsForNameCalculated() {
-        List<Range> ranges = decoratorProvider.calculateDecorationsForModelNames(model);
+        List<DecoratorRange> ranges = decoratorProvider.calculateDecorationsForModelNames(model);
         assertTrue(!ranges.isEmpty());
         System.err.println("Range: "+ranges.get(0));
     }

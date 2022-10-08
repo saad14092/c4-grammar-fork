@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.structurizr.dsl.StructurizrDslParser;
@@ -19,13 +18,13 @@ import com.structurizr.io.plantuml.PlantUMLWriter;
 import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
 import com.structurizr.view.View;
 
-import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentManager;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
+import de.systemticks.c4dsl.ls.provider.C4TextDecoratorProvider.DecoratorRange;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
 public class C4ExecuteCommandProvider {
@@ -75,11 +74,11 @@ public class C4ExecuteCommandProvider {
                 logger.info("Calculate Text Decorations");
                 C4TextDecoratorProvider decoratorProvider = new C4TextDecoratorProvider();
                 String uri = options.get("uri").getAsString();
-                List<Range> decorations = new ArrayList<>();
+                List<DecoratorRange> decorations = new ArrayList<>();
                 try {
                     TextDocumentIdentifier documentId = new TextDocumentIdentifier(new File(uri).toURI().toURL().toString());
                     C4DocumentModel model = documentManager.getDocument(documentId);
-                    decorations = decoratorProvider.calculateDecorationsForModelNames(model);
+                    decorations = decoratorProvider.calculateDecorations(model);
                 } catch (URISyntaxException | MalformedURLException e) {
                     logger.error(e.getMessage());
                     return C4ExecuteCommandResult.UNKNOWN_FAILURE;
@@ -142,7 +141,7 @@ public class C4ExecuteCommandProvider {
         }
     } 
 
-    private JsonElement toJson(List<Range> ranges) {
-        return gson.toJsonTree(ranges);
+    private JsonElement toJson(List<DecoratorRange> decorations) {
+        return gson.toJsonTree(decorations);
     }
 }
