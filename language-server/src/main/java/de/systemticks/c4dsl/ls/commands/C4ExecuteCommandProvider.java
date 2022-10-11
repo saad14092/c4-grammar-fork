@@ -31,10 +31,8 @@ public class C4ExecuteCommandProvider {
                 return C4ExecuteCommandResult.OK;
 
             case CALCULATE_TEXT_DECORATIONS:
-                if(arguments == null || arguments.size() != 1) {
-                    return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
-                }
-                return new C4TextDecorationHandler(documentManager).handleRequest(arguments);
+                logger.error("CALCULATE_TEXT_DECORATIONS should not be handled here");
+                return C4ExecuteCommandResult.UNKNOWN_FAILURE;
 
             default:
                 logger.error("Unknown command {}", command);

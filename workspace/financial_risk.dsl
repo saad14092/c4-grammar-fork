@@ -11,7 +11,7 @@ workspace "Financial Risk System" "This is a simple (incomplete) example C4 mode
         emailSystem = softwareSystem "E-mail system" "The bank's Microsoft Exchange system."
         centralMonitoringService = softwareSystem "Central Monitoring Service" "The bank's central monitoring and alerting dashboard."
         activeDirectory = softwareSystem "Active Directory" "The bank's authentication and authorisation system."
-
+ 
         businessUser -> financialRiskSystem "Views reports using"
         financialRiskSystem -> tradeDataSystem "Gets trade data from"
         financialRiskSystem -> referenceDataSystem "Gets counterparty data from"

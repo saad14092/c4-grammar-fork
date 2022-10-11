@@ -1,26 +1,19 @@
 package de.systemticks.c4dsl.ls.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import com.google.gson.JsonObject;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
 
 import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
 import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandResult;
 import de.systemticks.c4dsl.ls.helper.C4TestHelper;
-import de.systemticks.c4dsl.ls.model.C4DocumentManager;
-import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 
 public class C4ExecutionCommandProviderTest {
     
@@ -97,24 +90,6 @@ public class C4ExecutionCommandProviderTest {
         assertEquals(C4ExecuteCommandResult.OK.getResultCode(), result.getResultCode());
 
         assertEquals("AmazonWebServicesDeployment.puml", outDir.list()[0]);
-    }
-
-    @Test
-    public void textDecorationsCalled() throws URISyntaxException {
-
-        C4DocumentManager documentManager = mock(C4DocumentManager.class);
-        C4DocumentModel model = mock(C4DocumentModel.class);
-        when(documentManager.getDocument(any())).thenReturn(model);
-
-        C4ExecuteCommandProvider commandProvider = new C4ExecuteCommandProvider();
-
-        JsonObject obj = new JsonObject();
-        obj.addProperty("uri", C4TestHelper.PATH_VALID_MODELS + File.separator + "amazon_web_service.dsl");
-        
-        C4ExecuteCommandResult result = commandProvider.execute("c4-server.text-decorations", Arrays.asList(obj), documentManager);
-
-        assertEquals(C4ExecuteCommandResult.TEXT_DECORATIONS.getResultCode(), result.getResultCode());
-
     }
 
 }

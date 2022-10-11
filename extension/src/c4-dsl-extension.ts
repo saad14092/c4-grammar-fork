@@ -222,11 +222,28 @@ export function activate(context: ExtensionContext) {
         });
     });
 
-    workspace.onDidSaveTextDocument( e => {
-        commands.executeCommand("c4-server.text-decorations", { uri: e.uri.path }).then( callback => {
-            window.activeTextEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
-        })
+    workspace.onDidSaveTextDocument( document => {
+        if(document && document.languageId == "c4") {
+            commands.executeCommand("c4-server.text-decorations", { uri: document.uri.path }).then( callback => {
+                window.activeTextEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
+            })    
+        }
     })
+
+    window.onDidChangeActiveTextEditor( editor => {
+        if(editor && editor.document && editor.document.languageId === "c4") {
+            commands.executeCommand("c4-server.text-decorations", { uri: editor.document.uri.path }).then( callback => {
+                editor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
+            })    
+        }
+    });
+
+    const activeEditor = window.activeTextEditor
+    if(activeEditor && activeEditor.document && activeEditor.document.languageId === "c4") {
+        commands.executeCommand("c4-server.text-decorations", { uri: activeEditor.document.uri.path }).then( callback => {
+            activeEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
+        })    
+    }
 
     logger.appendLine("Initialized");
     return languageClient;

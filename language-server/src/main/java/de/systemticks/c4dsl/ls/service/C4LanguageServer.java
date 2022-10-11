@@ -33,7 +33,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 
 	public C4LanguageServer(String renderer) {
 		this.documentService = new C4TextDocumentService(this);
-		this.workspaceService = new C4WorkspaceService(documentService.getDocumentManager());
+		this.workspaceService = new C4WorkspaceService(this.documentService);
 		this.renderer = renderer;
 	}
 	

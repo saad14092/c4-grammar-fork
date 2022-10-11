@@ -28,6 +28,7 @@ public class C4TextDecoratorProvider {
         List<DecoratorRange> result = new ArrayList<>();
 
         if(model == null || !model.isValid()) {
+            logger.warn("Cannot calculate text decorations");
             return result;
         }
 

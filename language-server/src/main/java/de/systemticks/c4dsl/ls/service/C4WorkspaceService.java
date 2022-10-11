@@ -2,7 +2,11 @@ package de.systemticks.c4dsl.ls.service;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandResult;
 
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
 import org.eclipse.lsp4j.DidChangeWatchedFilesParams;
@@ -12,17 +16,14 @@ import org.eclipse.lsp4j.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
-import de.systemticks.c4dsl.ls.model.C4DocumentManager;
-
 public class C4WorkspaceService implements WorkspaceService{
 
     private static final Logger logger = LoggerFactory.getLogger(C4WorkspaceService.class);
 	private C4ExecuteCommandProvider commandProvider = new C4ExecuteCommandProvider();
-	private C4DocumentManager documentManager;
+	private C4TextDocumentService documentService;
 
-	public C4WorkspaceService(C4DocumentManager documentManager) {
-		this.documentManager = documentManager;
+	public C4WorkspaceService(C4TextDocumentService documentService) {
+		this.documentService = documentService;
 	}
 
 	@Override
@@ -43,16 +44,20 @@ public class C4WorkspaceService implements WorkspaceService{
 
 	@Override
 	public CompletableFuture<Object> executeCommand(ExecuteCommandParams params) {
-		logger.info("executeCommand {}", params.getCommand());	
 		
 		return CompletableFuture.supplyAsync( () -> {
-			JsonObject result = commandProvider.execute( params.getCommand(), params.getArguments(), documentManager ).toJson();
-			logger.info("executeCommand {}, {}", params.getCommand(), result);	
-			return result;	
+			logger.info("executeCommand {}", params.getCommand());
+			if(params.getCommand().equals(C4ExecuteCommandProvider.CALCULATE_TEXT_DECORATIONS)) {
+				JsonElement decorations = documentService.textDecorations((JsonObject) params.getArguments().get(0)) ;
+				logger.info("decorations {}", decorations);
+				return C4ExecuteCommandResult.TEXT_DECORATIONS.setResultData(decorations).toJson();
+			}
+			else {
+				return commandProvider.execute( params.getCommand(), params.getArguments(), null).toJson();
+			}
 		});
 
 	}
-	
 	
 
 }

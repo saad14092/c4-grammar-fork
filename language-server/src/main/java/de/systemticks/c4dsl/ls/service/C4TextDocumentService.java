@@ -1,6 +1,7 @@
 package de.systemticks.c4dsl.ls.service;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -32,12 +33,18 @@ import org.eclipse.lsp4j.services.TextDocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import de.systemticks.c4dsl.ls.model.C4DocumentManager;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.provider.C4CodeLenseProvider;
 import de.systemticks.c4dsl.ls.provider.C4ColorProvider;
 import de.systemticks.c4dsl.ls.provider.C4DefinitionProvider;
 import de.systemticks.c4dsl.ls.provider.C4SemanticTokenProvider;
+import de.systemticks.c4dsl.ls.provider.C4TextDecoratorProvider;
+import de.systemticks.c4dsl.ls.provider.C4TextDecoratorProvider.DecoratorRange;
 
 public class C4TextDocumentService implements TextDocumentService {
 
@@ -51,9 +58,12 @@ public class C4TextDocumentService implements TextDocumentService {
 	private C4ColorProvider colorProvider = new C4ColorProvider();
 	private C4DefinitionProvider definitionProvider = new C4DefinitionProvider();
 	private C4SemanticTokenProvider semanticTokenProvider = new C4SemanticTokenProvider();
+	private C4TextDecoratorProvider decoratorProvider = new C4TextDecoratorProvider();
 
 	ReadWriteLock lock = new ReentrantReadWriteLock();
 	private int changeCount = 0;
+
+	private Gson gson = new Gson();
 
 	public C4TextDocumentService(C4LanguageServer c4LanguageServer) {
 		this.ls = c4LanguageServer;
@@ -150,6 +160,30 @@ public class C4TextDocumentService implements TextDocumentService {
 			}
 		});
 	}
+
+	public JsonElement textDecorations(JsonObject options) {
+
+		logger.info("textDecorations");
+
+		String uri = options.get("uri").getAsString();
+		TextDocumentIdentifier documentId;
+		try {
+			documentId = new TextDocumentIdentifier(new File(uri).toURI().toURL().toString());
+			C4DocumentModel model = getDocument(documentId);
+			if(model != null && model.isValid()) {
+				return toJson(decoratorProvider.calculateDecorations(model));
+			} 
+		}
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+		}		
+		logger.error("textDecorations == null");
+		return null;
+	}
+
+	private JsonElement toJson(List<DecoratorRange> decorations) {
+        return gson.toJsonTree(decorations);
+    }
 
 	@Override
 	public void didOpen(DidOpenTextDocumentParams params) {
