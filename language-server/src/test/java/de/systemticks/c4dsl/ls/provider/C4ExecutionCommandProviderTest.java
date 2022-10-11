@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandResult;
 import de.systemticks.c4dsl.ls.helper.C4TestHelper;
 import de.systemticks.c4dsl.ls.model.C4DocumentManager;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;

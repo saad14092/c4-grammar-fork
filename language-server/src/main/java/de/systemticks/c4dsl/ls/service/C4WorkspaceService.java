@@ -12,8 +12,8 @@ import org.eclipse.lsp4j.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
 import de.systemticks.c4dsl.ls.model.C4DocumentManager;
-import de.systemticks.c4dsl.ls.provider.C4ExecuteCommandProvider;
 
 public class C4WorkspaceService implements WorkspaceService{
 

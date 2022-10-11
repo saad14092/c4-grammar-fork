@@ -1,4 +1,4 @@
-package de.systemticks.c4dsl.ls.provider;
+package de.systemticks.c4dsl.ls.commands;
 
 import java.util.Objects;
 
