@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Map.Entry;
-import java.util.function.Function;
 
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
@@ -15,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import com.structurizr.model.Component;
 import com.structurizr.model.Container;
 import com.structurizr.model.Element;
+import com.structurizr.model.ModelItem;
+import com.structurizr.model.Relationship;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
-import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
+import lombok.Data;
 
 public class C4TextDecoratorProvider {
     
@@ -34,12 +34,46 @@ public class C4TextDecoratorProvider {
 
         model.getAllElements().forEach( entry -> {
             
-            String line = model.getLineAt(lineNumber(entry));
+            String line = model.getLineAt(lineNumber(entry.getKey()));
             Element element = entry.getValue().getObject();
 
-            result.addAll(calculateDecoratorsForOneElement(element, line, lineNumber(entry)));
+            result.addAll(calculateDecoratorsForOneElement(element, line, lineNumber(entry.getKey())));
 
         });
+
+        model.getAllRelationships().forEach( entry -> {
+            String line = model.getLineAt(lineNumber(entry.getKey()));
+            Relationship relationShip = entry.getValue().getObject();
+
+            result.addAll(calculateDecoratorsForOneRelationship(relationShip, line, lineNumber(entry.getKey())));
+        });
+
+        return result;
+    }
+
+    public List<DecoratorRange> calculateDecoratorsForOneRelationship(Relationship relationship, String line, int lineNumber) {
+
+        List<DecoratorRange> result = new ArrayList<>();
+
+        int fromIndex = 0;
+
+        PositionAndLength posObject = calculatePositionAndLengthObject(line, relationship.getDescription(), fromIndex);
+        if(posObject.getStartPos() > 0) {
+            result.add(createDecoratorRange("description: ", lineNumber, posObject.getStartPos()));
+            fromIndex = posObject.getFromIndex();
+        }
+
+        posObject = calculatePositionAndLengthObject(line, relationship.getTechnology(), fromIndex);
+        if(posObject.getStartPos() > 0) {
+            result.add(createDecoratorRange("technology: ", lineNumber, posObject.getStartPos()));
+            fromIndex = posObject.getFromIndex();
+        }
+
+        posObject = calculatePositionAndLengthObject(line, getFirstCustomTag(relationship).orElse(null), fromIndex);
+        if(posObject.getStartPos() > 0) {
+            result.add(createDecoratorRange("tags: ", lineNumber, posObject.getStartPos()));
+            fromIndex = posObject.getFromIndex();
+        }
 
         return result;
     }
@@ -50,25 +84,25 @@ public class C4TextDecoratorProvider {
 
         int fromIndex = 0;
 
-        PositionAndLength posObject = calculatePositionAndLengthObject(element, line, ele -> ele.getName(), fromIndex);
+        PositionAndLength posObject = calculatePositionAndLengthObject(line, element.getName(), fromIndex);
         if(posObject.getStartPos() > 0) {
             result.add(createDecoratorRange("name: ", lineNumber, posObject.getStartPos()));
             fromIndex = posObject.getFromIndex();
         }
         
-        posObject = calculatePositionAndLengthObject(element, line, ele -> ele.getDescription(), fromIndex);
+        posObject = calculatePositionAndLengthObject(line, element.getDescription(), fromIndex);
         if(posObject.getStartPos() > 0) {
             result.add(createDecoratorRange("description: ", lineNumber, posObject.getStartPos()));
             fromIndex = posObject.getFromIndex();
         }
 
-        posObject = calculatePositionAndLengthObject(element, line, ele ->  getTechnology(ele).orElse(null), fromIndex);
+        posObject = calculatePositionAndLengthObject(line, getTechnology(element).orElse(null), fromIndex);
         if(posObject.getStartPos() > 0) {
             result.add(createDecoratorRange("technology: ", lineNumber, posObject.getStartPos()));
             fromIndex = posObject.getFromIndex();
         }
 
-        posObject = calculatePositionAndLengthObject(element, line, ele ->  getFirstCustomTag(ele).orElse(null), fromIndex);
+        posObject = calculatePositionAndLengthObject(line, getFirstCustomTag(element).orElse(null), fromIndex);
         if(posObject.getStartPos() > 0) {
             result.add(createDecoratorRange("tags: ", lineNumber, posObject.getStartPos()));
             fromIndex = posObject.getFromIndex();
@@ -87,7 +121,7 @@ public class C4TextDecoratorProvider {
         return Optional.empty();
     }
      
-    Optional<String> getFirstCustomTag(Element element) {
+    Optional<String> getFirstCustomTag(ModelItem element) {
 
         return Arrays.asList(element.getTags().split(",")).stream()
             .map(String::trim)
@@ -100,8 +134,7 @@ public class C4TextDecoratorProvider {
        return new DecoratorRange(type ,new Range(new Position(line, character), new Position(line, character)));
     }
 
-    PositionAndLength calculatePositionAndLengthObject(Element element, String line, Function<Element, String> func, int fromIndex) {        
-        String decoratable = func.apply(element);
+    PositionAndLength calculatePositionAndLengthObject(String line, String decoratable, int fromIndex) {        
         if(decoratable == null || decoratable.length() == 0) {
             return new PositionAndLength(-1, fromIndex);
         }
@@ -109,28 +142,24 @@ public class C4TextDecoratorProvider {
         return new PositionAndLength(startPos, startPos + decoratable.length());
     }
 
-    private int lineNumber(Entry<Integer, C4ObjectWithContext<Element>> entry) {
-        return entry.getKey()-1;
+    private int lineNumber(Integer key) {
+        return key-1;
     }
 
+    @Data
     class PositionAndLength {
 
         private int startPos;
-        private int fromIndex;
-        
+        private int fromIndex;        
+
         public PositionAndLength(int startPos, int fromIndex) {
             this.startPos = startPos;
             this.fromIndex = fromIndex;
         }
-        public int getStartPos() {
-            return startPos;
-        }
-        public int getFromIndex() {
-            return fromIndex;
-        }
         
     }
 
+    @Data
     public class DecoratorRange {
         
         private String type;
@@ -141,23 +170,7 @@ public class C4TextDecoratorProvider {
             this.type = type;
             this.range = range;        
         }
-        
-        public String getType() {
-            return type;
-        }
-        
-        public Range getRange() {
-            return range;
-        }
 
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public void setRange(Range range) {
-            this.range = range;
-        }
-        
     }
     
 }

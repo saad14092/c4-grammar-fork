@@ -49,19 +49,21 @@ targetCompatibility = 1.8
 
 dependencies {
 
-	//implementation 'com.github.torsten-systemticks:dsl:d9cc622705'	
+	//the patched structurizr/dsl dependency, provinding parser callbacks	
 	implementation 'com.github.torsten-systemticks:dsl:a76f19de99'
-		
-	//implementation 'com.structurizr:structurizr-dsl:1.13.1'
+
+	// other structurizr dependencies		
 	implementation 'com.structurizr:structurizr-plantuml:1.6.3'
 	implementation 'com.structurizr:structurizr-mermaid:1.4.1'
 	implementation 'com.structurizr:structurizr-client:1.15.2'
 	
+	// language server protocol
 	implementation group: 'org.eclipse.lsp4j', name: 'org.eclipse.lsp4j', version: '0.14.0'
 	
 	implementation 'ch.qos.logback:logback-classic:1.2.6'
-	
 	implementation 'info.picocli:picocli:4.6.2'
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     // Use JUnit test framework
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'

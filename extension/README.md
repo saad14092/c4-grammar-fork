@@ -66,6 +66,7 @@ Therefore a semantic highlighting option is provided, in order to highlight the 
 |c4.diagram.structurizr.enabled|true/false|false|If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns
 |c4.diagram.structurizr.uri|STRUCTURIZR_URI|https://structurizr.com/json|The URL to call when rendering the diagram using a Structurizr server.  Override if you want to point to a on-premise installation rather than the main Structurizr site, for example.
 |c4.diagram.plantuml.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns.
+|c4.decorations.enabled|true/false|true|Switch inline text decorations on or off.
 
 ## Pre-requisites
 

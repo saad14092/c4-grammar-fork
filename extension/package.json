@@ -127,6 +127,11 @@
                     "default": "plantuml",
                     "scope": "application",
                     "description": "Detmerines which inline renderer is used for displaying views"
+                },
+                "c4.decorations.enabled" :{
+                    "type": "boolean",
+                    "default": true,
+                    "description": "enable/disable inline text decoration"
                 }
             }
         }

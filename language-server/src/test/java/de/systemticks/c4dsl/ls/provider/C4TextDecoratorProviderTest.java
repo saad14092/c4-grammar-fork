@@ -78,11 +78,11 @@ public class C4TextDecoratorProviderTest {
         final String LINE = "id = container \"Container Name\" \"Fancy Description\" \"Cool Technology\" {";
         Container container = mock(Container.class);
         when(container.getName()).thenReturn("Container Name");
-        PositionAndLength posAndLength = decoratorProvider.calculatePositionAndLengthObject(container, LINE, c -> c.getName(), 0);
+        PositionAndLength posAndLength = decoratorProvider.calculatePositionAndLengthObject(LINE, container.getName(), 0);
         assertEquals(15, posAndLength.getStartPos());
 
         when(container.getTechnology()).thenReturn("Cool Technology");
-        posAndLength = decoratorProvider.calculatePositionAndLengthObject(container, LINE, c -> ((Container)c).getTechnology(), 40);
+        posAndLength = decoratorProvider.calculatePositionAndLengthObject(LINE, ((Container)container).getTechnology(), 40);
         assertEquals(52, posAndLength.getStartPos());
     }
 

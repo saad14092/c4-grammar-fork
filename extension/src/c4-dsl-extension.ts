@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ExtensionContext, workspace, commands, window, StatusBarAlignment, Uri } from 'vscode'
+import {ExtensionContext, workspace, commands, window, StatusBarAlignment, Uri, TextEditor, TextDocument } from 'vscode'
 import * as path from 'path';
 import * as net from 'net';
 import * as cp from 'child_process'
@@ -33,6 +33,7 @@ const CONF_DIAGRAM_STRUCTURZR_URI = "c4.diagram.structurizr.uri"
 const CONF_DIAGRAM_PLANTUML_ENABLED = "c4.diagram.plantuml.enabled"
 const CONF_PLANTUML_SERVER = "c4.show.plantuml.server"
 const CONF_INLINE_RENDERER = "c4.diagram.renderer"
+const CONF_TEXT_DECORATIONS = "c4.decorations.enabled"
 
 const decType = window.createTextEditorDecorationType({});
 
@@ -72,7 +73,8 @@ export function activate(context: ExtensionContext) {
     };
     const connectionType = workspace.getConfiguration().get(CONF_LANGUAGESERVER_CONNECTIONTYPE) as string; 
     const renderer = workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string
-    
+    const textDecorations = workspace.getConfiguration().get(CONF_TEXT_DECORATIONS) as boolean
+
     //
     const getServerOptions = function (): ServerOptions {
 
@@ -222,31 +224,37 @@ export function activate(context: ExtensionContext) {
         });
     });
 
-    workspace.onDidSaveTextDocument( document => {
-        if(document && document.languageId == "c4") {
-            commands.executeCommand("c4-server.text-decorations", { uri: document.uri.path }).then( callback => {
-                window.activeTextEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
-            })    
-        }
-    })
-
-    window.onDidChangeActiveTextEditor( editor => {
-        if(editor && editor.document && editor.document.languageId === "c4") {
-            commands.executeCommand("c4-server.text-decorations", { uri: editor.document.uri.path }).then( callback => {
-                editor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
-            })    
-        }
-    });
-
-    const activeEditor = window.activeTextEditor
-    if(activeEditor && activeEditor.document && activeEditor.document.languageId === "c4") {
-        commands.executeCommand("c4-server.text-decorations", { uri: activeEditor.document.uri.path }).then( callback => {
-            activeEditor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
-        })    
+    if(textDecorations) {
+        workspace.onDidSaveTextDocument( document => {
+            triggerTextDecorations(undefined, document)
+        })
+    
+        window.onDidChangeActiveTextEditor( editor => {
+            triggerTextDecorations(editor, undefined)
+        });
+    
+        triggerTextDecorations(window.activeTextEditor, undefined)    
     }
 
     logger.appendLine("Initialized");
     return languageClient;
+}
+
+function triggerTextDecorations(editor: TextEditor | undefined, document: TextDocument | undefined) {
+
+    if(!editor) {
+        editor = window.activeTextEditor
+    }
+
+    if(!document) {
+        document = editor?.document
+    }
+
+    if(editor && document && document.languageId === 'c4') {
+        commands.executeCommand("c4-server.text-decorations", { uri: document.uri.path }).then( callback => {
+            editor?.setDecorations( decType, toTextDecorations(callback as CommandResultTextDecorations))
+        })        
+    }
 }
 
 export function updateServerConfiguration() {
