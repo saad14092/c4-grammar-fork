@@ -117,6 +117,8 @@ public class C4SemanticTokenProvider {
             result.add(token.getTokenModifier());
         }
 
+        logger.debug("Semantik Tokens at {}", result);
+
         return result;
     }
 

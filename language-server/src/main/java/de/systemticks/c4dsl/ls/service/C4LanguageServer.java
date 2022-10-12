@@ -19,7 +19,7 @@ import org.eclipse.lsp4j.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.systemticks.c4dsl.ls.provider.C4ExecuteCommandProvider;
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
 import de.systemticks.c4dsl.ls.provider.C4SemanticTokenProvider;
 
 public class C4LanguageServer implements LanguageServer, LanguageClientAware {
@@ -33,7 +33,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 
 	public C4LanguageServer(String renderer) {
 		this.documentService = new C4TextDocumentService(this);
-		this.workspaceService = new C4WorkspaceService();
+		this.workspaceService = new C4WorkspaceService(this.documentService);
 		this.renderer = renderer;
 	}
 	
@@ -64,7 +64,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		semanticTokenOptions.setLegend(legend);
 		res.getCapabilities().setSemanticTokensProvider(semanticTokenOptions);
 		res.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(
-			Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML, C4ExecuteCommandProvider.UPDATE_CONFIGURATION)));
+			Arrays.asList(C4ExecuteCommandProvider.EXPORT_FILE_TO_PUML, C4ExecuteCommandProvider.UPDATE_CONFIGURATION, C4ExecuteCommandProvider.CALCULATE_TEXT_DECORATIONS )));
 			//res.getCapabilities().setWorkspace(new WorkspaceServerCapabilities(new WorkspaceFoldersOptions()));
 				
 		return CompletableFuture.supplyAsync(() -> res);

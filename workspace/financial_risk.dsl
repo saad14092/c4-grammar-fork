@@ -1,7 +1,7 @@
 workspace "Financial Risk System" "This is a simple (incomplete) example C4 model based upon the financial risk system architecture kata, which can be found at http://bit.ly/sa4d-risksystem" {
 
     model {
-        businessUser = person "Business User" "A regular business user."
+        businessUser = person "Business User" "A regular business user"
         configurationUser = person "Configuration User" "A regular business user who can also configure the parameters used in the risk calculations."
 
         financialRiskSystem = softwareSystem "Financial Risk System" "Calculates the bank's exposure to risk for product X." "Financial Risk System"
@@ -11,7 +11,7 @@ workspace "Financial Risk System" "This is a simple (incomplete) example C4 mode
         emailSystem = softwareSystem "E-mail system" "The bank's Microsoft Exchange system."
         centralMonitoringService = softwareSystem "Central Monitoring Service" "The bank's central monitoring and alerting dashboard."
         activeDirectory = softwareSystem "Active Directory" "The bank's authentication and authorisation system."
-
+ 
         businessUser -> financialRiskSystem "Views reports using"
         financialRiskSystem -> tradeDataSystem "Gets trade data from"
         financialRiskSystem -> referenceDataSystem "Gets counterparty data from"

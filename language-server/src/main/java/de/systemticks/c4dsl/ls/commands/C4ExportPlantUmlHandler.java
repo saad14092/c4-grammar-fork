@@ -1,10 +1,15 @@
-package de.systemticks.c4dsl.ls.provider;
+package de.systemticks.c4dsl.ls.commands;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
-import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.dsl.StructurizrDslParserException;
 import com.structurizr.io.plantuml.BasicPlantUMLWriter;
@@ -13,56 +18,27 @@ import com.structurizr.io.plantuml.PlantUMLWriter;
 import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
 import com.structurizr.view.View;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
-public class C4ExecuteCommandProvider {
+public class C4ExportPlantUmlHandler implements C4CommandHandler {
 
-    public static final String EXPORT_FILE_TO_PUML = "c4-server.export.puml";
-    public static final String UPDATE_CONFIGURATION = "c4-server.configuration";
     private static final String PLANTUML_FILE_EXT = ".puml";
+    private static final Logger logger = LoggerFactory.getLogger(C4ExportPlantUmlHandler.class);
+    private Gson gson = new Gson();
 
-    private static final Logger logger = LoggerFactory.getLogger(C4ExecuteCommandProvider.class);
+    @Override
+    public C4ExecuteCommandResult handleRequest(List<Object> arguments) {
 
-    public C4ExecuteCommandResult execute(String command, List<Object> arguments) {
-
-        switch (command) {
-            case EXPORT_FILE_TO_PUML:
-
-                if(arguments == null) {
-                    return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
-                }
-                else if(arguments.size() != 1) {
-                    logger.error("Command {} does not contain any options", command);
-                }
-                else {
-                    try {
-                        JsonObject options = (JsonObject) arguments.get(0);
-                        logger.info("Execute Command {} with options {}",command,options);
-                        String uri = options.get("uri").getAsString();
-                        String renderer = options.get("renderer").getAsString();
-                        String exportDir = options.get("outDir").getAsString();
-                        return exportFileToPuml(uri, renderer, exportDir);    
-                    }
-                    catch(ClassCastException | NullPointerException e) {
-                        logger.error("execute {}", e.getMessage());
-                        return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
-                    }
-                }
-                break;
-            
-            case UPDATE_CONFIGURATION:
-                logger.info("Update configuration {}", arguments.get(0).toString());
-                return C4ExecuteCommandResult.OK;
-
-            default:
-            logger.error("Unknown command {}", command);
-            return C4ExecuteCommandResult.UNKNOWN_COMMAND.setMessage(command);
+        try {
+            C4ExportPlantUmlDto request = gson.fromJson((JsonElement)arguments.get(0), C4ExportPlantUmlDto.class);
+            if(Objects.isNull(request.getUri()) || Objects.isNull(request.getRenderer()) || Objects.isNull(request.getOutDir())) {
+                return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
+            }
+            return exportFileToPuml(request.getUri(), request.getRenderer(), request.getOutDir());
+            }
+        catch(ClassCastException e) {
+            return C4ExecuteCommandResult.ILLEGAL_ARGUMENTS;
         }
-
-        return C4ExecuteCommandResult.UNKNOWN_FAILURE;
 
     }
     
@@ -111,4 +87,5 @@ public class C4ExecuteCommandProvider {
             return new StructurizrPlantUMLWriter();
         }
     } 
+
 }

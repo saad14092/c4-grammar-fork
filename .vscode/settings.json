@@ -2,5 +2,6 @@
     "git.ignoreLimitWarning": true,
 
     "color-highlight.markRuler": false,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "editor.semanticHighlighting.enabled": true
 }

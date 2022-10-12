@@ -1,5 +1,13 @@
 # Change Log
 
+## v3.2.0
+
+Provides text decoration for inline parameter, e.g.:
+
+atm = softwaresystem `name:` "ATM" `description:` "Allows customers to withdraw cash." `tags:` "Existing System"
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/90
+
 ## v3.1.8
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/111

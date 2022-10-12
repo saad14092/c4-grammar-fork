@@ -11,6 +11,8 @@ import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandProvider;
+import de.systemticks.c4dsl.ls.commands.C4ExecuteCommandResult;
 import de.systemticks.c4dsl.ls.helper.C4TestHelper;
 
 public class C4ExecutionCommandProviderTest {
@@ -20,7 +22,7 @@ public class C4ExecutionCommandProviderTest {
 
         C4ExecuteCommandProvider commandProvider = new C4ExecuteCommandProvider();
 
-        C4ExecuteCommandResult result = commandProvider.execute("unknown.command", null);
+        C4ExecuteCommandResult result = commandProvider.execute("unknown.command", null, null);
 
         assertEquals(C4ExecuteCommandResult.UNKNOWN_COMMAND.getResultCode(), result.getResultCode());
     }
@@ -30,7 +32,7 @@ public class C4ExecutionCommandProviderTest {
 
         C4ExecuteCommandProvider commandProvider = new C4ExecuteCommandProvider();
 
-        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", null);
+        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", null, null);
 
         assertEquals(C4ExecuteCommandResult.ILLEGAL_ARGUMENTS.getResultCode(), result.getResultCode());
     }
@@ -40,7 +42,7 @@ public class C4ExecutionCommandProviderTest {
 
         C4ExecuteCommandProvider commandProvider = new C4ExecuteCommandProvider();
 
-        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList("A String"));
+        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList("A String"), null);
 
         assertEquals(C4ExecuteCommandResult.ILLEGAL_ARGUMENTS.getResultCode(), result.getResultCode());
     }
@@ -54,7 +56,7 @@ public class C4ExecutionCommandProviderTest {
         obj.addProperty("json", "renderer");
         obj.addProperty("key", "ourDir");
 
-        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList(obj));
+        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList(obj), null);
 
         assertEquals(C4ExecuteCommandResult.ILLEGAL_ARGUMENTS.getResultCode(), result.getResultCode());
     }
@@ -68,7 +70,7 @@ public class C4ExecutionCommandProviderTest {
         obj.addProperty("renderer", "renderer");
         obj.addProperty("outDir", "ourDir");
 
-        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList(obj));
+        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList(obj), null);
 
         assertEquals(C4ExecuteCommandResult.STRUCTURIZR_PARSER_EXCEPTION.getResultCode(), result.getResultCode());
     }
@@ -83,7 +85,7 @@ public class C4ExecutionCommandProviderTest {
         obj.addProperty("renderer", "StructurizrPlantUMLWriter");
         obj.addProperty("outDir", outDir.getAbsolutePath());
 
-        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList(obj));
+        C4ExecuteCommandResult result = commandProvider.execute("c4-server.export.puml", Arrays.asList(obj), null);
 
         assertEquals(C4ExecuteCommandResult.OK.getResultCode(), result.getResultCode());
 
