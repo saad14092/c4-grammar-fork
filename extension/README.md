@@ -50,9 +50,11 @@ Output folder and Plant UML Renderer are configurable.
 
 When describing C4 models textually, there are plenty of raw strings describing different aspects and meta data of a model element. They are visually difficult to distinguish from each other.
 
-Therefore a semantic highlighting option is provided, in order to highlight the different aspects in different colors (see screenshot below).
+Therefore a text decoration option is provided, in order to highlight the different aspects with inline labels, such as  `name: ` or `description: ` (see screenshot below).
 
-![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-semantic-highlighting.png)
+This feature can become pretty expensive in case of large models. You can switch it off with setting 'c4.decorations.enabled' to false.
+
+![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-text-decoration.png)
 
 ## Configuration
 

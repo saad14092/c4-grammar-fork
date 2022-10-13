@@ -16,7 +16,7 @@ workspace "C4 DSL Extension Workspace" {
                 c4_dsl_generator = component "C4 Generator" "Generates different from content from c4 models, e.g. PlantUML files"
                 c4_dsl_provider = component "C4 Provider" "Provides enhanced editor features like, code lenses, tooltips, content assist, etc."
 
-                structurizr_dsl = component "structurizr.dsl" " a way to create Structurizr software architecture models based upon the C4 model using a textual domain specific language" "Library/JAR" "Structurizr"
+                structurizr_dsl = component "structurizr.dsl" "a way to create Structurizr software architecture models based upon the C4 model using a textual domain specific language" "Library/JAR" "Structurizr"
                 structurizr_plantuml = component "structurizr.plantuml" "Exports the views in a Structurizr workspace to diagram definitions that are compatible with PlantUML" "Library/JAR" "Structurizr"
                 lsp4j = component "org.eclipse.lsp4j.*" "Java binding for the Language Server Protocol" "LSP" "Extern"
 
