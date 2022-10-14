@@ -37,6 +37,8 @@ const CONF_TEXT_DECORATIONS = "c4.decorations.enabled"
 
 const decType = window.createTextEditorDecorationType({});
 
+type TextDocumentChangeConfig = 'off' | 'onChange' | 'onSave'
+
 type PlantUmlExportOptions = {
     uri: string;
     outDir: string;
@@ -73,7 +75,7 @@ export function activate(context: ExtensionContext) {
     };
     const connectionType = workspace.getConfiguration().get(CONF_LANGUAGESERVER_CONNECTIONTYPE) as string; 
     const renderer = workspace.getConfiguration().get(CONF_INLINE_RENDERER) as string
-    const textDecorations = workspace.getConfiguration().get(CONF_TEXT_DECORATIONS) as boolean
+    const textDecorations = workspace.getConfiguration().get(CONF_TEXT_DECORATIONS) as TextDocumentChangeConfig
 
     //
     const getServerOptions = function (): ServerOptions {
@@ -224,10 +226,18 @@ export function activate(context: ExtensionContext) {
         });
     });
 
-    if(textDecorations) {
-        workspace.onDidSaveTextDocument( document => {
-            triggerTextDecorations(undefined, document)
-        })
+    if(textDecorations !== 'off') {
+
+        if(textDecorations === "onSave") {
+            workspace.onDidSaveTextDocument( savedDocument => {
+                triggerTextDecorations(undefined, savedDocument)
+            })    
+        }
+        else if(textDecorations === "onChange") {
+            workspace.onDidChangeTextDocument( changed => {
+                triggerTextDecorations(undefined, changed.document)
+            })    
+        }
     
         window.onDidChangeActiveTextEditor( editor => {
             triggerTextDecorations(editor, undefined)

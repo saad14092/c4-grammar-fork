@@ -128,9 +128,15 @@
                     "description": "Detmerines which inline renderer is used for displaying views"
                 },
                 "c4.decorations.enabled" :{
-                    "type": "boolean",
-                    "default": true,
-                    "description": "enable/disable inline text decoration"
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "onChange",
+                        "onSave"
+                    ],
+                    "default": "onChange",
+                    "scope": "application",
+                    "description": "Determines when text decoration takes place"
                 }
             }
         }
