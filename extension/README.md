@@ -52,7 +52,7 @@ When describing C4 models textually, there are plenty of raw strings describing 
 
 Therefore a text decoration option is provided, in order to highlight the different aspects with inline labels, such as  `name: ` or `description: ` (see screenshot below).
 
-This feature can become pretty expensive in case of large models. You can switch it off with setting 'c4.decorations.enabled' to false.
+This feature can become pretty expensive in case of large models. You can switch it off with setting 'c4.decorations.enabled' to 'off'.
 
 ![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-text-decoration.png)
 
@@ -68,7 +68,7 @@ This feature can become pretty expensive in case of large models. You can switch
 |c4.diagram.structurizr.enabled|true/false|false|If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns
 |c4.diagram.structurizr.uri|STRUCTURIZR_URI|https://structurizr.com/json|The URL to call when rendering the diagram using a Structurizr server.  Override if you want to point to a on-premise installation rather than the main Structurizr site, for example.
 |c4.diagram.plantuml.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns.
-|c4.decorations.enabled|true/false|true|Switch inline text decorations on or off.
+|c4.decorations.enabled|<ul><li>off</li><li>onChange</li><li>onSave</li></ul>|onChange|Text decorations can take place when editing (onChange) or when file is saved (onSave). It can also be switched off.
 
 ## Pre-requisites
 
