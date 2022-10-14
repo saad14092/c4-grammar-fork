@@ -17,6 +17,7 @@ import com.structurizr.model.ModelItem;
 import com.structurizr.model.Relationship;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
+import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import lombok.Data;
 
 public class C4TextDecoratorProvider {
@@ -35,7 +36,7 @@ public class C4TextDecoratorProvider {
         model.getAllElements().forEach( entry -> {
             
             String line = model.getLineAt(lineNumber(entry.getKey()));
-            Element element = entry.getValue().getObject();
+            C4ObjectWithContext<Element> element = entry.getValue();
 
             result.addAll(calculateDecoratorsForOneElement(element, line, lineNumber(entry.getKey())));
 
@@ -78,11 +79,17 @@ public class C4TextDecoratorProvider {
         return result;
     }
 
-    public List<DecoratorRange> calculateDecoratorsForOneElement(Element element, String line, int lineNumber) {
+    public List<DecoratorRange> calculateDecoratorsForOneElement(C4ObjectWithContext<Element> elementWithContext, String line, int lineNumber) {
         
         List<DecoratorRange> result = new ArrayList<>();
 
         int fromIndex = 0;
+        
+        if(elementWithContext.getIdentifier() != null) {
+            fromIndex = line.indexOf(elementWithContext.getIdentifier()) + elementWithContext.getIdentifier().length();
+        }
+
+        Element element = elementWithContext.getObject();
 
         PositionAndLength posObject = calculatePositionAndLengthObject(line, element.getName(), fromIndex);
         if(posObject.getStartPos() > 0) {
@@ -138,7 +145,11 @@ public class C4TextDecoratorProvider {
         if(decoratable == null || decoratable.length() == 0) {
             return new PositionAndLength(-1, fromIndex);
         }
-        int startPos = line.indexOf(decoratable, fromIndex)-1;
+        int startPos = line.indexOf(decoratable, fromIndex);
+        if(startPos > -1 && line.charAt(startPos-1) == '"') {
+            startPos -= 1;
+        }
+
         return new PositionAndLength(startPos, startPos + decoratable.length());
     }
 
