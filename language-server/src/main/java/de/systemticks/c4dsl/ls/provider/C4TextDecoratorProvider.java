@@ -3,6 +3,7 @@ package de.systemticks.c4dsl.ls.provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.lsp4j.Position;
@@ -130,10 +131,14 @@ public class C4TextDecoratorProvider {
      
     Optional<String> getFirstCustomTag(ModelItem element) {
 
+        if(Objects.isNull(element.getDefaultTags())) {
+            return Optional.empty();
+        }
+
         return Arrays.asList(element.getTags().split(",")).stream()
             .map(String::trim)
             .filter( tag -> !element.getDefaultTags().contains(tag))
-            .findFirst();
+            .findFirst();            
 
     }
 

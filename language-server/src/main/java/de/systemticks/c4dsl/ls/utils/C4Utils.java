@@ -82,4 +82,8 @@ public class C4Utils {
         return NOT_FOUND_WITHIN_STRING;
     }	
 
+    public static boolean isBlank(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
 }

@@ -34,7 +34,7 @@
         },
         {
 			"name": "variable.other.property.c4",
-            "match": "\\b(url|properties|perspectives)\\b"
+            "match": "\\b(url|properties|perspectives|tags)\\b"
         },
         {
             "name": "constant.numeric.c4",

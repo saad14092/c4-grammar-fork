@@ -1,7 +1,10 @@
 package de.systemticks.c4dsl.ls.utils;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -60,6 +63,16 @@ public class C4UtilsTest {
             String content = new String(Files.readAllBytes(Paths.get(tmpDir.listFiles()[0].getAbsolutePath())));
             assertEquals("something", content);
         });
+    }
 
+    @Test
+    public void isBlank() {
+        assertAll( "String is identified as blank" ,
+            () -> assertTrue(C4Utils.isBlank(null)),
+            () -> assertTrue(C4Utils.isBlank(null)),
+            () -> assertTrue(C4Utils.isBlank("")),
+            () -> assertTrue(C4Utils.isBlank("       ")),
+            () -> assertTrue(C4Utils.isBlank("\t\t "))
+        );
     }
 }
