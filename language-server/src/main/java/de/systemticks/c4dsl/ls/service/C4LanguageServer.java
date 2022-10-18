@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.lsp4j.CodeLensOptions;
+import org.eclipse.lsp4j.CompletionOptions;
 import org.eclipse.lsp4j.ExecuteCommandOptions;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
@@ -52,7 +53,7 @@ public class C4LanguageServer implements LanguageServer, LanguageClientAware {
 		
 		logger.info("initialize");		
 		final InitializeResult res = new InitializeResult(new ServerCapabilities());
-			//res.getCapabilities().setCompletionProvider(new CompletionOptions());
+		res.getCapabilities().setCompletionProvider(new CompletionOptions());
 		res.getCapabilities().setTextDocumentSync(TextDocumentSyncKind.Full);
 		res.getCapabilities().setCodeLensProvider(new CodeLensOptions());
 			//res.getCapabilities().setHoverProvider(Boolean.TRUE);

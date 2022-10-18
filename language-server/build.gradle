@@ -50,7 +50,7 @@ targetCompatibility = 1.8
 dependencies {
 
 	//the patched structurizr/dsl dependency, provinding parser callbacks	
-	implementation 'com.github.torsten-systemticks:dsl:a76f19de99'
+	implementation 'com.github.torsten-systemticks:dsl:d73f6edad4'
 
 	// other structurizr dependencies		
 	implementation 'com.structurizr:structurizr-plantuml:1.6.3'

@@ -3,6 +3,7 @@ package de.systemticks.c4dsl.ls.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class C4DocumentModel {
 	private Map<Integer, String> includesToLineNumber = new HashMap<>();
     private List<Integer> colors = new ArrayList<>();
 	private List<C4DocumentModel> referencedModels = new ArrayList<>();
+	private List<C4CompletionScope> scopes = new ArrayList<>();
 	private String uri;
 	private boolean parsedInternally;
 
@@ -137,6 +139,13 @@ public class C4DocumentModel {
 		viewToLineNumber.put(lineNumber, view);
     }
 
+	public void closeLastScope(int lineNumber) {
+		scopes.stream()
+			.filter( scope -> scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED)
+			.reduce( (f, s) -> s).get()
+			.setEndsAt(lineNumber);
+	}
+
     public void addColor(int lineNumber) {
 		colors.add(lineNumber);
     }
@@ -153,5 +162,24 @@ public class C4DocumentModel {
 	public List<C4DocumentModel> getReferencedModels() {
 		return this.referencedModels;
 	}
+
+	public String getNearestScope(int lineNumber) {
+
+		C4CompletionScope nearestScope = scopes.stream()
+				.filter(scope -> scope.getStartsAt() < lineNumber && (scope.getEndsAt() > lineNumber || scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED))
+				.sorted( Comparator.comparingInt(C4CompletionScope::getStartsAt).reversed())
+				.findFirst()
+				.get();
+
+		return nearestScope.getName();
+	}
+
+	public void openScope(int lineNumber, int contextId, String contextName) {
+		scopes.add(new C4CompletionScope(contextId, contextName, lineNumber));
+	}
+
+    public void closeScope(int lineNumber, int contextId, String contextName) {
+		scopes.stream().filter( s -> s.getId() == contextId).findFirst().get().setEndsAt(lineNumber);
+    }
 
 }
