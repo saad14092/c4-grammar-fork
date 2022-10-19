@@ -1,6 +1,7 @@
 package de.systemticks.c4dsl.ls.model;
 
-public class C4Keywords {
+public class C4Tokens {
+    // Keywords
     public static final String KW_MODEL = "model";
     public static final String KW_VIEWS = "views";
     public static final String KW_DOCS = "!docs";
@@ -36,5 +37,8 @@ public class C4Keywords {
     public static final String KW_AUTOLAYOUT = "autolayout";
     public static final String KW_ANIMATION = "animation";
     public static final String KW_TITLE = "title";
+
+    // other
+    public static final String EXPR_RELATIONSHIP = "->";
 
 }

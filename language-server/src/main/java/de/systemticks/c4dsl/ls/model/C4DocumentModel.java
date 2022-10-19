@@ -22,10 +22,12 @@ import com.structurizr.view.View;
 
 public class C4DocumentModel {
 
+	public static final String NO_SCOPE = "UnknownScope"; 
+
 	private String rawText;
 	private Workspace workspace;
 	private boolean valid;
-	private final static String NEW_LINE = "\\r?\\n";
+	private static final String NEW_LINE = "\\r?\\n";
 	private String lines[];
 	
     private static final Logger logger = LoggerFactory.getLogger(C4DocumentModel.class);
@@ -124,7 +126,7 @@ public class C4DocumentModel {
 	}
 	
 	public String getLineAt(int lineNumber) {
-		return lines[lineNumber];
+		return lineNumber < lines.length ? lines[lineNumber] : null;
 	}
 
 	public void addRelationship(int lineNumber, C4ObjectWithContext<Relationship> c4ObjectWithContext) {
@@ -138,13 +140,6 @@ public class C4DocumentModel {
     public void addView(int lineNumber, View view) {
 		viewToLineNumber.put(lineNumber, view);
     }
-
-	public void closeLastScope(int lineNumber) {
-		scopes.stream()
-			.filter( scope -> scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED)
-			.reduce( (f, s) -> s).get()
-			.setEndsAt(lineNumber);
-	}
 
     public void addColor(int lineNumber) {
 		colors.add(lineNumber);
@@ -162,16 +157,15 @@ public class C4DocumentModel {
 	public List<C4DocumentModel> getReferencedModels() {
 		return this.referencedModels;
 	}
-
+ 
 	public String getSurroundingScope(int lineNumber) {
 
-		C4CompletionScope nearestScope = scopes.stream()
+		Optional<C4CompletionScope> nearestScope = scopes.stream()
 				.filter(scope -> scope.getStartsAt() < lineNumber && (scope.getEndsAt() > lineNumber || scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED))
 				.sorted( Comparator.comparingInt(C4CompletionScope::getStartsAt).reversed())
-				.findFirst()
-				.get();
+				.findFirst();
 
-		return nearestScope.getName();
+		return nearestScope.map(C4CompletionScope::getName).orElse(NO_SCOPE);
 	}
 
 	public void openScope(int lineNumber, int contextId, String contextName) {

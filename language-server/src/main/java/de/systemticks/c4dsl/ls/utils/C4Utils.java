@@ -86,4 +86,7 @@ public class C4Utils {
         return str == null || str.trim().isEmpty();
     }
 
+    public static String leftOfCursor(String line, int cursor) {
+        return line.substring(0, cursor).trim();
+    }
 }

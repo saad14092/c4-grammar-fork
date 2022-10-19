@@ -20,7 +20,7 @@ import com.structurizr.model.Element;
 import com.structurizr.model.SoftwareSystem;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
-import de.systemticks.c4dsl.ls.model.C4Keywords;
+import de.systemticks.c4dsl.ls.model.C4Tokens;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 
@@ -39,28 +39,28 @@ public class C4CompletionProvider {
     private final static List<CompletionItem> EMPTY = Collections.emptyList();
 
     List<String> WORKSPACE_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Keywords.KW_PROPERTIES, C4Keywords.KW_DOCS, C4Keywords.KW_ADRS, C4Keywords.KW_IDENTIFIERS,
-            C4Keywords.KW_IMPLIED_RELATIONSHIOS, C4Keywords.KW_MODEL, C4Keywords.KW_VIEWS, C4Keywords.KW_CONFIGURATION);
+            C4Tokens.KW_PROPERTIES, C4Tokens.KW_DOCS, C4Tokens.KW_ADRS, C4Tokens.KW_IDENTIFIERS,
+            C4Tokens.KW_IMPLIED_RELATIONSHIOS, C4Tokens.KW_MODEL, C4Tokens.KW_VIEWS, C4Tokens.KW_CONFIGURATION);
 
     List<String> MODEL_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Keywords.KW_ENTERPRISE, C4Keywords.KW_GROUP,C4Keywords.KW_PERSON, C4Keywords.KW_SOFTWARE_SYSTEM, 
-            C4Keywords.KW_DEPLOYMENT_ENVIRONMENT, C4Keywords.KW_ELEMENT);
+            C4Tokens.KW_ENTERPRISE, C4Tokens.KW_GROUP,C4Tokens.KW_PERSON, C4Tokens.KW_SOFTWARE_SYSTEM, 
+            C4Tokens.KW_DEPLOYMENT_ENVIRONMENT, C4Tokens.KW_ELEMENT);
 
     List<String> SOFTWARE_SYSTEM_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Keywords.KW_GROUP, C4Keywords.KW_CONTAINER, C4Keywords.KW_DOCS, C4Keywords.KW_ADRS,
-            C4Keywords.KW_DESCRIPTION, C4Keywords.KW_TAGS, C4Keywords.KW_URL, C4Keywords.KW_PROPERTIES, C4Keywords.KW_PERSPECTIVES);
+            C4Tokens.KW_GROUP, C4Tokens.KW_CONTAINER, C4Tokens.KW_DOCS, C4Tokens.KW_ADRS,
+            C4Tokens.KW_DESCRIPTION, C4Tokens.KW_TAGS, C4Tokens.KW_URL, C4Tokens.KW_PROPERTIES, C4Tokens.KW_PERSPECTIVES);
 
     List<String> CONTAINER_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Keywords.KW_GROUP, C4Keywords.KW_COMPONENT,
-            C4Keywords.KW_DESCRIPTION, C4Keywords.KW_TAGS, C4Keywords.KW_URL, C4Keywords.KW_PROPERTIES, C4Keywords.KW_PERSPECTIVES);
+            C4Tokens.KW_GROUP, C4Tokens.KW_COMPONENT,
+            C4Tokens.KW_DESCRIPTION, C4Tokens.KW_TAGS, C4Tokens.KW_URL, C4Tokens.KW_PROPERTIES, C4Tokens.KW_PERSPECTIVES);
 
     List<String> VIEWS_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Keywords.KW_SYSTEM_LANSCAPE, C4Keywords.KW_SYSTEM_CONTEXT, C4Keywords.KW_CONTAINER, C4Keywords.KW_COMPONENT,
-            C4Keywords.KW_FILTERED, C4Keywords.KW_DYNAMIC, C4Keywords.KW_CUSTOM, C4Keywords.KW_STYLES, C4Keywords.KW_THEME, 
-            C4Keywords.KW_THEMES, C4Keywords.KW_BRANDING, C4Keywords.KW_TERMINOLOGY, C4Keywords.KW_PROPERTIES);
+            C4Tokens.KW_SYSTEM_LANSCAPE, C4Tokens.KW_SYSTEM_CONTEXT, C4Tokens.KW_CONTAINER, C4Tokens.KW_COMPONENT,
+            C4Tokens.KW_FILTERED, C4Tokens.KW_DYNAMIC, C4Tokens.KW_CUSTOM, C4Tokens.KW_STYLES, C4Tokens.KW_THEME, 
+            C4Tokens.KW_THEMES, C4Tokens.KW_BRANDING, C4Tokens.KW_TERMINOLOGY, C4Tokens.KW_PROPERTIES);
 
     List<String> VIEW_COMPLETION_COMMON_KEYWORDS = Arrays.asList(
-            C4Keywords.KW_INCLUDE, C4Keywords.KW_EXCLUDE, C4Keywords.KW_ANIMATION, C4Keywords.KW_AUTOLAYOUT, C4Keywords.KW_TITLE);
+            C4Tokens.KW_INCLUDE, C4Tokens.KW_EXCLUDE, C4Tokens.KW_ANIMATION, C4Tokens.KW_AUTOLAYOUT, C4Tokens.KW_TITLE);
 
     List<String> RELATIONSHIP_STYLE_PROPERTIES = Arrays.asList("thickness", "color", "colour", "dashed", "style",
             "routing", "fontSize", "width", "position", "opacity");
@@ -71,15 +71,19 @@ public class C4CompletionProvider {
         String line = model.getLineAt(lineNumber);
         String scope = model.getSurroundingScope(lineNumber + 1);
 
+        if(scope.equals(C4DocumentModel.NO_SCOPE)) {
+            return EMPTY;
+        }
+
         if (C4Utils.isBlank(line)) {
-            return completionIfBlank(scope, model);
+            return completionLineIsEmpty(scope, model);
         }
         else {
-            return completionIfNotBlank(scope, line, model, position);
+            return completionLineIsNotEmpty(scope, line, model, position);
         }
     }
 
-    private List<CompletionItem> completionIfBlank(String scope, C4DocumentModel model) {
+    private List<CompletionItem> completionLineIsEmpty(String scope, C4DocumentModel model) {
         switch (scope) {
             case WORKSPACE_SCOPE:
                 return completionForWorkspace();
@@ -101,24 +105,35 @@ public class C4CompletionProvider {
         }
     }
 
-    private List<CompletionItem> completionIfNotBlank(String scope, String line, C4DocumentModel model, Position position) {
+    private List<CompletionItem> completionLineIsNotEmpty(String scope, String line, C4DocumentModel model, Position position) {
 
-        if(scope.equals(VIEWS_SCOPE)) {
-            return completionWithinViewsScope(line.substring(0, position.getCharacter()).trim() , model);
-        }
-
-        else {
-            return EMPTY;
+        switch(scope) {
+            case VIEWS_SCOPE:
+                return completionWithinViewsScope(C4Utils.leftOfCursor(line, position.getCharacter()) , model);
+            case MODEL_SCOPE:
+                return completionWithinModelScope(C4Utils.leftOfCursor(line, position.getCharacter()) , model);
+            default:
+                logger.info("Currently not completion for scope {} in line {} at pos {}", scope, line, position.getCharacter());
+                return EMPTY;
         }
 
     }
 
+    private List<CompletionItem> completionWithinModelScope(String line, C4DocumentModel model) {
+        if(line.endsWith(C4Tokens.EXPR_RELATIONSHIP)) {
+            return identifierInModelCompletion(getIdentifiers(model));
+        }
+        else {
+            return EMPTY;
+        }
+    }
+
     private List<CompletionItem> completionWithinViewsScope(String line, C4DocumentModel model) {
 
-        if(line.equals( C4Keywords.KW_SYSTEM_CONTEXT) || line.endsWith( C4Keywords.KW_CONTAINER)) {
+        if(line.equals( C4Tokens.KW_SYSTEM_CONTEXT) || line.endsWith( C4Tokens.KW_CONTAINER)) {
             return completionInViewIdentifiers(model, (element) -> element.getObject() instanceof SoftwareSystem);
         }
-        else if(line.equals( C4Keywords.KW_COMPONENT)) {
+        else if(line.equals( C4Tokens.KW_COMPONENT)) {
             return completionInViewIdentifiers(model, (element) -> element.getObject() instanceof Container);
         }
 
@@ -177,6 +192,16 @@ public class C4CompletionProvider {
         return item;
     }
 
+    private CompletionItem workspaceSnippet() {
+        CompletionItem item = new CompletionItem();
+        item.setLabel("Workspace Template");
+        item.setDetail("Add a workspace");
+        item.setKind(CompletionItemKind.Snippet);
+        item.setInsertTextFormat(InsertTextFormat.Snippet);
+        item.setInsertText("workspace {\n\n}");
+        return item;
+    }
+ 
     private List<CompletionItem> identifierInModelCompletion(List<String> identifier) {
         return identifier.stream().map(id -> {
             CompletionItem item = new CompletionItem();
