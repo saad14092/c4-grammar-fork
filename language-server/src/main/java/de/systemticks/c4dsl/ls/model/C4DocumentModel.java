@@ -163,7 +163,7 @@ public class C4DocumentModel {
 		return this.referencedModels;
 	}
 
-	public String getNearestScope(int lineNumber) {
+	public String getSurroundingScope(int lineNumber) {
 
 		C4CompletionScope nearestScope = scopes.stream()
 				.filter(scope -> scope.getStartsAt() < lineNumber && (scope.getEndsAt() > lineNumber || scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED))
