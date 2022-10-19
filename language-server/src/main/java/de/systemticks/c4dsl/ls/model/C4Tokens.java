@@ -37,6 +37,7 @@ public class C4Tokens {
     public static final String KW_AUTOLAYOUT = "autolayout";
     public static final String KW_ANIMATION = "animation";
     public static final String KW_TITLE = "title";
+    public static final String KW_RELATIONSHIP = "relationship";
 
     // other
     public static final String EXPR_RELATIONSHIP = "->";

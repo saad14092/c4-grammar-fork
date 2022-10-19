@@ -23,17 +23,27 @@ import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.model.C4Tokens;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 public class C4CompletionProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(C4CompletionProvider.class);
 
     private final static String WORKSPACE_SCOPE = "WorkspaceDslContext";
+    
+    // Model Scopes
     private final static String MODEL_SCOPE = "ModelDslContext";
     private final static String SOFTWARE_SYSTEM_SCOPE = "SoftwareSystemDslContext";
     private final static String CONTAINER_SCOPE = "ContainerDslContext";
+
+    // View Scopes
     private final static String VIEWS_SCOPE = "ViewsDslContext";
     private final static String SYSTEM_CONTEXT_VIEW_SCOPE = "SystemContextViewDslContext";
+    
+    // Style Scopes
+    private final static String STYLES_SCOPE = "StylesDslContext";
+    private final static String ELEMENT_STYLE_SCOPE = "ElementStyleDslContext";
     private final static String RELATIONSHIP_STYLE_SCOPE = "RelationshipStyleDslContext";
 
     private final static List<CompletionItem> EMPTY = Collections.emptyList();
@@ -64,6 +74,9 @@ public class C4CompletionProvider {
 
     List<String> RELATIONSHIP_STYLE_PROPERTIES = Arrays.asList("thickness", "color", "colour", "dashed", "style",
             "routing", "fontSize", "width", "position", "opacity");
+
+    List<String> ELEMENT_STYLE_PROPERTIES = Arrays.asList("shape", "icon", "width", "height", "background", "color",
+            "colour", "stroke", "fontSize", "border", "opacity", "metadata", "description");
 
     public List<CompletionItem> calcCompletions(C4DocumentModel model, Position position) {
 
@@ -97,6 +110,10 @@ public class C4CompletionProvider {
                 return keyWordCompletion(VIEWS_COMPLETION_KEYWORDS);
             case SYSTEM_CONTEXT_VIEW_SCOPE:
                 return keyWordCompletion(VIEW_COMPLETION_COMMON_KEYWORDS);
+            case STYLES_SCOPE:
+                return propertyCompletion(List.of(C4Tokens.KW_ELEMENT, C4Tokens.KW_RELATIONSHIP));
+            case ELEMENT_STYLE_SCOPE:
+                return propertyCompletion(ELEMENT_STYLE_PROPERTIES);
             case RELATIONSHIP_STYLE_SCOPE:
                 return propertyCompletion(RELATIONSHIP_STYLE_PROPERTIES);
             default:
@@ -183,25 +200,19 @@ public class C4CompletionProvider {
     }
 
     private CompletionItem personSnippet() {
+        return createSnippet(new SnippetData("Person Template", "Add a new person", "${1:identifier} = person ${2:name} \"Your Description\""));
+    }
+
+    private CompletionItem createSnippet(SnippetData snippet) {
         CompletionItem item = new CompletionItem();
-        item.setLabel("Person Template");
-        item.setDetail("Add a new person");
+        item.setLabel(snippet.getLabel());
+        item.setDetail(snippet.getDetail());
         item.setKind(CompletionItemKind.Snippet);
         item.setInsertTextFormat(InsertTextFormat.Snippet);
-        item.setInsertText("${1:identifier} = person ${2:name} \"Your Description\"");
+        item.setInsertText(snippet.getInsertText());
         return item;
     }
 
-    private CompletionItem workspaceSnippet() {
-        CompletionItem item = new CompletionItem();
-        item.setLabel("Workspace Template");
-        item.setDetail("Add a workspace");
-        item.setKind(CompletionItemKind.Snippet);
-        item.setInsertTextFormat(InsertTextFormat.Snippet);
-        item.setInsertText("workspace {\n\n}");
-        return item;
-    }
- 
     private List<CompletionItem> identifierInModelCompletion(List<String> identifier) {
         return identifier.stream().map(id -> {
             CompletionItem item = new CompletionItem();
@@ -216,5 +227,13 @@ public class C4CompletionProvider {
                 .map(ele -> ele.getValue().getIdentifier())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    @Data
+    @AllArgsConstructor
+    class SnippetData {
+        private String label;
+        private String detail;
+        private String insertText;
     }
 }
