@@ -1,9 +1,13 @@
 package de.systemticks.c4dsl.ls.provider;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -20,7 +24,9 @@ import com.structurizr.model.Element;
 import com.structurizr.model.SoftwareSystem;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
-import de.systemticks.c4dsl.ls.model.C4Tokens;
+import de.systemticks.c4dsl.ls.model.C4TokensConfig;
+import de.systemticks.c4dsl.ls.model.C4TokensLoader;
+import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenScope;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 import lombok.AllArgsConstructor;
@@ -28,55 +34,31 @@ import lombok.Data;
 
 public class C4CompletionProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(C4CompletionProvider.class);
+    private static final String EXPR_RELATIONSHIP = "->";
 
-    private final static String WORKSPACE_SCOPE = "WorkspaceDslContext";
+    private static final Logger logger = LoggerFactory.getLogger(C4CompletionProvider.class);    
+    private final static List<CompletionItem> EMPTY = Collections.emptyList();    
+    private Map<String, List<CompletionItem>> completionItemsPerScope;
+    private List<String> relationRelevantScopes;
     
-    // Model Scopes
-    private final static String MODEL_SCOPE = "ModelDslContext";
-    private final static String SOFTWARE_SYSTEM_SCOPE = "SoftwareSystemDslContext";
-    private final static String CONTAINER_SCOPE = "ContainerDslContext";
+    public C4CompletionProvider() {
+        init();
+    }
 
-    // View Scopes
-    private final static String VIEWS_SCOPE = "ViewsDslContext";
-    private final static String SYSTEM_CONTEXT_VIEW_SCOPE = "SystemContextViewDslContext";
-    
-    // Style Scopes
-    private final static String STYLES_SCOPE = "StylesDslContext";
-    private final static String ELEMENT_STYLE_SCOPE = "ElementStyleDslContext";
-    private final static String RELATIONSHIP_STYLE_SCOPE = "RelationshipStyleDslContext";
-
-    private final static List<CompletionItem> EMPTY = Collections.emptyList();
-
-    List<String> WORKSPACE_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Tokens.KW_PROPERTIES, C4Tokens.KW_DOCS, C4Tokens.KW_ADRS, C4Tokens.KW_IDENTIFIERS,
-            C4Tokens.KW_IMPLIED_RELATIONSHIOS, C4Tokens.KW_MODEL, C4Tokens.KW_VIEWS, C4Tokens.KW_CONFIGURATION);
-
-    List<String> MODEL_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Tokens.KW_ENTERPRISE, C4Tokens.KW_GROUP,C4Tokens.KW_PERSON, C4Tokens.KW_SOFTWARE_SYSTEM, 
-            C4Tokens.KW_DEPLOYMENT_ENVIRONMENT, C4Tokens.KW_ELEMENT);
-
-    List<String> SOFTWARE_SYSTEM_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Tokens.KW_GROUP, C4Tokens.KW_CONTAINER, C4Tokens.KW_DOCS, C4Tokens.KW_ADRS,
-            C4Tokens.KW_DESCRIPTION, C4Tokens.KW_TAGS, C4Tokens.KW_URL, C4Tokens.KW_PROPERTIES, C4Tokens.KW_PERSPECTIVES);
-
-    List<String> CONTAINER_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Tokens.KW_GROUP, C4Tokens.KW_COMPONENT,
-            C4Tokens.KW_DESCRIPTION, C4Tokens.KW_TAGS, C4Tokens.KW_URL, C4Tokens.KW_PROPERTIES, C4Tokens.KW_PERSPECTIVES);
-
-    List<String> VIEWS_COMPLETION_KEYWORDS = Arrays.asList(
-            C4Tokens.KW_SYSTEM_LANSCAPE, C4Tokens.KW_SYSTEM_CONTEXT, C4Tokens.KW_CONTAINER, C4Tokens.KW_COMPONENT,
-            C4Tokens.KW_FILTERED, C4Tokens.KW_DYNAMIC, C4Tokens.KW_CUSTOM, C4Tokens.KW_STYLES, C4Tokens.KW_THEME, 
-            C4Tokens.KW_THEMES, C4Tokens.KW_BRANDING, C4Tokens.KW_TERMINOLOGY, C4Tokens.KW_PROPERTIES);
-
-    List<String> VIEW_COMPLETION_COMMON_KEYWORDS = Arrays.asList(
-            C4Tokens.KW_INCLUDE, C4Tokens.KW_EXCLUDE, C4Tokens.KW_ANIMATION, C4Tokens.KW_AUTOLAYOUT, C4Tokens.KW_TITLE);
-
-    List<String> RELATIONSHIP_STYLE_PROPERTIES = Arrays.asList("thickness", "color", "colour", "dashed", "style",
-            "routing", "fontSize", "width", "position", "opacity");
-
-    List<String> ELEMENT_STYLE_PROPERTIES = Arrays.asList("shape", "icon", "width", "height", "background", "color",
-            "colour", "stroke", "fontSize", "border", "opacity", "metadata", "description");
+    void init() {
+        C4TokensLoader configLoader = new C4TokensLoader();
+        C4TokensConfig config = configLoader.readConfiguration();
+        if(config != null) {
+            completionItemsPerScope = new HashMap<>();
+            config.getScopes().forEach( scope -> {
+                completionItemsPerScope.put(scope.getName(), keyWordCompletion(scope.getKeywords()));
+            });
+            relationRelevantScopes = config.getScopes().stream()
+                                        .filter(C4TokenScope::isRelations)
+                                        .map(C4TokenScope::getName)
+                                        .collect(Collectors.toList());
+        }
+    }
 
     public List<CompletionItem> calcCompletions(C4DocumentModel model, Position position) {
 
@@ -97,48 +79,34 @@ public class C4CompletionProvider {
     }
 
     private List<CompletionItem> completionLineIsEmpty(String scope, C4DocumentModel model) {
-        switch (scope) {
-            case WORKSPACE_SCOPE:
-                return completionForWorkspace();
-            case MODEL_SCOPE:
-                return completionForModel(model);
-            case SOFTWARE_SYSTEM_SCOPE:
-                return keyWordCompletion(SOFTWARE_SYSTEM_COMPLETION_KEYWORDS);
-            case CONTAINER_SCOPE:
-                return keyWordCompletion(CONTAINER_COMPLETION_KEYWORDS);
-            case VIEWS_SCOPE:
-                return keyWordCompletion(VIEWS_COMPLETION_KEYWORDS);
-            case SYSTEM_CONTEXT_VIEW_SCOPE:
-                return keyWordCompletion(VIEW_COMPLETION_COMMON_KEYWORDS);
-            case STYLES_SCOPE:
-                return propertyCompletion(List.of(C4Tokens.KW_ELEMENT, C4Tokens.KW_RELATIONSHIP));
-            case ELEMENT_STYLE_SCOPE:
-                return propertyCompletion(ELEMENT_STYLE_PROPERTIES);
-            case RELATIONSHIP_STYLE_SCOPE:
-                return propertyCompletion(RELATIONSHIP_STYLE_PROPERTIES);
-            default:
-                logger.info("Currently not completion for scope {} implemented", scope);
-                return EMPTY;
-        }
+
+        return C4Utils.merge(
+                    completionItemsPerScope.getOrDefault(scope, EMPTY), 
+                    relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : EMPTY);
     }
 
     private List<CompletionItem> completionLineIsNotEmpty(String scope, String line, C4DocumentModel model, Position position) {
 
-        switch(scope) {
-            case VIEWS_SCOPE:
-                return completionWithinViewsScope(C4Utils.leftOfCursor(line, position.getCharacter()) , model);
-            case MODEL_SCOPE:
-                return completionWithinModelScope(C4Utils.leftOfCursor(line, position.getCharacter()) , model);
-            default:
-                logger.info("Currently not completion for scope {} in line {} at pos {}", scope, line, position.getCharacter());
-                return EMPTY;
+        Optional<String> leftFromCursor = C4Utils.leftFromCursor(line, position.getCharacter());
+
+        if(leftFromCursor.isPresent()) {
+            switch(scope) {
+                case "ViewsDslContext":
+                    return completionWithinViewsScope(leftFromCursor.get() , model);
+                case "ModelDslContext":
+                    return completionWithinModelScope(leftFromCursor.get() , model);
+                default:
+                    logger.info("Currently not completion for scope {} in line {} at pos {}", scope, line, position.getCharacter());
+                    return EMPTY;
+            }    
         }
 
+        return EMPTY;
     }
 
     private List<CompletionItem> completionWithinModelScope(String line, C4DocumentModel model) {
-        if(line.endsWith(C4Tokens.EXPR_RELATIONSHIP)) {
-            return identifierInModelCompletion(getIdentifiers(model));
+        if(line.endsWith(EXPR_RELATIONSHIP)) {
+            return identifierCompletion(getIdentifiers(model));
         }
         else {
             return EMPTY;
@@ -147,10 +115,10 @@ public class C4CompletionProvider {
 
     private List<CompletionItem> completionWithinViewsScope(String line, C4DocumentModel model) {
 
-        if(line.equals( C4Tokens.KW_SYSTEM_CONTEXT) || line.endsWith( C4Tokens.KW_CONTAINER)) {
+        if(line.equals("SoftwareSystemDslContext") || line.endsWith( "ContainerDslContext")) {
             return completionInViewIdentifiers(model, (element) -> element.getObject() instanceof SoftwareSystem);
         }
-        else if(line.equals( C4Tokens.KW_COMPONENT)) {
+        else if(line.equals( "ComponentDslContext")) {
             return completionInViewIdentifiers(model, (element) -> element.getObject() instanceof Container);
         }
 
@@ -161,24 +129,13 @@ public class C4CompletionProvider {
     }
 
     private List<CompletionItem> completionInViewIdentifiers(C4DocumentModel model, Predicate<C4ObjectWithContext<Element>> func) {
-        return identifierInModelCompletion( 
+        return identifierCompletion( 
                 model.getAllElements().stream()
                     .map(Entry::getValue)
                     .filter(element -> func.test(element))
                     .map(C4ObjectWithContext::getIdentifier)
                     .collect(Collectors.toList())
             );
-    }
-
-    private List<CompletionItem> completionForWorkspace() {
-        return keyWordCompletion(WORKSPACE_COMPLETION_KEYWORDS);
-    }
-
-    private List<CompletionItem> completionForModel(C4DocumentModel documentModel) {
-        List<CompletionItem> result = keyWordCompletion(MODEL_COMPLETION_KEYWORDS);
-        result.add(personSnippet());
-        result.addAll(identifierInModelCompletion(getIdentifiers(documentModel)));
-        return result;
     }
 
     private List<CompletionItem> keyWordCompletion(List<String> keywords) {
@@ -213,7 +170,7 @@ public class C4CompletionProvider {
         return item;
     }
 
-    private List<CompletionItem> identifierInModelCompletion(List<String> identifier) {
+    private List<CompletionItem> identifierCompletion(List<String> identifier) {
         return identifier.stream().map(id -> {
             CompletionItem item = new CompletionItem();
             item.setLabel(id);

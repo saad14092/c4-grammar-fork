@@ -1,6 +1,6 @@
 {
     "git.ignoreLimitWarning": true,
-
+    "java.debug.settings.forceBuildBeforeLaunch": false,
     "color-highlight.markRuler": false,
     "java.configuration.updateBuildConfiguration": "automatic",
     "editor.semanticHighlighting.enabled": true

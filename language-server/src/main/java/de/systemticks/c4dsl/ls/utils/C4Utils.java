@@ -3,9 +3,13 @@ package de.systemticks.c4dsl.ls.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.structurizr.view.ComponentView;
 import com.structurizr.view.ContainerView;
 import com.structurizr.view.DeploymentView;
@@ -86,7 +90,15 @@ public class C4Utils {
         return str == null || str.trim().isEmpty();
     }
 
-    public static String leftOfCursor(String line, int cursor) {
-        return line.substring(0, cursor).trim();
+    public static Optional<String> leftFromCursor(String line, int cursor) {
+
+        if(line == null || cursor < 0) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(line.substring(0, cursor).trim());
+    }
+
+    public static<T> List<T> merge(List<T> list1, List<T> list2) {
+        return Lists.newArrayList(Iterables.concat(list1, list2));
     }
 }
