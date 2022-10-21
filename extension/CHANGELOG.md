@@ -1,5 +1,11 @@
 # Change Log
 
+## v3.2.1
+
+Provides basic support for code completion / content assist
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/116
+
 ## v3.2.0
 
 Provides text decoration for inline parameter, e.g.:

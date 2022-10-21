@@ -104,6 +104,13 @@ test {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
+jacocoTestReport {
+	reports {
+		xml.required = true
+	}
+    dependsOn test
+}
+
 build.dependsOn deployToVSCode
 
 clean.dependsOn cleanDeployedServer

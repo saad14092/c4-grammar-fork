@@ -2,12 +2,10 @@ package de.systemticks.c4dsl.ls.provider;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -41,12 +39,11 @@ public class C4CompletionProvider {
     private Map<String, List<CompletionItem>> completionItemsPerScope;
     private List<String> relationRelevantScopes;
     
-    public C4CompletionProvider() {
-        init();
+    public C4CompletionProvider(C4TokensLoader configLoader) {
+        init(configLoader);
     }
 
-    void init() {
-        C4TokensLoader configLoader = new C4TokensLoader();
+    void init(C4TokensLoader configLoader) {
         C4TokensConfig config = configLoader.readConfiguration();
         if(config != null) {
             completionItemsPerScope = new HashMap<>();
@@ -64,7 +61,7 @@ public class C4CompletionProvider {
 
         int lineNumber = position.getLine();
         String line = model.getLineAt(lineNumber);
-        String scope = model.getSurroundingScope(lineNumber + 1);
+        String scope = model.getSurroundingScope(lineNumber);
 
         if(scope.equals(C4DocumentModel.NO_SCOPE)) {
             return EMPTY;

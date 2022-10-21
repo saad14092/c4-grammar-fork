@@ -160,8 +160,10 @@ public class C4DocumentModel {
  
 	public String getSurroundingScope(int lineNumber) {
 
+		final int adjustedLineNumber = lineNumber + 1;
+
 		Optional<C4CompletionScope> nearestScope = scopes.stream()
-				.filter(scope -> scope.getStartsAt() < lineNumber && (scope.getEndsAt() > lineNumber || scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED))
+				.filter(scope -> scope.getStartsAt() < adjustedLineNumber && (scope.getEndsAt() > adjustedLineNumber || scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED))
 				.sorted( Comparator.comparingInt(C4CompletionScope::getStartsAt).reversed())
 				.findFirst();
 

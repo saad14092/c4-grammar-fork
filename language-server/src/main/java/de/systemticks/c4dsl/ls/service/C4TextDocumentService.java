@@ -42,6 +42,7 @@ import com.google.gson.JsonObject;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentManager;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
+import de.systemticks.c4dsl.ls.model.C4TokensLoader;
 import de.systemticks.c4dsl.ls.provider.C4CodeLenseProvider;
 import de.systemticks.c4dsl.ls.provider.C4ColorProvider;
 import de.systemticks.c4dsl.ls.provider.C4CompletionProvider;
@@ -63,7 +64,7 @@ public class C4TextDocumentService implements TextDocumentService {
 	private C4DefinitionProvider definitionProvider = new C4DefinitionProvider();
 	private C4SemanticTokenProvider semanticTokenProvider = new C4SemanticTokenProvider();
 	private C4TextDecoratorProvider decoratorProvider = new C4TextDecoratorProvider();
-	private C4CompletionProvider completionProvider = new C4CompletionProvider();
+	private C4CompletionProvider completionProvider = new C4CompletionProvider(new C4TokensLoader());
 
 	ReadWriteLock lock = new ReentrantReadWriteLock();
 	private int changeCount = 0;

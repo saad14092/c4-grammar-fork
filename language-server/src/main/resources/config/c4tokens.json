@@ -246,6 +246,16 @@
                 "opacity",
                 "metadata",
                 "description"
+            ],
+            "details": [
+                {
+                    "keyword": "border",
+                    "choice": [
+                        "solid",
+                        "dashed",
+                        "dotted"
+                    ]
+                }
             ]
         },
         {
@@ -290,5 +300,5 @@
                 "properties"
             ]
         }
-   ]
+    ]
 }
