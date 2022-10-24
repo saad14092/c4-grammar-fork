@@ -3,6 +3,7 @@ package de.systemticks.c4dsl.ls.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -16,6 +17,9 @@ import com.structurizr.view.DeploymentView;
 import com.structurizr.view.DynamicView;
 import com.structurizr.view.SystemContextView;
 import com.structurizr.view.View;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 public class C4Utils {
 
@@ -101,4 +105,25 @@ public class C4Utils {
     public static<T> List<T> merge(List<T> list1, List<T> list2) {
         return Lists.newArrayList(Iterables.concat(list1, list2));
     }
+
+    private final static String TOKENIZE_PATTERN = "\\w+|\"([^\"]*)\"";
+    private final static Pattern pattern = Pattern.compile(TOKENIZE_PATTERN);
+
+    public static List<LineToken> tokenize(String line) {
+
+        List<LineToken> result = new ArrayList<>();
+        if(isBlank(line)) {
+            return result;
+        }
+
+        Matcher matcher = pattern.matcher(line);
+
+        while(matcher.find()) {
+            result.add(new LineToken(matcher.group(0), matcher.start(), matcher.end()));
+        }
+
+        return result;
+    }
+
+
 }

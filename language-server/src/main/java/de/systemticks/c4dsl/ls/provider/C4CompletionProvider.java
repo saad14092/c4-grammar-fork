@@ -27,6 +27,7 @@ import de.systemticks.c4dsl.ls.model.C4TokensLoader;
 import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenScope;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
+import de.systemticks.c4dsl.ls.utils.LineToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -64,15 +65,28 @@ public class C4CompletionProvider {
         String scope = model.getSurroundingScope(lineNumber);
 
         if(scope.equals(C4DocumentModel.NO_SCOPE)) {
+            logger.warn("Cannot calculate code completion. No scope detected for line {} at Position ({},{})", line, position.getLine(), position.getCharacter());
             return EMPTY;
         }
 
-        if (C4Utils.isBlank(line)) {
+        List<LineToken> tokensInLine = C4Utils.tokenize(line);
+        // Line is empty. Determine all keywords in scope and potential identifer references
+        if(tokensInLine.size() == 0) {
             return completionLineIsEmpty(scope, model);
+        } 
+        // Currently typing first token
+        else if(tokensInLine.size() == 1) {
+            LineToken firstToken = tokensInLine.get(0);
+            if(position.getCharacter() > firstToken.getStart() && position.getCharacter() <= firstToken.getEnd()) {
+                return completionLineIsEmpty(scope, model).stream()
+                    .filter( item -> item.getLabel().startsWith(firstToken.getToken())).collect(Collectors.toList());
+            }
+            else if(position.getCharacter() > firstToken.getEnd()) {
+                return completionLineIsNotEmpty(scope, firstToken.getToken(), model, position);
+            }
         }
-        else {
-            return completionLineIsNotEmpty(scope, line, model, position);
-        }
+
+        return EMPTY;
     }
 
     private List<CompletionItem> completionLineIsEmpty(String scope, C4DocumentModel model) {
@@ -82,23 +96,18 @@ public class C4CompletionProvider {
                     relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : EMPTY);
     }
 
-    private List<CompletionItem> completionLineIsNotEmpty(String scope, String line, C4DocumentModel model, Position position) {
+    private List<CompletionItem> completionLineIsNotEmpty(String scope, String firstToken, C4DocumentModel model, Position position) {
 
-        Optional<String> leftFromCursor = C4Utils.leftFromCursor(line, position.getCharacter());
+        switch(scope) {
+            case "ViewsDslContext":
+                return completionWithinViewsScope(firstToken , model);
+            case "ModelDslContext":
+                return completionWithinModelScope(firstToken , model);
+            default:
+                logger.info("Currently no completion for scope {} in line {} at pos {}", scope, firstToken, position.getCharacter());
+                return EMPTY;
+        }    
 
-        if(leftFromCursor.isPresent()) {
-            switch(scope) {
-                case "ViewsDslContext":
-                    return completionWithinViewsScope(leftFromCursor.get() , model);
-                case "ModelDslContext":
-                    return completionWithinModelScope(leftFromCursor.get() , model);
-                default:
-                    logger.info("Currently not completion for scope {} in line {} at pos {}", scope, line, position.getCharacter());
-                    return EMPTY;
-            }    
-        }
-
-        return EMPTY;
     }
 
     private List<CompletionItem> completionWithinModelScope(String line, C4DocumentModel model) {
