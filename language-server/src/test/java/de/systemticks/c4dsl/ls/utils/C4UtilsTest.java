@@ -108,13 +108,13 @@ public class C4UtilsTest {
     }
 
     @Test
-    public void tokenizRelationShip() {
+    public void tokenizeRelationShip() {
         List<String> tokens = C4Utils.tokenize("abc -> def \"My Description\"").stream().map(LineToken::getToken).collect(Collectors.toList()) ;
         assertThat(tokens ).containsExactly("abc", "->", "def", "\"My Description\"");
     }
 
     @Test
-    public void tokenizAssignment() {
+    public void tokenizeAssignment() {
         List<String> tokens = C4Utils.tokenize("user = person \"A User\" {").stream().map(LineToken::getToken).collect(Collectors.toList()) ;
         assertThat(tokens ).containsExactly("user", "=", "person", "\"A User\"", "{");
     }
