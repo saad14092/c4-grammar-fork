@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -16,8 +15,6 @@ import org.eclipse.lsp4j.InsertTextFormat;
 import org.eclipse.lsp4j.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.structurizr.model.Container;
 import com.structurizr.model.Element;
 import com.structurizr.model.SoftwareSystem;
 
@@ -34,9 +31,10 @@ import lombok.Data;
 public class C4CompletionProvider {
 
     private static final String EXPR_RELATIONSHIP = "->";
+    private static final String EXPR_ASSIGNMENT = "=";
 
     private static final Logger logger = LoggerFactory.getLogger(C4CompletionProvider.class);    
-    private final static List<CompletionItem> EMPTY = Collections.emptyList();    
+    private final static List<CompletionItem> NO_COMPLETIONS = Collections.emptyList();    
     private Map<String, List<CompletionItem>> completionItemsPerScope;
     private List<String> relationRelevantScopes;
     
@@ -66,72 +64,83 @@ public class C4CompletionProvider {
 
         if(scope.equals(C4DocumentModel.NO_SCOPE)) {
             logger.warn("Cannot calculate code completion. No scope detected for line {} at Position ({},{})", line, position.getLine(), position.getCharacter());
-            return EMPTY;
+            return NO_COMPLETIONS;
         }
 
-        List<LineToken> tokensInLine = C4Utils.tokenize(line);
-        // Line is empty. Determine all keywords in scope and potential identifer references
-        if(tokensInLine.size() == 0) {
-            return completionLineIsEmpty(scope, model);
+        List<LineToken> tokens = C4Utils.tokenize(line);
+
+        // Line is empty or cursor is located before first token. 
+        // Determine all keywords in the given scope and potential identifer references (if applicable)
+        if(tokens.isEmpty() || C4Utils.cursorBeforeToken(tokens.get(0), position.getCharacter())) {
+            return completeBeforeFirstToken(scope, model);
         } 
-        // Currently typing first token
-        else if(tokensInLine.size() == 1) {
-            LineToken firstToken = tokensInLine.get(0);
-            if(position.getCharacter() > firstToken.getStart() && position.getCharacter() <= firstToken.getEnd()) {
-                return completionLineIsEmpty(scope, model).stream()
-                    .filter( item -> item.getLabel().startsWith(firstToken.getToken())).collect(Collectors.toList());
-            }
-            else if(position.getCharacter() > firstToken.getEnd()) {
-                return completionLineIsNotEmpty(scope, firstToken.getToken(), model, position);
-            }
-        }
 
-        return EMPTY;
+        else {
+            switch(scope) {
+                case "ModelDslContext":
+                    return completeModel(tokens, position, model);
+                case "ViewsDslContext":
+                    return completeViews(tokens, position, model);
+                default:
+                    return NO_COMPLETIONS;
+            }         
+        }
     }
 
-    private List<CompletionItem> completionLineIsEmpty(String scope, C4DocumentModel model) {
+    private List<CompletionItem> completeBeforeFirstToken(String scope, C4DocumentModel model) {
 
         return C4Utils.merge(
-                    completionItemsPerScope.getOrDefault(scope, EMPTY), 
-                    relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : EMPTY);
+                    completionItemsPerScope.getOrDefault(scope, NO_COMPLETIONS), 
+                    relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : NO_COMPLETIONS);
     }
 
-    private List<CompletionItem> completionLineIsNotEmpty(String scope, String firstToken, C4DocumentModel model, Position position) {
+    private List<CompletionItem> completeModel(List<LineToken> tokens, Position cursor, C4DocumentModel docModel) {
 
-        switch(scope) {
-            case "ViewsDslContext":
-                return completionWithinViewsScope(firstToken , model);
-            case "ModelDslContext":
-                return completionWithinModelScope(firstToken , model);
-            default:
-                logger.info("Currently no completion for scope {} in line {} at pos {}", scope, firstToken, position.getCharacter());
-                return EMPTY;
-        }    
+        if(tokens.size() == 1 && C4Utils.cursorInsideToken(tokens.get(0), cursor.getCharacter())) {
+            return completeBeforeFirstToken("ModelDslContext", docModel).stream()
+                    .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken()))
+                    .collect(Collectors.toList());
+        }
 
+        else if(tokens.size() == 2 && tokens.get(1).getToken().equals(EXPR_ASSIGNMENT)) {
+            return completeBeforeFirstToken("ModelDslContext", docModel).stream()
+                    .collect(Collectors.toList());
+        }
+
+        else if(tokens.size() == 3 && tokens.get(1).getToken().equals(EXPR_ASSIGNMENT) && C4Utils.cursorInsideToken(tokens.get(2), cursor.getCharacter())) {
+            return completeBeforeFirstToken("ModelDslContext", docModel).stream()
+                    .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
+                    .collect(Collectors.toList());
+        }
+
+        else if(tokens.size() == 2 && tokens.get(1).getToken().equals(EXPR_RELATIONSHIP)) {
+            return identifierCompletion(getIdentifiers(docModel));
+        }
+
+        else if(tokens.size() == 3 && tokens.get(1).getToken().equals(EXPR_RELATIONSHIP) && C4Utils.cursorInsideToken(tokens.get(2), cursor.getCharacter())) {
+            return identifierCompletion(getIdentifiers(docModel)).stream()
+                    .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
+                    .collect(Collectors.toList());
+        }
+
+        return NO_COMPLETIONS;
     }
 
-    private List<CompletionItem> completionWithinModelScope(String line, C4DocumentModel model) {
-        if(line.endsWith(EXPR_RELATIONSHIP)) {
-            return identifierCompletion(getIdentifiers(model));
-        }
-        else {
-            return EMPTY;
-        }
-    }
+    private List<CompletionItem> completeViews(List<LineToken> tokens, Position cursor, C4DocumentModel docModel) {
 
-    private List<CompletionItem> completionWithinViewsScope(String line, C4DocumentModel model) {
-
-        if(line.equals("SoftwareSystemDslContext") || line.endsWith( "ContainerDslContext")) {
-            return completionInViewIdentifiers(model, (element) -> element.getObject() instanceof SoftwareSystem);
-        }
-        else if(line.equals( "ComponentDslContext")) {
-            return completionInViewIdentifiers(model, (element) -> element.getObject() instanceof Container);
+        if(tokens.size() >= 1 && C4Utils.cursorInsideToken(tokens.get(0), cursor.getCharacter())) {
+            return completeBeforeFirstToken("ViewsDslContext", docModel).stream()
+                .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken())).collect(Collectors.toList());
         }
 
-        else {
-            return EMPTY;
+        else if(tokens.size() == 1 && C4Utils.cursorAfterToken(tokens.get(0), cursor.getCharacter())) {
+            LineToken firstToken = tokens.get(0);
+            if(firstToken.getToken().equals("systemContext")) {
+                return completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
+            }
         }
-
+        
+        return NO_COMPLETIONS;
     }
 
     private List<CompletionItem> completionInViewIdentifiers(C4DocumentModel model, Predicate<C4ObjectWithContext<Element>> func) {

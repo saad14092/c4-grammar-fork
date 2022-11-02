@@ -18,9 +18,6 @@ import com.structurizr.view.DynamicView;
 import com.structurizr.view.SystemContextView;
 import com.structurizr.view.View;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 public class C4Utils {
 
     public static final int NOT_FOUND_WITHIN_STRING = -1;
@@ -106,7 +103,7 @@ public class C4Utils {
         return Lists.newArrayList(Iterables.concat(list1, list2));
     }
 
-    private final static String TOKENIZE_PATTERN = "\\w+|\"([^\"]*)\"";
+    private final static String TOKENIZE_PATTERN = "\\w+|\"([^\"]*)\"|->|=|\\{";
     private final static Pattern pattern = Pattern.compile(TOKENIZE_PATTERN);
 
     public static List<LineToken> tokenize(String line) {
@@ -125,5 +122,22 @@ public class C4Utils {
         return result;
     }
 
+    public static boolean cursorInsideToken(LineToken token, int charAt) {
+        return (charAt > token.getStart() && charAt <= token.getEnd());
+    }
 
+    public static boolean cursorAfterToken(LineToken token, int charAt) {
+        return charAt > token.getEnd();
+    }
+
+    public static boolean cursorBeforeToken(LineToken token, int charAt) {
+        return charAt < token.getStart();
+    }
+
+    public static void findPositionInTokenList(List<LineToken> tokens, int charAt) {
+
+      Optional<LineToken> result = tokens.stream().filter( t -> cursorInsideToken(t, charAt)).findFirst();
+
+      System.out.println(result);
+    }
 }
