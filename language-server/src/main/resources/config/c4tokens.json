@@ -246,16 +246,6 @@
                 "opacity",
                 "metadata",
                 "description"
-            ],
-            "details": [
-                {
-                    "keyword": "border",
-                    "choice": [
-                        "solid",
-                        "dashed",
-                        "dotted"
-                    ]
-                }
             ]
         },
         {
@@ -300,5 +290,81 @@
                 "properties"
             ]
         }
+    ],
+    "details": [
+        {
+            "keyword": "shape",
+            "choice": [
+                "Box",
+                "RoundedBox",
+                "Circle",
+                "Ellipse",
+                "Hexagon",
+                "Cylinder",
+                "Pipe",
+                "Person",
+                "Robot",
+                "Folder",
+                "WebBrowser",
+                "MobileDevicePortrait",
+                "MobileDeviceLandscape",
+                "Component"
+            ]
+        },
+        {
+            "keyword": "style",
+            "choice": [
+                "solid",
+                "dashed",
+                "dotted"
+            ]
+        },
+        {
+            "keyword": "border",
+            "choice": [
+                "solid",
+                "dashed",
+                "dotted"
+            ]
+        },
+        {
+            "keyword": "routing",
+            "choice": [
+                "Direct",
+                "Orthogonal",
+                "Curved"
+            ]
+        },
+        {
+            "keyword": "dashed",
+            "choice": [
+                "true",
+                "false"
+            ]
+        },
+        {
+            "keyword": "metadata",
+            "choice": [
+                "true",
+                "false"
+            ]
+        },
+        {
+            "keyword": "description",
+            "choice": [
+                "true",
+                "false"
+            ]
+        },
+        {
+            "keyword": "autoLayout",
+            "choice": [
+                "tb",
+                "bt",
+                "lr",
+                "rl"
+            ]
+        }
     ]
+
 }

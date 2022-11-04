@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class C4TokensConfig {
     private List<C4TokenScope> scopes;
+    private List<C4TokenDetail> details;
 
     // for test purposes
     public void addScope(String name, List<String> keywords, boolean hasRelations) {
@@ -19,6 +20,14 @@ public class C4TokensConfig {
         }
         scopes.add(new C4TokenScope(name, keywords, hasRelations));
     }
+
+    // for test purposes
+    public void addDetail(String keyword, List<String> choices) {
+        if(details == null) {
+            details = new ArrayList<>();
+        }
+        details.add(new C4TokenDetail(keyword, choices));
+    }
     
     @Data
     @AllArgsConstructor
@@ -26,7 +35,15 @@ public class C4TokensConfig {
         private String name;
         private List<String> keywords;
         @SerializedName("hasRelations")
-        private boolean relations;
+        private boolean relations;        
     }    
+
+    @Data
+    @AllArgsConstructor
+    public class C4TokenDetail {
+        private String keyword;
+        @SerializedName("choice")
+        private List<String> choices;
+    }
 }
 

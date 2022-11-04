@@ -38,6 +38,7 @@ public class C4CompletionProvider {
     private static final Logger logger = LoggerFactory.getLogger(C4CompletionProvider.class);    
     private final static List<CompletionItem> NO_COMPLETIONS = Collections.emptyList();    
     private Map<String, List<CompletionItem>> completionItemsPerScope;
+    private Map<String, List<CompletionItem>> completionItemsPerDetails;
     private List<String> relationRelevantScopes;
     
     public C4CompletionProvider(C4TokensLoader configLoader) {
@@ -50,6 +51,10 @@ public class C4CompletionProvider {
             completionItemsPerScope = new HashMap<>();
             config.getScopes().forEach( scope -> {
                 completionItemsPerScope.put(scope.getName(), keyWordCompletion(scope.getKeywords()));
+            });
+            completionItemsPerDetails = new HashMap<>();
+            config.getDetails().forEach( detail -> {
+                completionItemsPerDetails.put(detail.getKeyword(), propertyCompletion(detail.getChoices()));
             });
             relationRelevantScopes = config.getScopes().stream()
                                         .filter(C4TokenScope::isRelations)
@@ -99,7 +104,10 @@ public class C4CompletionProvider {
                     return completeModel(scope, tokens, position, model);
                 case "ViewsDslContext":
                     return completeViews(tokens, position, model);
-                default:
+                case "ElementStyleDslContext":
+                case "RelationshipStyleDslContext":
+                    return completeDetails(tokens, position, model);
+                default:                
                     return NO_COMPLETIONS;
             }         
         }
@@ -134,6 +142,24 @@ public class C4CompletionProvider {
                     .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
                     .collect(Collectors.toList());
         }
+
+        return NO_COMPLETIONS;
+    }
+
+    private List<CompletionItem> completeDetails(List<LineToken> tokens, Position cursor, C4DocumentModel docModel) {
+
+        LineToken firstToken = tokens.get(0);
+
+        if(tokens.size() == 1 && C4Utils.cursorAfterToken(firstToken, cursor.getCharacter())) {
+            return completionItemsPerDetails.getOrDefault(firstToken.getToken(), NO_COMPLETIONS);
+        }
+
+        if(tokens.size() == 2 && C4Utils.cursorInsideToken(tokens.get(1), cursor.getCharacter())) {
+            return completionItemsPerDetails.getOrDefault(firstToken.getToken(), NO_COMPLETIONS).stream()
+                    .filter( item -> item.getLabel().startsWith(tokens.get(1).getToken()))
+                    .collect(Collectors.toList());
+        }    
+
 
         return NO_COMPLETIONS;
     }
