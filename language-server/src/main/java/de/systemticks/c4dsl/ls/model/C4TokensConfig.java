@@ -1,6 +1,7 @@
 package de.systemticks.c4dsl.ls.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -18,7 +19,7 @@ public class C4TokensConfig {
         if(scopes == null) {
             scopes = new ArrayList<>();
         }
-        scopes.add(new C4TokenScope(name, keywords, hasRelations));
+        scopes.add(new C4TokenScope(name, keywords, hasRelations, Collections.emptyList()));
     }
 
     // for test purposes
@@ -35,8 +36,17 @@ public class C4TokensConfig {
         private String name;
         private List<String> keywords;
         @SerializedName("hasRelations")
-        private boolean relations;        
+        private boolean relations;
+        private List<C4TokenSnippet> snippets;     
     }    
+
+    @Data
+    @AllArgsConstructor
+    public class C4TokenSnippet {
+        private String label;
+        private String detail;
+        private String insertText;
+    }
 
     @Data
     @AllArgsConstructor

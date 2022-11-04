@@ -23,7 +23,19 @@
                 "deploymentEnvironment",
                 "element"
             ],
-            "hasRelations": true
+            "hasRelations": true,
+            "snippets": [
+                {
+                    "label": "Person Template",
+                    "detail": "Add a new person",
+                    "insertText": "${1:identifier} = person ${2:name} \"Your Description\""
+                },
+                {
+                    "label": "SoftwareSystem Template",
+                    "detail": "Add a new softwareSystem",
+                    "insertText": "${1:identifier} = softwareSystem ${2:name} \"Your Description\" \"Tags\" {\n\n}"
+                }
+            ]
         },
         {
             "name": "EnterpriseDslContext",
@@ -58,7 +70,14 @@
                 "properties",
                 "perspectives"
             ],
-            "hasRelations": true
+            "hasRelations": true,
+            "snippets": [
+                {
+                    "label": "Container Template",
+                    "detail": "Add a new container",
+                    "insertText": "${1:identifier} = container ${2:name} \"Your Description\" \"Technology\" \"Tags\" {\n\n}"
+                }
+            ]
         },
         {
             "name": "ContainerDslContext",
@@ -366,5 +385,4 @@
             ]
         }
     ]
-
 }

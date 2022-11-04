@@ -24,14 +24,13 @@ import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.model.C4TokensConfig;
 import de.systemticks.c4dsl.ls.model.C4TokensLoader;
 import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenScope;
+import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenSnippet;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 import de.systemticks.c4dsl.ls.utils.LineToken;
 import de.systemticks.c4dsl.ls.utils.LineTokenizer;
 import de.systemticks.c4dsl.ls.utils.LineTokenizer.CursorLocation;
 import de.systemticks.c4dsl.ls.utils.LineTokenizer.TokenPosition;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 public class C4CompletionProvider {
 
@@ -55,7 +54,11 @@ public class C4CompletionProvider {
         if(config != null) {
             completionItemsPerScope = new HashMap<>();
             config.getScopes().forEach( scope -> {
-                completionItemsPerScope.put(scope.getName(), keyWordCompletion(scope.getKeywords()));
+                List<CompletionItem> completions = keyWordCompletion(scope.getKeywords());
+                if(scope.getSnippets() != null) {
+                    scope.getSnippets().forEach( snippet -> completions.add(createSnippet(snippet)));
+                    completionItemsPerScope.put(scope.getName(), completions);    
+                }
             });
             completionItemsPerDetails = new HashMap<>();
             config.getDetails().forEach( detail -> {
@@ -85,11 +88,11 @@ public class C4CompletionProvider {
         // Line is empty or cursor is located before first token. 
         // Determine all keywords in the given scope and potential identifer references (if applicable)
         if(tokens.isEmpty() || (cursorAt.getTokenIndex() == 0 && cursorAt.getTokenPosition().equals(TokenPosition.BEFORE)) ) {
-            return completeAsConfigured(scope, model);
+            return completeAsPerConfiguration(scope, model);
         }
 
         else if(cursorAt.getTokenIndex() == 0 && cursorAt.getTokenPosition().equals(TokenPosition.INSIDE)) {
-            return completeAsConfigured(scope, model).stream()
+            return completeAsPerConfiguration(scope, model).stream()
                     .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken()))
                     .collect(Collectors.toList());
         }
@@ -119,7 +122,7 @@ public class C4CompletionProvider {
         }
     }
 
-    private List<CompletionItem> completeAsConfigured(String scope, C4DocumentModel model) {
+    private List<CompletionItem> completeAsPerConfiguration(String scope, C4DocumentModel model) {
 
         return C4Utils.merge(
                     completionItemsPerScope.getOrDefault(scope, NO_COMPLETIONS), 
@@ -131,10 +134,10 @@ public class C4CompletionProvider {
         if(tokens.size() >= 2) {
             if(tokens.get(1).getToken().equals(EXPR_ASSIGNMENT)) {
                 if(tokenizer.isBetweenTokens(cursor, 1, 2)) {
-                    return completeAsConfigured(scope, docModel).stream().collect(Collectors.toList());
+                    return completeAsPerConfiguration(scope, docModel).stream().collect(Collectors.toList());
                 }
                 if(tokenizer.isInsideToken(cursor, 2)) {
-                    return completeAsConfigured(scope, docModel).stream()
+                    return completeAsPerConfiguration(scope, docModel).stream()
                             .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
                             .collect(Collectors.toList());
                 }
@@ -238,11 +241,7 @@ public class C4CompletionProvider {
         }).collect(Collectors.toList());
     }
 
-    private CompletionItem personSnippet() {
-        return createSnippet(new SnippetData("Person Template", "Add a new person", "${1:identifier} = person ${2:name} \"Your Description\""));
-    }
-
-    private CompletionItem createSnippet(SnippetData snippet) {
+    private CompletionItem createSnippet(C4TokenSnippet snippet) {
         CompletionItem item = new CompletionItem();
         item.setLabel(snippet.getLabel());
         item.setDetail(snippet.getDetail());
@@ -268,11 +267,4 @@ public class C4CompletionProvider {
                 .collect(Collectors.toList());
     }
 
-    @Data
-    @AllArgsConstructor
-    class SnippetData {
-        private String label;
-        private String detail;
-        private String insertText;
-    }
 }
