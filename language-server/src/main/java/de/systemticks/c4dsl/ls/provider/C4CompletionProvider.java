@@ -27,6 +27,9 @@ import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenScope;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 import de.systemticks.c4dsl.ls.utils.LineToken;
+import de.systemticks.c4dsl.ls.utils.LineTokenizer;
+import de.systemticks.c4dsl.ls.utils.LineTokenizer.CursorLocation;
+import de.systemticks.c4dsl.ls.utils.LineTokenizer.TokenPosition;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -40,8 +43,10 @@ public class C4CompletionProvider {
     private Map<String, List<CompletionItem>> completionItemsPerScope;
     private Map<String, List<CompletionItem>> completionItemsPerDetails;
     private List<String> relationRelevantScopes;
+    private LineTokenizer tokenizer;
     
     public C4CompletionProvider(C4TokensLoader configLoader) {
+        tokenizer = new LineTokenizer();
         init(configLoader);
     }
 
@@ -74,16 +79,17 @@ public class C4CompletionProvider {
             return NO_COMPLETIONS;
         }
 
-        List<LineToken> tokens = C4Utils.tokenize(line);
+        List<LineToken> tokens = tokenizer.tokenize(line);
+        CursorLocation cursorAt = tokenizer.cursorLocation(tokens, position.getCharacter());
 
         // Line is empty or cursor is located before first token. 
         // Determine all keywords in the given scope and potential identifer references (if applicable)
-        if(tokens.isEmpty() || C4Utils.cursorBeforeToken(tokens.get(0), position.getCharacter())) {
-            return completeBeforeFirstToken(scope, model);
-        } 
+        if(tokens.isEmpty() || (cursorAt.getTokenIndex() == 0 && cursorAt.getTokenPosition().equals(TokenPosition.BEFORE)) ) {
+            return completeAsConfigured(scope, model);
+        }
 
-        else if(tokens.size() == 1 && C4Utils.cursorInsideToken(tokens.get(0), position.getCharacter())) {
-            return completeBeforeFirstToken(scope, model).stream()
+        else if(cursorAt.getTokenIndex() == 0 && cursorAt.getTokenPosition().equals(TokenPosition.INSIDE)) {
+            return completeAsConfigured(scope, model).stream()
                     .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken()))
                     .collect(Collectors.toList());
         }
@@ -101,60 +107,63 @@ public class C4CompletionProvider {
                 case "InfrastructureNodeDslContext":
                 case "SoftwareSystemInstanceDslContext":
                 case "ContainerInstanceDslContext":
-                    return completeModel(scope, tokens, position, model);
+                    return completeModel(scope, tokens, cursorAt, model);
                 case "ViewsDslContext":
-                    return completeViews(tokens, position, model);
+                    return completeViews(tokens, cursorAt, model);
                 case "ElementStyleDslContext":
                 case "RelationshipStyleDslContext":
-                    return completeDetails(tokens, position, model);
+                    return completeDetails(tokens, cursorAt, model);
                 default:                
                     return NO_COMPLETIONS;
             }         
         }
     }
 
-    private List<CompletionItem> completeBeforeFirstToken(String scope, C4DocumentModel model) {
+    private List<CompletionItem> completeAsConfigured(String scope, C4DocumentModel model) {
 
         return C4Utils.merge(
                     completionItemsPerScope.getOrDefault(scope, NO_COMPLETIONS), 
                     relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : NO_COMPLETIONS);
     }
 
-    private List<CompletionItem> completeModel(String scope, List<LineToken> tokens, Position cursor, C4DocumentModel docModel) {
+    private List<CompletionItem> completeModel(String scope, List<LineToken> tokens, CursorLocation cursor, C4DocumentModel docModel) {
 
-        if(tokens.size() == 2 && tokens.get(1).getToken().equals(EXPR_ASSIGNMENT)) {
-            return completeBeforeFirstToken(scope, docModel).stream()
-                    .collect(Collectors.toList());
-        }
+        if(tokens.size() >= 2) {
+            if(tokens.get(1).getToken().equals(EXPR_ASSIGNMENT)) {
+                if(tokenizer.isBetweenTokens(cursor, 1, 2)) {
+                    return completeAsConfigured(scope, docModel).stream().collect(Collectors.toList());
+                }
+                if(tokenizer.isInsideToken(cursor, 2)) {
+                    return completeAsConfigured(scope, docModel).stream()
+                            .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
+                            .collect(Collectors.toList());
+                }
+            }
 
-        else if(tokens.size() == 3 && tokens.get(1).getToken().equals(EXPR_ASSIGNMENT) && C4Utils.cursorInsideToken(tokens.get(2), cursor.getCharacter())) {
-            return completeBeforeFirstToken(scope, docModel).stream()
-                    .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
-                    .collect(Collectors.toList());
-        }
-
-        else if(tokens.size() == 2 && tokens.get(1).getToken().equals(EXPR_RELATIONSHIP)) {
-            return identifierCompletion(getIdentifiers(docModel));
-        }
-
-        else if(tokens.size() == 3 && tokens.get(1).getToken().equals(EXPR_RELATIONSHIP) && C4Utils.cursorInsideToken(tokens.get(2), cursor.getCharacter())) {
-            return identifierCompletion(getIdentifiers(docModel)).stream()
-                    .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
-                    .collect(Collectors.toList());
+            if(tokens.get(1).getToken().equals(EXPR_RELATIONSHIP)) {
+                if(tokenizer.isBetweenTokens(cursor, 1, 2)) {
+                    return identifierCompletion(getIdentifiers(docModel));
+                }
+                if(tokenizer.isInsideToken(cursor, 2)) {
+                    return identifierCompletion(getIdentifiers(docModel)).stream()
+                            .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
+                            .collect(Collectors.toList());
+                }
+            }
         }
 
         return NO_COMPLETIONS;
     }
 
-    private List<CompletionItem> completeDetails(List<LineToken> tokens, Position cursor, C4DocumentModel docModel) {
+    private List<CompletionItem> completeDetails(List<LineToken> tokens, CursorLocation cursor, C4DocumentModel docModel) {
 
         LineToken firstToken = tokens.get(0);
 
-        if(tokens.size() == 1 && C4Utils.cursorAfterToken(firstToken, cursor.getCharacter())) {
+        if(tokenizer.isBetweenTokens(cursor, 0, 1)) {
             return completionItemsPerDetails.getOrDefault(firstToken.getToken(), NO_COMPLETIONS);
         }
 
-        if(tokens.size() == 2 && C4Utils.cursorInsideToken(tokens.get(1), cursor.getCharacter())) {
+        if(tokenizer.isInsideToken(cursor, 1)) {
             return completionItemsPerDetails.getOrDefault(firstToken.getToken(), NO_COMPLETIONS).stream()
                     .filter( item -> item.getLabel().startsWith(tokens.get(1).getToken()))
                     .collect(Collectors.toList());
@@ -164,39 +173,41 @@ public class C4CompletionProvider {
         return NO_COMPLETIONS;
     }
 
-    private List<CompletionItem> completeViews(List<LineToken> tokens, Position cursor, C4DocumentModel docModel) {
+    private List<CompletionItem> completeViews(List<LineToken> tokens, CursorLocation cursor, C4DocumentModel docModel) {
 
         List<CompletionItem> completionIds = NO_COMPLETIONS;
 
-        if(tokens.size() <= 2) {
-            LineToken firstToken = tokens.get(0);
+        LineToken firstToken = tokens.get(0);
 
-            if(firstToken.getToken().equals("systemContext")) {
-                completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
-            }
-            else if(firstToken.getToken().equals("container")) {
-                completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
-            }
-            else if(firstToken.getToken().equals("component")) {
-                completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof Container);
-            }
-            else if(firstToken.getToken().equals("dynamic")) {
-                completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof Container || element.getObject() instanceof SoftwareSystem);
-                completionIds.add(new CompletionItem("*"));
-            }
-            else if(firstToken.getToken().equals("deployment")) {
-                completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
-                completionIds.add(new CompletionItem("*"));
-            }
-
-            if(tokens.size() == 2 && C4Utils.cursorInsideToken(tokens.get(1), cursor.getCharacter())) {
-                completionIds = completionIds.stream()
-                        .filter( item -> item.getLabel().startsWith(tokens.get(1).getToken()))
-                        .collect(Collectors.toList());
-            }    
+        if(firstToken.getToken().equals("systemContext")) {
+            completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
+        }
+        else if(firstToken.getToken().equals("container")) {
+            completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
+        }
+        else if(firstToken.getToken().equals("component")) {
+            completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof Container);
+        }
+        else if(firstToken.getToken().equals("dynamic")) {
+            completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof Container || element.getObject() instanceof SoftwareSystem);
+            completionIds.add(new CompletionItem("*"));
+        }
+        else if(firstToken.getToken().equals("deployment")) {
+            completionIds = completionInViewIdentifiers(docModel, (element) -> element.getObject() instanceof SoftwareSystem);
+            completionIds.add(new CompletionItem("*"));
         }
 
-        return completionIds;
+        if(tokenizer.isBetweenTokens(cursor, 0, 1)) {
+            return completionIds;
+        }
+
+        if(tokenizer.isInsideToken(cursor, 1)) {
+            return completionIds.stream()
+                    .filter( item -> item.getLabel().startsWith(tokens.get(1).getToken()))
+                    .collect(Collectors.toList());
+        }
+
+        return NO_COMPLETIONS;
     }
 
     private List<CompletionItem> completionInViewIdentifiers(C4DocumentModel model, Predicate<C4ObjectWithContext<Element>> func) {

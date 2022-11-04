@@ -3,7 +3,6 @@ package de.systemticks.c4dsl.ls.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -103,41 +102,4 @@ public class C4Utils {
         return Lists.newArrayList(Iterables.concat(list1, list2));
     }
 
-    private final static String TOKENIZE_PATTERN = "\\w+|\"([^\"]*)\"|->|=|\\{";
-    private final static Pattern pattern = Pattern.compile(TOKENIZE_PATTERN);
-
-    public static List<LineToken> tokenize(String line) {
-
-        List<LineToken> result = new ArrayList<>();
-        if(isBlank(line)) {
-            return result;
-        }
-
-        Matcher matcher = pattern.matcher(line);
-
-        while(matcher.find()) {
-            result.add(new LineToken(matcher.group(0), matcher.start(), matcher.end()));
-        }
-
-        return result;
-    }
-
-    public static boolean cursorInsideToken(LineToken token, int charAt) {
-        return (charAt > token.getStart() && charAt <= token.getEnd());
-    }
-
-    public static boolean cursorAfterToken(LineToken token, int charAt) {
-        return charAt > token.getEnd();
-    }
-
-    public static boolean cursorBeforeToken(LineToken token, int charAt) {
-        return charAt < token.getStart();
-    }
-
-    public static void findPositionInTokenList(List<LineToken> tokens, int charAt) {
-
-      Optional<LineToken> result = tokens.stream().filter( t -> cursorInsideToken(t, charAt)).findFirst();
-
-      System.out.println(result);
-    }
 }

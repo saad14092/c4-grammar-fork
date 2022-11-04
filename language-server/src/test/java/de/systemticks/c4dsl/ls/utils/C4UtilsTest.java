@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -93,72 +91,6 @@ public class C4UtilsTest {
             () -> assertThat(C4Utils.leftFromCursor("   My   Test", 8)).hasValue("My"),
             () -> assertThat(C4Utils.leftFromCursor("   My   Test", 10)).hasValue("My   Te")
         );
-    }
-
-    @Test
-    public void tokenizeUnquotedStrings() {
-        List<String> tokens = C4Utils.tokenize("This contains simple strings").stream().map(LineToken::getToken).collect(Collectors.toList()) ;
-        assertThat(tokens ).containsExactly("This", "contains", "simple", "strings");
-    }
-
-    @Test
-    public void tokenizeUnquotedAndQuotedStrings() {
-        List<String> tokens = C4Utils.tokenize("This contains      \"   quoted   \" strings").stream().map(LineToken::getToken).collect(Collectors.toList());
-        assertThat(tokens ).containsExactly("This", "contains", "\"   quoted   \"", "strings");
-    }
-
-    @Test
-    public void tokenizeRelationShip() {
-        List<String> tokens = C4Utils.tokenize("abc -> def \"My Description\"").stream().map(LineToken::getToken).collect(Collectors.toList()) ;
-        assertThat(tokens ).containsExactly("abc", "->", "def", "\"My Description\"");
-    }
-
-    @Test
-    public void tokenizeAssignment() {
-        List<String> tokens = C4Utils.tokenize("user = person \"A User\" {").stream().map(LineToken::getToken).collect(Collectors.toList()) ;
-        assertThat(tokens ).containsExactly("user", "=", "person", "\"A User\"", "{");
-    }
-
-    @Test
-    public void tokenizeEmpty() {
-        List<String> tokens = C4Utils.tokenize("     ").stream().map(LineToken::getToken).collect(Collectors.toList());
-        assertThat(tokens ).isEmpty();
-    }
-
-    @Test
-    public void cursorInsideToken() {
-        LineToken token = new LineToken("My Token", 10, 18);
-        assertAll(
-            () -> assertThat(C4Utils.cursorInsideToken(token, 15)).isTrue(),
-            () -> assertThat(C4Utils.cursorInsideToken(token, 18)).isTrue(),
-            () -> assertThat(C4Utils.cursorInsideToken(token, 19)).isFalse()
-        );
-    }
-
-    @Test
-    public void cursorAfterToken() {
-        LineToken token = new LineToken("My Token", 10, 18);
-        assertAll(
-            () -> assertThat(C4Utils.cursorAfterToken(token, 20)).isTrue(),
-            () -> assertThat(C4Utils.cursorAfterToken(token, 5)).isFalse(),
-            () -> assertThat(C4Utils.cursorAfterToken(token, 18)).isFalse()
-        );
-    }
-
-    @Test
-    public void cursorBeforeToken() {
-        LineToken token = new LineToken("My Token", 10, 18);
-        assertAll(
-            () -> assertThat(C4Utils.cursorBeforeToken(token, 20)).isFalse(),
-            () -> assertThat(C4Utils.cursorBeforeToken(token, 9)).isTrue(),
-            () -> assertThat(C4Utils.cursorBeforeToken(token, 10)).isFalse()
-        );
-    }
-
-    @Test
-    public void abc() {
-        List<LineToken> tokens = C4Utils.tokenize("    abc -> def  \"Some Description\"    ");
-        C4Utils.findPositionInTokenList(tokens, 40);
     }
 
 }
