@@ -70,6 +70,10 @@ public class LineTokenizer {
         return cursor.getTokenIndex() == index && cursor.getTokenPosition().equals(TokenPosition.INSIDE);  
     }
 
+    public boolean isBeforeToken(CursorLocation cursor, int index) {
+        return cursor.getTokenIndex() == index && cursor.getTokenPosition().equals(TokenPosition.BEFORE);
+    }
+
     public enum TokenPosition { BEFORE, INSIDE, AFTER, NOT_APPLICABLE };
 
     @Data

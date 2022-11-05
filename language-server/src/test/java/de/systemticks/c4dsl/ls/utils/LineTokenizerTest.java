@@ -110,4 +110,19 @@ public class LineTokenizerTest {
         CursorLocation location = tokenizer.cursorLocation(tokens, 4);
         assertThat(tokenizer.isInsideToken(location, 1)).isFalse();
     }
+
+    @Test
+    void isBeforeToken() {
+        List<LineToken> tokens = tokenizer.tokenize("Two Tokens ");
+        CursorLocation location = tokenizer.cursorLocation(tokens, 0);
+        assertThat(tokenizer.isBeforeToken(location, 0)).isTrue();
+    }
+
+    @Test
+    void isNotBeforeToken() {
+        List<LineToken> tokens = tokenizer.tokenize("Two Tokens ");
+        CursorLocation location = tokenizer.cursorLocation(tokens, 1);
+        assertThat(tokenizer.isBeforeToken(location, 0)).isFalse();
+    }
+
 }

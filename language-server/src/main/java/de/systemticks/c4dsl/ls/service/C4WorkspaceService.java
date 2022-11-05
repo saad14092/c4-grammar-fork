@@ -49,7 +49,6 @@ public class C4WorkspaceService implements WorkspaceService{
 			logger.info("executeCommand {}", params.getCommand());
 			if(params.getCommand().equals(C4ExecuteCommandProvider.CALCULATE_TEXT_DECORATIONS)) {
 				JsonElement decorations = documentService.textDecorations((JsonObject) params.getArguments().get(0)) ;
-				logger.info("decorations {}", decorations);
 				return C4ExecuteCommandResult.TEXT_DECORATIONS.setResultData(decorations).toJson();
 			}
 			else {

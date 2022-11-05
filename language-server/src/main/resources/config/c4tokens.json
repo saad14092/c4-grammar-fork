@@ -34,6 +34,11 @@
                     "label": "SoftwareSystem Template",
                     "detail": "Add a new softwareSystem",
                     "insertText": "${1:identifier} = softwareSystem ${2:name} \"Your Description\" \"Tags\" {\n\n}"
+                },
+                {
+                    "label": "DeploymentEnvironment Template",
+                    "detail": "Add a new deploymentEnvironment",
+                    "insertText": "${1:identifier} = deploymentEnvironment ${2:name} {\n\n}"
                 }
             ]
         },
@@ -91,7 +96,14 @@
                 "properties",
                 "perspectives"
             ],
-            "hasRelations": true
+            "hasRelations": true,
+            "snippets": [
+                {
+                    "label": "Component Template",
+                    "detail": "Add a new component",
+                    "insertText": "${1:identifier} = component ${2:name} \"Your Description\" \"Technology\" \"Tags\" {\n\n}"
+                }
+            ]
         },
         {
             "name": "ComponentDslContext",
@@ -183,6 +195,43 @@
                 "branding",
                 "terminology",
                 "properties"
+            ],
+            "snippets": [
+                {
+                    "label": "systemLandscape View Template",
+                    "detail": "Add a new systemLandscape View",
+                    "insertText": "systemLandscape ${1:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                },
+                {
+                    "label": "systemContext View Template",
+                    "detail": "Add a new systemContext View",
+                    "insertText": "systemContext ${1:identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                },
+                {
+                    "label": "container View Template",
+                    "detail": "Add a new container View",
+                    "insertText": "container ${1:identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                },
+                {
+                    "label": "component View Template",
+                    "detail": "Add a new component View",
+                    "insertText": "component ${1:identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                },
+                {
+                    "label": "dynamic View Template",
+                    "detail": "Add a new dynamic View",
+                    "insertText": "dynamic ${1:identifier} ${2:key} \"Your Description\" {\n  autoLayout\n}"
+                },
+                {
+                    "label": "deployment View Template",
+                    "detail": "Add a new deployment View",
+                    "insertText": "deployment ${1:environment} ${2:identifier} ${3:key} \"Your Description\" {\n  autoLayout\n}"
+                },
+                {
+                    "label": "custom View Template",
+                    "detail": "Add a new custom View",
+                    "insertText": "custom ${1:key} \"Your Title\" \"Your Description\" {\n  include * \n  autoLayout\n}"
+                }
             ]
         },
         {
@@ -247,6 +296,18 @@
             "keywords": [
                 "element",
                 "relationship"
+            ],
+            "snippets": [
+                {
+                    "label": "element Style Template",
+                    "detail": "Add a new element Style",
+                    "insertText": "element \"Tag\" {\n\n}"
+                },
+                {
+                    "label": "relationship Style Template",
+                    "detail": "Add a new relationship Style",
+                    "insertText": "relationship \"Tag\" {\n\n}"
+                }
             ]
         },
         {

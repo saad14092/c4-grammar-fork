@@ -30,7 +30,6 @@ import de.systemticks.c4dsl.ls.utils.C4Utils;
 import de.systemticks.c4dsl.ls.utils.LineToken;
 import de.systemticks.c4dsl.ls.utils.LineTokenizer;
 import de.systemticks.c4dsl.ls.utils.LineTokenizer.CursorLocation;
-import de.systemticks.c4dsl.ls.utils.LineTokenizer.TokenPosition;
 
 public class C4CompletionProvider {
 
@@ -39,8 +38,9 @@ public class C4CompletionProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(C4CompletionProvider.class);    
     private final static List<CompletionItem> NO_COMPLETIONS = Collections.emptyList();    
-    private Map<String, List<CompletionItem>> completionItemsPerScope;
-    private Map<String, List<CompletionItem>> completionItemsPerDetails;
+    private Map<String, List<CompletionItem>> keywordCompletions;
+    private Map<String, List<CompletionItem>> snippetCompletions;
+    private Map<String, List<CompletionItem>> detailCompletions;
     private List<String> relationRelevantScopes;
     private LineTokenizer tokenizer;
     
@@ -52,17 +52,17 @@ public class C4CompletionProvider {
     void init(C4TokensLoader configLoader) {
         C4TokensConfig config = configLoader.readConfiguration();
         if(config != null) {
-            completionItemsPerScope = new HashMap<>();
+            keywordCompletions = new HashMap<>();
+            snippetCompletions = new HashMap<>();
+            detailCompletions = new HashMap<>();
             config.getScopes().forEach( scope -> {
-                List<CompletionItem> completions = keyWordCompletion(scope.getKeywords());
+                keywordCompletions.put(scope.getName(), keyWordCompletion(scope.getKeywords()));                    
                 if(scope.getSnippets() != null) {
-                    scope.getSnippets().forEach( snippet -> completions.add(createSnippet(snippet)));
-                    completionItemsPerScope.put(scope.getName(), completions);    
-                }
+                    snippetCompletions.put(scope.getName(), snippetCompletion(scope.getSnippets()));
+                }                
             });
-            completionItemsPerDetails = new HashMap<>();
             config.getDetails().forEach( detail -> {
-                completionItemsPerDetails.put(detail.getKeyword(), propertyCompletion(detail.getChoices()));
+                detailCompletions.put(detail.getKeyword(), propertyCompletion(detail.getChoices()));
             });
             relationRelevantScopes = config.getScopes().stream()
                                         .filter(C4TokenScope::isRelations)
@@ -76,10 +76,13 @@ public class C4CompletionProvider {
         int lineNumber = position.getLine();
         String line = model.getLineAt(lineNumber);
         String scope = model.getSurroundingScope(lineNumber);
+        List<CompletionItem> result;
+
+        logger.debug("-> calcCompletions in scope {} at Position ({},{})", scope, position.getLine(), position.getCharacter());
 
         if(scope.equals(C4DocumentModel.NO_SCOPE)) {
-            logger.warn("Cannot calculate code completion. No scope detected for line {} at Position ({},{})", line, position.getLine(), position.getCharacter());
-            return NO_COMPLETIONS;
+            logger.warn("Cannot calculate code completion. No scope detected");
+            result = NO_COMPLETIONS;
         }
 
         List<LineToken> tokens = tokenizer.tokenize(line);
@@ -87,12 +90,12 @@ public class C4CompletionProvider {
 
         // Line is empty or cursor is located before first token. 
         // Determine all keywords in the given scope and potential identifer references (if applicable)
-        if(tokens.isEmpty() || (cursorAt.getTokenIndex() == 0 && cursorAt.getTokenPosition().equals(TokenPosition.BEFORE)) ) {
-            return completeAsPerConfiguration(scope, model);
+        if(tokens.isEmpty() || tokenizer.isBeforeToken(cursorAt, 0) ) {
+            result = C4Utils.merge(completeAsPerConfiguration(scope, model), snippetCompletions.getOrDefault(scope, NO_COMPLETIONS));
         }
 
-        else if(cursorAt.getTokenIndex() == 0 && cursorAt.getTokenPosition().equals(TokenPosition.INSIDE)) {
-            return completeAsPerConfiguration(scope, model).stream()
+        else if(tokenizer.isInsideToken(cursorAt, 0)) {
+            result = completeAsPerConfiguration(scope, model).stream()
                     .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken()))
                     .collect(Collectors.toList());
         }
@@ -110,22 +113,29 @@ public class C4CompletionProvider {
                 case "InfrastructureNodeDslContext":
                 case "SoftwareSystemInstanceDslContext":
                 case "ContainerInstanceDslContext":
-                    return completeModel(scope, tokens, cursorAt, model);
+                    result = completeModel(scope, tokens, cursorAt, model);
+                    break;
                 case "ViewsDslContext":
-                    return completeViews(tokens, cursorAt, model);
+                    result = completeViews(tokens, cursorAt, model);
+                    break;
                 case "ElementStyleDslContext":
                 case "RelationshipStyleDslContext":
-                    return completeDetails(tokens, cursorAt, model);
+                    result = completeDetails(tokens, cursorAt, model);
+                    break;
                 default:                
-                    return NO_COMPLETIONS;
+                    result = NO_COMPLETIONS;
             }         
         }
+
+        logger.debug("<- calcCompletions size = {}", result.size());
+
+        return result;
     }
 
     private List<CompletionItem> completeAsPerConfiguration(String scope, C4DocumentModel model) {
 
         return C4Utils.merge(
-                    completionItemsPerScope.getOrDefault(scope, NO_COMPLETIONS), 
+                    keywordCompletions.getOrDefault(scope, NO_COMPLETIONS), 
                     relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : NO_COMPLETIONS);
     }
 
@@ -163,11 +173,11 @@ public class C4CompletionProvider {
         LineToken firstToken = tokens.get(0);
 
         if(tokenizer.isBetweenTokens(cursor, 0, 1)) {
-            return completionItemsPerDetails.getOrDefault(firstToken.getToken(), NO_COMPLETIONS);
+            return detailCompletions.getOrDefault(firstToken.getToken(), NO_COMPLETIONS);
         }
 
         if(tokenizer.isInsideToken(cursor, 1)) {
-            return completionItemsPerDetails.getOrDefault(firstToken.getToken(), NO_COMPLETIONS).stream()
+            return detailCompletions.getOrDefault(firstToken.getToken(), NO_COMPLETIONS).stream()
                     .filter( item -> item.getLabel().startsWith(tokens.get(1).getToken()))
                     .collect(Collectors.toList());
         }    
@@ -241,14 +251,16 @@ public class C4CompletionProvider {
         }).collect(Collectors.toList());
     }
 
-    private CompletionItem createSnippet(C4TokenSnippet snippet) {
-        CompletionItem item = new CompletionItem();
-        item.setLabel(snippet.getLabel());
-        item.setDetail(snippet.getDetail());
-        item.setKind(CompletionItemKind.Snippet);
-        item.setInsertTextFormat(InsertTextFormat.Snippet);
-        item.setInsertText(snippet.getInsertText());
-        return item;
+    private List<CompletionItem> snippetCompletion(List<C4TokenSnippet> snippets) {
+        return snippets.stream().map(snippet -> {
+            CompletionItem item = new CompletionItem();
+            item.setLabel(snippet.getLabel());
+            item.setDetail(snippet.getDetail());
+            item.setKind(CompletionItemKind.Snippet);
+            item.setInsertTextFormat(InsertTextFormat.Snippet);
+            item.setInsertText(snippet.getInsertText());
+            return item;
+        }).collect(Collectors.toList());
     }
 
     private List<CompletionItem> identifierCompletion(List<String> identifier) {
