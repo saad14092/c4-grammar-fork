@@ -1,5 +1,6 @@
 package de.systemticks.c4dsl.ls.provider;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +35,7 @@ public class C4CompletionProviderTest {
         config.addScope("ContainerDslContext", Arrays.asList("keyword4", "keyword5"), true);
         config.addDetail("style", Arrays.asList("dashed", "solid"));
         when(configLoader.readConfiguration()).thenReturn(config);
+        when(model.getRawText()).thenReturn("worksapce {}");
         completionProvider = new C4CompletionProvider(configLoader);
     }
 
