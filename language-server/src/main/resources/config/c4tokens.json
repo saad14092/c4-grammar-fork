@@ -1,6 +1,19 @@
 {
     "scopes": [
         {
+            "name": "DocumentRootContext",
+            "keywords": [
+                "workspace"
+            ],
+            "snippets": [
+                {
+                    "label": "Workspace Template",
+                    "detail": "Add a new workspace",
+                    "insertText": "workspace name \"Your Description\" {\n\tmodel {\n\t}\n\n\tviews {\n\t}\n}"
+                }
+            ]
+        },
+        {
             "name": "WorkspaceDslContext",
             "keywords": [
                 "properties",

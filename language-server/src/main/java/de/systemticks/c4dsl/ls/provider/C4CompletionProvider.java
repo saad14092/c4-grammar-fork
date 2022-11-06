@@ -80,53 +80,60 @@ public class C4CompletionProvider {
 
         logger.debug("-> calcCompletions in scope {} at Position ({},{})", scope, position.getLine(), position.getCharacter());
 
-        if(scope.equals(C4DocumentModel.NO_SCOPE)) {
+        // if model is empy, i.e. just created
+        if(C4Utils.isBlank(model.getRawText())) {
+            result = C4Utils.merge(completeAsPerConfiguration("DocumentRootContext", model), snippetCompletions.getOrDefault("DocumentRootContext", NO_COMPLETIONS));
+        }
+
+        else if(scope.equals(C4DocumentModel.NO_SCOPE)) {
             logger.warn("Cannot calculate code completion. No scope detected");
             result = NO_COMPLETIONS;
         }
 
-        List<LineToken> tokens = tokenizer.tokenize(line);
-        CursorLocation cursorAt = tokenizer.cursorLocation(tokens, position.getCharacter());
-
-        // Line is empty or cursor is located before first token. 
-        // Determine all keywords in the given scope and potential identifer references (if applicable)
-        if(tokens.isEmpty() || tokenizer.isBeforeToken(cursorAt, 0) ) {
-            result = C4Utils.merge(completeAsPerConfiguration(scope, model), snippetCompletions.getOrDefault(scope, NO_COMPLETIONS));
-        }
-
-        else if(tokenizer.isInsideToken(cursorAt, 0)) {
-            result = completeAsPerConfiguration(scope, model).stream()
-                    .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken()))
-                    .collect(Collectors.toList());
-        }
-
         else {
-            switch(scope) {
-                case "ModelDslContext":
-                case "EnterpriseDslContext":
-                case "PersonDslContext":
-                case "SoftwareSystemDslContext":
-                case "ContainerDslContext":
-                case "ComponentDslContext":
-                case "DeploymentEnvironmentDslContext":
-                case "DeploymentNodeDslContext":
-                case "InfrastructureNodeDslContext":
-                case "SoftwareSystemInstanceDslContext":
-                case "ContainerInstanceDslContext":
-                    result = completeModel(scope, tokens, cursorAt, model);
-                    break;
-                case "ViewsDslContext":
-                    result = completeViews(tokens, cursorAt, model);
-                    break;
-                case "ElementStyleDslContext":
-                case "RelationshipStyleDslContext":
-                    result = completeDetails(tokens, cursorAt, model);
-                    break;
-                default:                
-                    result = NO_COMPLETIONS;
-            }         
-        }
+            List<LineToken> tokens = tokenizer.tokenize(line);
+            CursorLocation cursorAt = tokenizer.cursorLocation(tokens, position.getCharacter());
 
+            // Line is empty or cursor is located before first token. 
+            // Determine all keywords in the given scope and potential identifer references (if applicable)
+            if(tokens.isEmpty() || tokenizer.isBeforeToken(cursorAt, 0) ) {
+                result = C4Utils.merge(completeAsPerConfiguration(scope, model), snippetCompletions.getOrDefault(scope, NO_COMPLETIONS));
+            }
+
+            else if(tokenizer.isInsideToken(cursorAt, 0)) {
+                result = completeAsPerConfiguration(scope, model).stream()
+                        .filter( item -> item.getLabel().startsWith(tokens.get(0).getToken()))
+                        .collect(Collectors.toList());
+            }
+
+            else {
+                switch(scope) {
+                    case "ModelDslContext":
+                    case "EnterpriseDslContext":
+                    case "PersonDslContext":
+                    case "SoftwareSystemDslContext":
+                    case "ContainerDslContext":
+                    case "ComponentDslContext":
+                    case "DeploymentEnvironmentDslContext":
+                    case "DeploymentNodeDslContext":
+                    case "InfrastructureNodeDslContext":
+                    case "SoftwareSystemInstanceDslContext":
+                    case "ContainerInstanceDslContext":
+                        result = completeModel(scope, tokens, cursorAt, model);
+                        break;
+                    case "ViewsDslContext":
+                        result = completeViews(tokens, cursorAt, model);
+                        break;
+                    case "ElementStyleDslContext":
+                    case "RelationshipStyleDslContext":
+                        result = completeDetails(tokens, cursorAt, model);
+                        break;
+                    default:                
+                        result = NO_COMPLETIONS;
+                }         
+            }
+        }
+        
         logger.debug("<- calcCompletions size = {}", result.size());
 
         return result;
