@@ -9,7 +9,7 @@
                 {
                     "label": "Workspace Template",
                     "detail": "Add a new workspace",
-                    "insertText": "workspace name \"Your Description\" {\n\tmodel {\n\t}\n\n\tviews {\n\t}\n}"
+                    "insertText": "workspace name \"Your Description\" {\n\n\tmodel {\n\n\t}\n\n\tviews {\n\n\t}\n\n}"
                 }
             ]
         },
@@ -94,7 +94,13 @@
                     "label": "Container Template",
                     "detail": "Add a new container",
                     "insertText": "${1:identifier} = container ${2:name} \"Your Description\" \"Technology\" \"Tags\" {\n\n}"
+                },
+                {
+                    "label": "Container Template (short)",
+                    "detail": "Add a new container",
+                    "insertText": "${1:identifier} = container ${2:name} \"Your Description\" \"Technology\" \"Tags\""
                 }
+
             ]
         },
         {
@@ -115,7 +121,13 @@
                     "label": "Component Template",
                     "detail": "Add a new component",
                     "insertText": "${1:identifier} = component ${2:name} \"Your Description\" \"Technology\" \"Tags\" {\n\n}"
+                },
+                {
+                    "label": "Component Template (short)",
+                    "detail": "Add a new component",
+                    "insertText": "${1:identifier} = component ${2:name} \"Your Description\" \"Technology\" \"Tags\""
                 }
+
             ]
         },
         {
