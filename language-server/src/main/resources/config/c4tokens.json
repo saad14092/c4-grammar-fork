@@ -218,17 +218,17 @@
                 {
                     "label": "systemContext View Template",
                     "detail": "Add a new systemContext View",
-                    "insertText": "systemContext ${1:identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                    "insertText": "systemContext ${1:software_system_identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
                 },
                 {
                     "label": "container View Template",
                     "detail": "Add a new container View",
-                    "insertText": "container ${1:identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                    "insertText": "container ${1:software_system_identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
                 },
                 {
                     "label": "component View Template",
                     "detail": "Add a new component View",
-                    "insertText": "component ${1:identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
+                    "insertText": "component ${1:container_identifier} ${2:key} \"Your Description\" {\n  include * \n  autoLayout\n}"
                 },
                 {
                     "label": "dynamic View Template",
@@ -238,7 +238,7 @@
                 {
                     "label": "deployment View Template",
                     "detail": "Add a new deployment View",
-                    "insertText": "deployment ${1:environment} ${2:identifier} ${3:key} \"Your Description\" {\n  autoLayout\n}"
+                    "insertText": "deployment ${1:environment} ${2:software_system_identifier} ${3:key} \"Your Description\" {\n  autoLayout\n}"
                 },
                 {
                     "label": "custom View Template",

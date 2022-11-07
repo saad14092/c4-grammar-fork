@@ -1,6 +1,5 @@
 package de.systemticks.c4dsl.ls.provider;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

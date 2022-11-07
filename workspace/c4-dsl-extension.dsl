@@ -73,6 +73,11 @@ workspace "C4 DSL Extension Workspace" {
     }
     views {
 
+        systemLandscape Overview "C4 Dsl Extension Overview" {
+          include * 
+          autoLayout
+        }
+
         container c4DslExtension {
             include *
             autoLayout

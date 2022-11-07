@@ -10,8 +10,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.lsp4j.CompletionItem;
-import org.eclipse.lsp4j.CompletionItemKind;
-import org.eclipse.lsp4j.InsertTextFormat;
 import org.eclipse.lsp4j.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +22,6 @@ import de.systemticks.c4dsl.ls.model.C4DocumentModel;
 import de.systemticks.c4dsl.ls.model.C4TokensConfig;
 import de.systemticks.c4dsl.ls.model.C4TokensLoader;
 import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenScope;
-import de.systemticks.c4dsl.ls.model.C4TokensConfig.C4TokenSnippet;
 import de.systemticks.c4dsl.ls.model.C4ObjectWithContext;
 import de.systemticks.c4dsl.ls.utils.C4Utils;
 import de.systemticks.c4dsl.ls.utils.LineToken;
@@ -43,6 +40,7 @@ public class C4CompletionProvider {
     private Map<String, List<CompletionItem>> detailCompletions;
     private List<String> relationRelevantScopes;
     private LineTokenizer tokenizer;
+    private C4CompletionItemCreator completionCreator;
     
     public C4CompletionProvider(C4TokensLoader configLoader) {
         tokenizer = new LineTokenizer();
@@ -52,17 +50,18 @@ public class C4CompletionProvider {
     void init(C4TokensLoader configLoader) {
         C4TokensConfig config = configLoader.readConfiguration();
         if(config != null) {
+            completionCreator = new C4CompletionItemCreator();
             keywordCompletions = new HashMap<>();
             snippetCompletions = new HashMap<>();
             detailCompletions = new HashMap<>();
             config.getScopes().forEach( scope -> {
-                keywordCompletions.put(scope.getName(), keyWordCompletion(scope.getKeywords()));                    
+                keywordCompletions.put(scope.getName(), completionCreator.keyWordCompletion(scope.getKeywords()));                    
                 if(scope.getSnippets() != null) {
-                    snippetCompletions.put(scope.getName(), snippetCompletion(scope.getSnippets()));
+                    snippetCompletions.put(scope.getName(), completionCreator.snippetCompletion(scope.getSnippets()));
                 }                
             });
             config.getDetails().forEach( detail -> {
-                detailCompletions.put(detail.getKeyword(), propertyCompletion(detail.getChoices()));
+                detailCompletions.put(detail.getKeyword(), completionCreator.propertyCompletion(detail.getChoices()));
             });
             relationRelevantScopes = config.getScopes().stream()
                                         .filter(C4TokenScope::isRelations)
@@ -143,7 +142,7 @@ public class C4CompletionProvider {
 
         return C4Utils.merge(
                     keywordCompletions.getOrDefault(scope, NO_COMPLETIONS), 
-                    relationRelevantScopes.contains(scope) ? identifierCompletion(getIdentifiers(model)) : NO_COMPLETIONS);
+                    relationRelevantScopes.contains(scope) ? completionCreator.identifierCompletion(getIdentifiers(model)) : NO_COMPLETIONS);
     }
 
     private List<CompletionItem> completeModel(String scope, List<LineToken> tokens, CursorLocation cursor, C4DocumentModel docModel) {
@@ -162,10 +161,10 @@ public class C4CompletionProvider {
 
             if(tokens.get(1).getToken().equals(EXPR_RELATIONSHIP)) {
                 if(tokenizer.isBetweenTokens(cursor, 1, 2)) {
-                    return identifierCompletion(getIdentifiers(docModel));
+                    return completionCreator.identifierCompletion(getIdentifiers(docModel));
                 }
                 if(tokenizer.isInsideToken(cursor, 2)) {
-                    return identifierCompletion(getIdentifiers(docModel)).stream()
+                    return completionCreator.identifierCompletion(getIdentifiers(docModel)).stream()
                             .filter( item -> item.getLabel().startsWith(tokens.get(2).getToken()))
                             .collect(Collectors.toList());
                 }
@@ -231,52 +230,13 @@ public class C4CompletionProvider {
     }
 
     private List<CompletionItem> completionInViewIdentifiers(C4DocumentModel model, Predicate<C4ObjectWithContext<Element>> func) {
-        return identifierCompletion( 
+        return completionCreator.identifierCompletion( 
                 model.getAllElements().stream()
                     .map(Entry::getValue)
                     .filter(element -> func.test(element))
                     .map(C4ObjectWithContext::getIdentifier)
                     .collect(Collectors.toList())
             );
-    }
-
-    private List<CompletionItem> keyWordCompletion(List<String> keywords) {
-        return keywords.stream().map(keyword -> {
-            CompletionItem item = new CompletionItem();
-            item.setLabel(keyword);
-            item.setKind(CompletionItemKind.Keyword);
-            return item;
-        }).collect(Collectors.toList());
-    }
-
-    private List<CompletionItem> propertyCompletion(List<String> properties) {
-        return properties.stream().map(prop -> {
-            CompletionItem item = new CompletionItem();
-            item.setLabel(prop);
-            item.setKind(CompletionItemKind.Property);
-            return item;
-        }).collect(Collectors.toList());
-    }
-
-    private List<CompletionItem> snippetCompletion(List<C4TokenSnippet> snippets) {
-        return snippets.stream().map(snippet -> {
-            CompletionItem item = new CompletionItem();
-            item.setLabel(snippet.getLabel());
-            item.setDetail(snippet.getDetail());
-            item.setKind(CompletionItemKind.Snippet);
-            item.setInsertTextFormat(InsertTextFormat.Snippet);
-            item.setInsertText(snippet.getInsertText());
-            return item;
-        }).collect(Collectors.toList());
-    }
-
-    private List<CompletionItem> identifierCompletion(List<String> identifier) {
-        return identifier.stream().map(id -> {
-            CompletionItem item = new CompletionItem();
-            item.setLabel(id);
-            item.setKind(CompletionItemKind.Reference);
-            return item;
-        }).collect(Collectors.toList());
     }
 
     List<String> getIdentifiers(C4DocumentModel model) {
