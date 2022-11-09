@@ -1,6 +1,6 @@
 # A VS Code extension for C4 DSL Models
 
-**DESCRIPTION**
+## Description
 
 This is a VS Code extension for specifying software architecture models with the [Structurizr DSL](https://github.com/structurizr/dsl).
 
@@ -36,7 +36,7 @@ Output folder and Plant UML Renderer are configurable.
 
 ![c4 dsl](https://gitlab.com/systemticks/c4-grammar/-/raw/master/extension/images/c4dsl-screenshot-1.png)
 
-## Semantic Highlighting
+## Text Decorations
 
 When describing C4 models textually, there are plenty of raw strings describing different aspects and meta data of a model element. They are visually difficult to distinguish from each other.
 
