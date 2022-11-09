@@ -32,7 +32,7 @@ public class C4LanguageServerLauncher implements Callable<Integer> {
     @Option(names = {"-e", "--echo"}, description = "Echo to the client, to inform that socket can now accept incoming connections")
     private String echo = "READY_TO_CONNECT";
 
-    @Option(names = {"-ir", "--inlineRenderer"}, description = "Echo to the client, to inform that socket can now accept incoming connections")
+    @Option(names = {"-ir", "--inlineRenderer"}, description = "Sets the inline renderer on startup. Can be 'structurizr' or 'plantuml'")
     private String renderer = C4Utils.RENDERER_STRUCTURIZR;
 
     @Option(names = "-log") 

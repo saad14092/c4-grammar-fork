@@ -69,9 +69,14 @@ workspace "C4 DSL Extension Workspace" {
 
         plantuml_preview -> kroki "Requests SVG representation from a given encoded Plant UML string" "HTTP" "Runtime"
         structurizr_preview -> structurizr "Requests SVG representation from a given encoded workspace" "HTTP" "Runtime"
-    }
 
+    }
     views {
+
+        systemLandscape Overview "C4 Dsl Extension Overview" {
+          include * 
+          autoLayout
+        }
 
         container c4DslExtension {
             include *

@@ -15,7 +15,6 @@ public class C4LanguageServerLauncherTest {
             assertTrue(process.isAlive());
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

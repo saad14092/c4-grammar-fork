@@ -16,6 +16,9 @@ import org.eclipse.lsp4j.CodeLensParams;
 import org.eclipse.lsp4j.ColorInformation;
 import org.eclipse.lsp4j.ColorPresentation;
 import org.eclipse.lsp4j.ColorPresentationParams;
+import org.eclipse.lsp4j.CompletionItem;
+import org.eclipse.lsp4j.CompletionList;
+import org.eclipse.lsp4j.CompletionParams;
 import org.eclipse.lsp4j.DefinitionParams;
 import org.eclipse.lsp4j.DidChangeTextDocumentParams;
 import org.eclipse.lsp4j.DidCloseTextDocumentParams;
@@ -39,8 +42,10 @@ import com.google.gson.JsonObject;
 
 import de.systemticks.c4dsl.ls.model.C4DocumentManager;
 import de.systemticks.c4dsl.ls.model.C4DocumentModel;
+import de.systemticks.c4dsl.ls.model.C4TokensLoader;
 import de.systemticks.c4dsl.ls.provider.C4CodeLenseProvider;
 import de.systemticks.c4dsl.ls.provider.C4ColorProvider;
+import de.systemticks.c4dsl.ls.provider.C4CompletionProvider;
 import de.systemticks.c4dsl.ls.provider.C4DefinitionProvider;
 import de.systemticks.c4dsl.ls.provider.C4SemanticTokenProvider;
 import de.systemticks.c4dsl.ls.provider.C4TextDecoratorProvider;
@@ -59,6 +64,7 @@ public class C4TextDocumentService implements TextDocumentService {
 	private C4DefinitionProvider definitionProvider = new C4DefinitionProvider();
 	private C4SemanticTokenProvider semanticTokenProvider = new C4SemanticTokenProvider();
 	private C4TextDecoratorProvider decoratorProvider = new C4TextDecoratorProvider();
+	private C4CompletionProvider completionProvider = new C4CompletionProvider(new C4TokensLoader());
 
 	ReadWriteLock lock = new ReentrantReadWriteLock();
 	private int changeCount = 0;
@@ -71,6 +77,21 @@ public class C4TextDocumentService implements TextDocumentService {
 
 	public C4DocumentManager getDocumentManager() {
 		return documentManager;
+	}
+
+	@Override
+	public CompletableFuture<Either<List<CompletionItem>, CompletionList>> completion(CompletionParams params) {
+
+		return CompletableFuture.supplyAsync( () -> {
+
+			C4DocumentModel model = getDocument(params.getTextDocument());
+			if(model != null) {
+				return Either.forLeft(completionProvider.calcCompletions(model, params.getPosition()));
+			}
+
+			return Either.forLeft(Collections.emptyList());
+		});
+
 	}
 
 	@Override

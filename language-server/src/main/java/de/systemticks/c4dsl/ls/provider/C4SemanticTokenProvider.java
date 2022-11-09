@@ -32,22 +32,11 @@ public class C4SemanticTokenProvider {
         "abstract", "async", "modification", "documentation", "defaultLibrary");
     
     private final static int MODEL_ELEMENT = TOKEN_TYPES.indexOf("member");
-    private final static int MODEL_ELEMENT_NAME = TOKEN_TYPES.indexOf("macro");
 
     public List<Integer> calculateTokens(C4DocumentModel c4Model) {
 
         List<C4SemanticToken> tokens = new ArrayList<>();
-/*
-        c4Model.getElementToLineNumbers().forEach( entry -> {
-            final int line = entry.getKey() - 1;
-            final String key = entry.getValue().getValue().getName();
-            final int startPos = C4Utils.getStartPosition(c4Model.getLineAt(line), Pattern.quote(key));
-            C4SemanticToken token = new C4SemanticToken(line, startPos, key.length(), MODEL_ELEMENT_NAME, 0);
-            if(token != null) {
-                tokens.add(token);
-            }
-         });
-*/
+
         tokens.addAll(c4Model.getAllViews().stream()
             .map( entry -> createToken(C4Utils.getIdentifierOfView(entry.getValue()), c4Model, entry.getKey()-1))
             .filter(element -> element != null).collect(Collectors.toList()));

@@ -14,3 +14,4 @@ vscode:
     - redhat.java
     - vscjava.vscode-java-debug
     - vscjava.vscode-java-test
+    - tenninebt.vscode-koverage

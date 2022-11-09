@@ -70,18 +70,22 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 		logger.debug("onParsedColor at linenumber {}, {}", file.getName(), lineNumber);
         getModel(file).addColor(lineNumber);
 	}
-	
-	
-	@Override
-	public void onEndContext(File file, int linenumber, String context) {
-		logger.debug("onEndContext {} at linenumber {}, {}", context, file.getName(), linenumber);
-	}
-
-	
+			
     @Override
 	public void onInclude(File hostFile, int lineNumber, File referencedFile, String path) {
 		logger.debug("onInclude: {} includes {} at linenumber {}", hostFile.getName(), referencedFile.getName(), lineNumber);
 		getModel(hostFile).addReferencedModel(getModel(referencedFile), lineNumber, path);
+	}
+
+
+	@Override
+	public void onStartContext(File file, int lineNumber, int contextId, String contextName) {
+		getModel(file).openScope(lineNumber, contextId, contextName);
+	}
+
+	@Override
+	public void onEndContext(File file, int lineNumber, int contextId, String contextName) {
+		getModel(file).closeScope(lineNumber, contextId, contextName);
 	}
 
 	private C4DocumentModel getModel(File _file) {

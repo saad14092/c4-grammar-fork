@@ -1,6 +1,5 @@
 package de.systemticks.c4dsl.ls.generator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.Deflater;

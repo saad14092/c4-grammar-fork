@@ -1,7 +1,9 @@
 package de.systemticks.c4dsl.ls.utils;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class C4UtilsTest {
     
@@ -60,6 +63,34 @@ public class C4UtilsTest {
             String content = new String(Files.readAllBytes(Paths.get(tmpDir.listFiles()[0].getAbsolutePath())));
             assertEquals("something", content);
         });
-
     }
+
+    @Test
+    public void isBlank() {
+        assertAll( "String is identified as blank" ,
+            () -> assertTrue(C4Utils.isBlank(null)),
+            () -> assertTrue(C4Utils.isBlank(null)),
+            () -> assertTrue(C4Utils.isBlank("")),
+            () -> assertTrue(C4Utils.isBlank("       ")),
+            () -> assertTrue(C4Utils.isBlank("\t\t "))
+        );
+    }
+
+    @Test
+    public void leftFromCursorEmpty() {
+        assertAll( "No String found left from cursor" ,
+            () -> assertThat( C4Utils.leftFromCursor(null, 0)).isEmpty(),
+            () -> assertThat( C4Utils.leftFromCursor("Foo", -1)).isEmpty()
+        );
+    }
+
+    @Test
+    public void leftFromCursorHasRightValue() {
+        assertAll( "String found left from cursor" ,
+            () -> assertThat(C4Utils.leftFromCursor("   My   Test", 6)).hasValue("My"),
+            () -> assertThat(C4Utils.leftFromCursor("   My   Test", 8)).hasValue("My"),
+            () -> assertThat(C4Utils.leftFromCursor("   My   Test", 10)).hasValue("My   Te")
+        );
+    }
+
 }

@@ -3,6 +3,7 @@ package de.systemticks.c4dsl.ls.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +22,12 @@ import com.structurizr.view.View;
 
 public class C4DocumentModel {
 
+	public static final String NO_SCOPE = "UnknownScope"; 
+
 	private String rawText;
 	private Workspace workspace;
 	private boolean valid;
-	private final static String NEW_LINE = "\\r?\\n";
+	private static final String NEW_LINE = "\\r?\\n";
 	private String lines[];
 	
     private static final Logger logger = LoggerFactory.getLogger(C4DocumentModel.class);
@@ -35,6 +38,7 @@ public class C4DocumentModel {
 	private Map<Integer, String> includesToLineNumber = new HashMap<>();
     private List<Integer> colors = new ArrayList<>();
 	private List<C4DocumentModel> referencedModels = new ArrayList<>();
+	private List<C4CompletionScope> scopes = new ArrayList<>();
 	private String uri;
 	private boolean parsedInternally;
 
@@ -122,7 +126,7 @@ public class C4DocumentModel {
 	}
 	
 	public String getLineAt(int lineNumber) {
-		return lines[lineNumber];
+		return lineNumber < lines.length ? lines[lineNumber] : null;
 	}
 
 	public void addRelationship(int lineNumber, C4ObjectWithContext<Relationship> c4ObjectWithContext) {
@@ -153,5 +157,25 @@ public class C4DocumentModel {
 	public List<C4DocumentModel> getReferencedModels() {
 		return this.referencedModels;
 	}
+ 
+	public String getSurroundingScope(int lineNumber) {
+
+		final int adjustedLineNumber = lineNumber + 1;
+
+		Optional<C4CompletionScope> nearestScope = scopes.stream()
+				.filter(scope -> scope.getStartsAt() < adjustedLineNumber && (scope.getEndsAt() > adjustedLineNumber || scope.getEndsAt() == C4CompletionScope.SCOPE_NOT_CLOSED))
+				.sorted( Comparator.comparingInt(C4CompletionScope::getStartsAt).reversed())
+				.findFirst();
+
+		return nearestScope.map(C4CompletionScope::getName).orElse(NO_SCOPE);
+	}
+
+	public void openScope(int lineNumber, int contextId, String contextName) {
+		scopes.add(new C4CompletionScope(contextId, contextName, lineNumber));
+	}
+
+    public void closeScope(int lineNumber, int contextId, String contextName) {
+		scopes.stream().filter( s -> s.getId() == contextId).findFirst().get().setEndsAt(lineNumber);
+    }
 
 }
