@@ -8,7 +8,7 @@ type DecoratedRange = {
 export type CommandResultTextDecorations = {
     resultcode: number;
     message: string;
-    resultdata: DecoratedRange[]
+    resultdata?: DecoratedRange[]
 }
 
 export function nameDecoration(decoRange: DecoratedRange): DecorationOptions {
@@ -25,5 +25,5 @@ export function nameDecoration(decoRange: DecoratedRange): DecorationOptions {
 }
 
 export function toTextDecorations(fromLanguageServer: CommandResultTextDecorations): DecorationOptions[] {
-    return fromLanguageServer.resultdata.map( range => nameDecoration(range))
+    return fromLanguageServer.resultdata?.map( range => nameDecoration(range)) ?? []
 }
