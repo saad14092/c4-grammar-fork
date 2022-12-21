@@ -1,5 +1,10 @@
 # Change Log
 
+## v3.2.2
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/119
+* Closes https://gitlab.com/systemticks/c4-grammar/-/merge_requests/76
+
 ## v3.2.1
 
 Provides basic support for code completion / content assist

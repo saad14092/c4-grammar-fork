@@ -175,7 +175,10 @@ public class C4DocumentModel {
 	}
 
     public void closeScope(int lineNumber, int contextId, String contextName) {
-		scopes.stream().filter( s -> s.getId() == contextId).findFirst().get().setEndsAt(lineNumber);
+
+		scopes.stream().filter( s -> s.getId() == contextId).findFirst()
+			.ifPresentOrElse( scope -> scope.setEndsAt(lineNumber), 
+							  () -> logger.error("Cannot close scope {}, {}, {}", lineNumber, contextId, contextName));
     }
 
 }
