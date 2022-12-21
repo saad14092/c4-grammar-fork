@@ -1,0 +1,4 @@
+systemContext softwareSystem {
+    include *
+    autoLayout
+}

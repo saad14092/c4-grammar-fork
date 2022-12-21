@@ -80,11 +80,13 @@ public class C4DocumentManager implements StructurizrDslParserListener {
 
 	@Override
 	public void onStartContext(File file, int lineNumber, int contextId, String contextName) {
+		logger.debug("onStartContext: {} at linenumber {}, contextId: {}, contextName {}", file.getName(), lineNumber, contextId, contextName);
 		getModel(file).openScope(lineNumber, contextId, contextName);
 	}
 
 	@Override
 	public void onEndContext(File file, int lineNumber, int contextId, String contextName) {
+		logger.debug("onEndContext: {} at linenumber {}, contextId: {}, contextName {}", file.getName(), lineNumber, contextId, contextName);
 		getModel(file).closeScope(lineNumber, contextId, contextName);
 	}
 
