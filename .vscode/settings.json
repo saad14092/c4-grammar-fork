@@ -3,5 +3,7 @@
     "java.debug.settings.forceBuildBeforeLaunch": false,
     "color-highlight.markRuler": false,
     "java.configuration.updateBuildConfiguration": "automatic",
-    "editor.semanticHighlighting.enabled": true
+    "editor.semanticHighlighting.enabled": true,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable -javaagent:\"/workspace/.vscode-remote/extensions/gabrielbb.vscode-lombok-1.0.1-universal/server/lombok.jar\""
 }

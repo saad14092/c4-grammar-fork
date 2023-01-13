@@ -2,11 +2,20 @@ package de.systemticks.c4dsl.ls.generator;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.zip.Deflater;
 
 import com.structurizr.Workspace;
-import com.structurizr.io.plantuml.PlantUMLWriter;
+import com.structurizr.export.AbstractDiagramExporter;
+import com.structurizr.export.plantuml.C4PlantUMLExporter;
+import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
 import com.structurizr.util.WorkspaceUtils;
+import com.structurizr.view.ComponentView;
+import com.structurizr.view.ContainerView;
+import com.structurizr.view.DeploymentView;
+import com.structurizr.view.DynamicView;
+import com.structurizr.view.SystemContextView;
+import com.structurizr.view.SystemLandscapeView;
 import com.structurizr.view.View;
 
 public class C4Generator {
@@ -21,8 +30,9 @@ public class C4Generator {
 		return Base64.getEncoder().encodeToString(WorkspaceUtils.toJson(workspace, false).getBytes());
 	}
 
-	public static String generateEncodedPlantUml(View view, PlantUMLWriter writer) throws Exception {
-		String puml = writer.toString(view);
+	public static String generateEncodedPlantUml(View view, AbstractDiagramExporter exporter) throws Exception {
+		//FIXME optional might be empty
+		String puml = createPuml(view, exporter).get();
 		return new String(Base64.getUrlEncoder().encode(compress(puml.getBytes())));
 //		return Base64.getEncoder().encodeToString(puml.getBytes());
 	}
@@ -38,6 +48,46 @@ public class C4Generator {
 		System.arraycopy(buffer, 0, result, 0, compressedLength);
 		return result;
 	}	
+
+    public static Optional<String> createPuml(View view, AbstractDiagramExporter exporter) {
+
+        if(view instanceof ContainerView) {
+            return Optional.ofNullable(exporter.export((ContainerView)view).getDefinition());
+        }
+        else if(view instanceof ComponentView) {
+            return Optional.ofNullable(exporter.export((ComponentView)view).getDefinition());
+        }
+        else if(view instanceof SystemContextView) {
+            return Optional.ofNullable(exporter.export((SystemContextView)view).getDefinition());
+        }
+        else if(view instanceof SystemLandscapeView) {
+            return Optional.ofNullable(exporter.export((SystemLandscapeView)view).getDefinition());
+        }
+        else if(view instanceof DeploymentView) {
+            return Optional.ofNullable(exporter.export((DeploymentView)view).getDefinition());
+        }
+        else if(view instanceof DynamicView) {
+            return Optional.ofNullable(exporter.export((DynamicView)view).getDefinition());
+        }
+        else {
+            return Optional.empty();
+        }
+
+    }
+
+    public static AbstractDiagramExporter createDiagramExporter(String writer) {
+
+        if(writer.equals("StructurizrPlantUMLWriter")) {
+            return new StructurizrPlantUMLExporter();
+        }
+        else if(writer.equals("C4PlantUMLWriter")) {
+            return new C4PlantUMLExporter();
+        }
+        else {
+            return new StructurizrPlantUMLExporter();
+        }
+    } 
+
 //	public void generatePlantUML(StructurizrDslParser parser, String outDir) {
 //
 //		PlantUMLWriter writer = C4GeneratorConfiguration.INSTANCE.getInstance().getWriter();

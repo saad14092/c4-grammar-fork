@@ -53,10 +53,11 @@ dependencies {
 	implementation 'com.github.torsten-systemticks:dsl:b3fef851e4'
 
 	// other structurizr dependencies		
-	implementation 'com.structurizr:structurizr-plantuml:1.6.3'
-	implementation 'com.structurizr:structurizr-mermaid:1.4.1'
-	implementation 'com.structurizr:structurizr-client:1.15.2'
-	
+//	implementation 'com.structurizr:structurizr-plantuml:1.6.3'
+//	implementation 'com.structurizr:structurizr-mermaid:1.4.1'
+	implementation 'com.structurizr:structurizr-client:1.17.0'
+	implementation 'com.structurizr:structurizr-export:1.8.2'
+
 	// language server protocol
 	implementation group: 'org.eclipse.lsp4j', name: 'org.eclipse.lsp4j', version: '0.14.0'
 	
