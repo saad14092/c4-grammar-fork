@@ -71,8 +71,7 @@
                     "type": "string",
                     "enum": [
                         "StructurizrPlantUMLWriter",
-                        "C4PlantUMLWriter",
-                        "BasicPlantUMLWriter"
+                        "C4PlantUMLWriter"
                     ],
                     "default": "StructurizrPlantUMLWriter",
                     "scope": "application",

@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.structurizr.Workspace;
-import com.structurizr.io.plantuml.StructurizrPlantUMLWriter;
+import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
 import com.structurizr.view.View;
 
 import de.systemticks.c4dsl.ls.generator.C4Generator;
@@ -41,7 +41,7 @@ public class C4CodeLenseProvider {
 		Command command = new Command("$(link-external) Show as PlantUML Diagram", "c4.show.plantuml");
 		command.setArguments(new ArrayList<Object>());
 		try {
-			command.getArguments().add(C4Generator.generateEncodedPlantUml(view, new StructurizrPlantUMLWriter()));
+			command.getArguments().add(C4Generator.generateEncodedPlantUml(view, new StructurizrPlantUMLExporter()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
