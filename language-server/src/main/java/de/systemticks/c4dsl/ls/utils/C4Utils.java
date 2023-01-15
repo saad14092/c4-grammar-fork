@@ -23,6 +23,7 @@ public class C4Utils {
 
     public static final String RENDERER_STRUCTURIZR = "structurizr";
     public static final String RENDERER_PLANTUML = "plantuml";
+    public static final String RENDERER_MERMAID = "mermaid";
 
     public static void writeContentToFile(File out, String content) throws IOException {
         out.getParentFile().mkdirs();

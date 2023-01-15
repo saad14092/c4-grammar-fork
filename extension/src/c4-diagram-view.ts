@@ -1,21 +1,29 @@
-import { window, ViewColumn, WebviewPanel } from "vscode";
-import got from 'got';
+import got from "got/dist/source";
+import { ViewColumn, WebviewPanel, window } from "vscode";
 
-export class C4PlantUMLPreview {
+export class C4DiagramView {
 
-    urlSVG: string;
+    private _renderService: string;
+    private title: string;
+    private viewType: string;
 
-    constructor(renderer: string) {
-        this.urlSVG = renderer + "/" + "plantuml" + "/" + "svg"
+    constructor(renderService: string, viewTpe: string, title: string) {
+        this.title = title
+        this.viewType = viewTpe
+        this._renderService = renderService
     }
 
     panel: WebviewPanel | undefined
 
+    public get renderService() {
+        return this._renderService;
+    }
+
     private createPanel() {
 
         const panel = window.createWebviewPanel(
-            'PlantUML Preview',
-            'PlantUML Preview',
+            this.viewType,
+            this.title,
             ViewColumn.Two,
             {}
         );
@@ -26,29 +34,30 @@ export class C4PlantUMLPreview {
 
         return panel;
     }
-    async updateWebView(puml: string) {
+
+    async updateWebView(encodedContent: string, createUri: (content: string) => string) {
 
         if (!this.panel) {
             this.panel = this.createPanel();
         }
 
-        const svg = await this.toSVG(puml);
+        const svg = await this.toSVG(createUri(encodedContent))
         this.panel.webview.html = this.updateViewContent(svg);
     }
 
-    private async toSVG(encoded: string): Promise<string> {
-        const response = await got(this.urlSVG +"/" + encoded);
+    private async toSVG(url: string): Promise<string> {
+        const response = await got(url);
         return response.body;
     }
-
-    private updateViewContent(svgFile: string) {
+    
+    public updateViewContent(svg: string) {
 
         return `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Cat Coding</title>
+            <title>${this.title}</title>
             <style>
                 body.vscode-light {
                     background-color: white;
@@ -59,9 +68,10 @@ export class C4PlantUMLPreview {
             </style>
         </head>
         <body>
-            ${svgFile}
+            ${svg}
         </body>
         </html>`;
     }
+
 
 }

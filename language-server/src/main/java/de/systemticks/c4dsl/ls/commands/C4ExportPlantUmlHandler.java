@@ -53,7 +53,7 @@ public class C4ExportPlantUmlHandler implements C4CommandHandler {
             parser.parse(dslFile);
 
             for(View view: parser.getWorkspace().getViews().getViews()) {
-                Optional<String> puml = C4Generator.createPuml(view, exporter);
+                Optional<String> puml = C4Generator.createDiagramDefinition(view, exporter);
                 if(puml.isPresent()) {
                     File out = new File(outDir+File.separator+view.getKey()+PLANTUML_FILE_EXT);
                     logger.info("exportFileToPuml to File {}", out.getAbsolutePath());

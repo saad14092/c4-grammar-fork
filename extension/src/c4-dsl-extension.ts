@@ -20,10 +20,10 @@ import * as readline from 'readline'
 
 import { LanguageClientOptions, StateChangeEvent, State } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions, StreamInfo } from 'vscode-languageclient/node';
-//import { C4StructurizrPreview } from './c4-structurizr-preview';
-import { C4PlantUMLPreview } from './c4-plantuml-preview';
+//import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
 import { toTextDecorations, CommandResultTextDecorations } from './c4-decorator';
+import { C4DiagramView } from './c4-diagram-view';
 
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator"
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir"
@@ -31,6 +31,7 @@ const CONF_LANGUAGESERVER_CONNECTIONTYPE = "c4.languageserver.connectiontype"
 const CONF_DIAGRAM_STRUCTURIZR_ENABLED = "c4.diagram.structurizr.enabled"
 const CONF_DIAGRAM_STRUCTURZR_URI = "c4.diagram.structurizr.uri"
 const CONF_DIAGRAM_PLANTUML_ENABLED = "c4.diagram.plantuml.enabled"
+const CONF_DIAGRAM_MERMAID_ENABLED = "c4.diagram.mermaid.enabled"
 const CONF_PLANTUML_SERVER = "c4.show.plantuml.server"
 const CONF_INLINE_RENDERER = "c4.diagram.renderer"
 const CONF_TEXT_DECORATIONS = "c4.decorations.enabled"
@@ -166,7 +167,8 @@ export function activate(context: ExtensionContext) {
     */
     
     const structurizrPanel = new C4StructurizrPreview(logger)
-    const svgPreviewPanel = new C4PlantUMLPreview( workspace.getConfiguration().get(CONF_PLANTUML_SERVER) as string)
+    const plantUmlPreview = new C4DiagramView(workspace.getConfiguration().get(CONF_PLANTUML_SERVER) as string, "UML", "PlantUML Preview")
+    const mermaidPreview = new C4DiagramView("https://mermaid.ink", "UML", "Mermaid Preview")
 
     commands.registerCommand("c4.show.diagram", async(...args: string[]) => {        
         const diagramEnabled = workspace.getConfiguration().get(CONF_DIAGRAM_STRUCTURIZR_ENABLED) as boolean
@@ -200,14 +202,37 @@ export function activate(context: ExtensionContext) {
             const encodedPlantUML = args[0]
     
             try {
-                await svgPreviewPanel.updateWebView(encodedPlantUML);
+                await plantUmlPreview.updateWebView(encodedPlantUML, (encodedContent) => {
+                    return plantUmlPreview.renderService + "/" + "plantuml" + "/" + "svg" + "/" + encodedContent
+                });
             }
             catch (err) {
                 logger.appendLine("Error displaying preview: " + JSON.stringify(err))
             } 
         }   
     });
+
+    commands.registerCommand("c4.show.mermaid", async(...args: string[]) => {        
+
+        const diagramEnabled = workspace.getConfiguration().get(CONF_DIAGRAM_MERMAID_ENABLED) as boolean
+
+        if(!diagramEnabled) {
+            window.showInformationMessage("You have to set the config item 'c4.diagram.mermaid.enabled' to true, if you want to use the public mermaid rendering service");
+        }
+        else {
+            const encodedMermaid = args[0]
     
+            try {
+                await mermaidPreview.updateWebView(encodedMermaid, (encodedContent) => {
+                    return mermaidPreview.renderService + "/" + "svg" + "/" + encodedContent
+                });
+            }
+            catch (err) {
+                logger.appendLine("Error displaying preview: " + JSON.stringify(err))
+            } 
+        }   
+    });
+
     commands.registerCommand("c4.export.puml", ( uri: Uri ) => {
 
         const renderer = workspace.getConfiguration().get(CONF_PLANTUML_GENERATOR) as string; 

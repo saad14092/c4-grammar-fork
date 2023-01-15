@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.structurizr.export.AbstractDiagramExporter;
+import com.structurizr.export.mermaid.MermaidDiagramExporter;
 import com.structurizr.export.plantuml.C4PlantUMLExporter;
 import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
 import com.structurizr.view.ComponentView;
@@ -41,21 +42,42 @@ public class C4GeneratorTest {
 
     @ParameterizedTest
     @MethodSource("provideMockedViews")    
-    public void createPunlForContainerView(View view) {
+    public void createPumlForViews(View view) {
 
         ViewSet viewSet = mock(ViewSet.class);
         Configuration configuration = mock(Configuration.class);
-        AbstractDiagramExporter exporter = spy(new MockedExporter());
+        AbstractDiagramExporter exporter = spy(new MockedPlantUMLExporter());
         when(viewSet.getConfiguration()).thenReturn(configuration);
         when(view.getViewSet()).thenReturn(viewSet);
 
         view.setDescription("Description");
 
-        Optional<String> puml = C4Generator.createPuml(view, exporter);
+        Optional<String> puml = C4Generator.createDiagramDefinition(view, exporter);
+ 
+        assertAll( 
+            () -> assertThat(puml).map(str -> str.startsWith("@startuml")).hasValue(true),
+            () -> assertThat(puml).map(str -> str.endsWith("@enduml")).hasValue(true)
+        );
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideMockedViews")    
+    public void createMermaidForViews(View view) {
+
+        ViewSet viewSet = mock(ViewSet.class);
+        Configuration configuration = mock(Configuration.class);
+        AbstractDiagramExporter exporter = spy(new MockedMermaidExporter());
+        when(viewSet.getConfiguration()).thenReturn(configuration);
+        when(view.getViewSet()).thenReturn(viewSet);
+
+        view.setDescription("Description");
+
+        Optional<String> mermaid = C4Generator.createDiagramDefinition(view, exporter);
 
         assertAll( 
-            () -> assertThat(puml).map(str -> str.startsWith("@startuml")),
-            () -> assertThat(puml).map(str -> str.startsWith("@enduml"))    
+            () -> assertThat(mermaid).map(str -> str.startsWith("graph TB")).hasValue(true),
+            () -> assertThat(mermaid).map(str -> str.endsWith("end")).hasValue(true)
         );
 
     }
@@ -71,11 +93,20 @@ public class C4GeneratorTest {
         );
     }
     
-    class MockedExporter extends StructurizrPlantUMLExporter {
+    class MockedPlantUMLExporter extends StructurizrPlantUMLExporter {
 
         @Override
         public String getViewOrViewSetProperty(View view, String name, String defaultValue) {
-            return "mock";
+            return "plantuml-mock";
+        }
+        
+    } 
+
+    class MockedMermaidExporter extends MermaidDiagramExporter {
+
+        @Override
+        public String getViewOrViewSetProperty(View view, String name, String defaultValue) {
+            return "mermaid-mock";
         }
         
     } 
