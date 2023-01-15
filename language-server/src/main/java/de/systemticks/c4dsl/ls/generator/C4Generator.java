@@ -1,13 +1,13 @@
 package de.systemticks.c4dsl.ls.generator;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.Optional;
-import java.util.zip.Deflater;
 
 import com.structurizr.Workspace;
 import com.structurizr.export.AbstractDiagramExporter;
+import com.structurizr.export.mermaid.MermaidEncoder;
 import com.structurizr.export.plantuml.C4PlantUMLExporter;
+import com.structurizr.export.plantuml.PlantUMLEncoder;
 import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
 import com.structurizr.util.WorkspaceUtils;
 import com.structurizr.view.ComponentView;
@@ -20,36 +20,23 @@ import com.structurizr.view.View;
 
 public class C4Generator {
 
-//	public static void generateEncodedWorkspace(StructurizrDslParser parser, String outDir) throws Exception {
-//		final String workspaceJson = WorkspaceUtils.toJson(parser.getWorkspace(), false);
-//		final String encodedWorkspace = Base64.getEncoder().encodeToString(workspaceJson.getBytes());
-//		generateToFile(new File(outDir+File.separator+"_workspace.enc"), encodedWorkspace);		
-//	}
-
 	public static String generateEncodedWorkspace(Workspace workspace) throws Exception {
 		return Base64.getEncoder().encodeToString(WorkspaceUtils.toJson(workspace, false).getBytes());
 	}
 
 	public static String generateEncodedPlantUml(View view, AbstractDiagramExporter exporter) throws Exception {
 		//FIXME optional might be empty
-		String puml = createPuml(view, exporter).get();
-		return new String(Base64.getUrlEncoder().encode(compress(puml.getBytes())));
-//		return Base64.getEncoder().encodeToString(puml.getBytes());
+		String pumlContent = createDiagramDefinition(view, exporter).get();
+        return new PlantUMLEncoder().encode(pumlContent);
 	}
 
-	private static byte[] compress(byte[] source) throws IOException {
-		Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
-		deflater.setInput(source);
-		deflater.finish();
-	
-		byte[] buffer = new byte[32768];
-		int compressedLength = deflater.deflate(buffer);
-		byte[] result = new byte[compressedLength];
-		System.arraycopy(buffer, 0, result, 0, compressedLength);
-		return result;
-	}	
+	public static String generateEncodedMermaid(View view, AbstractDiagramExporter exporter) throws Exception {
+		//FIXME optional might be empty
+		String mermaidContent = createDiagramDefinition(view, exporter).get();
+        return new MermaidEncoder().encode(mermaidContent);
+	}
 
-    public static Optional<String> createPuml(View view, AbstractDiagramExporter exporter) {
+    public static Optional<String> createDiagramDefinition(View view, AbstractDiagramExporter exporter) {
 
         if(view instanceof ContainerView) {
             return Optional.ofNullable(exporter.export((ContainerView)view).getDefinition());

@@ -116,11 +116,17 @@
                     "default": false,
                     "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://kroki.io/ for rendering purposes. Do not enable, if you have concerns."
                 },
+                "c4.diagram.mermaid.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns."
+                },
                 "c4.diagram.renderer": {
                     "type": "string",
                     "enum": [
                         "structurizr",
-                        "plantuml"
+                        "plantuml",
+                        "mermaid"
                     ],
                     "default": "plantuml",
                     "scope": "application",

@@ -1,8 +1,10 @@
 package de.systemticks.c4dsl.ls.provider;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.structurizr.Workspace;
+import com.structurizr.export.mermaid.MermaidDiagramExporter;
 import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
 import com.structurizr.view.View;
 
@@ -24,6 +27,12 @@ import de.systemticks.c4dsl.ls.utils.C4Utils;
 public class C4CodeLenseProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(C4CodeLenseProvider.class);
+
+	private Map<String, BiFunction<Workspace, View, Command>> renderFunctions = Map.ofEntries(
+		new AbstractMap.SimpleEntry<String, BiFunction<Workspace, View, Command>>(C4Utils.RENDERER_STRUCTURIZR, toStructurizr),
+		new AbstractMap.SimpleEntry<String, BiFunction<Workspace, View, Command>>(C4Utils.RENDERER_PLANTUML, toPlantUML),
+		new AbstractMap.SimpleEntry<String, BiFunction<Workspace, View, Command>>(C4Utils.RENDERER_MERMAID, toMermaid)
+	  );
 
 	public static BiFunction<Workspace, View, Command> toStructurizr = (workspace, view) -> {
 		Command command = new Command("$(link-external) Show as Structurizr Diagram", "c4.show.diagram");
@@ -48,9 +57,20 @@ public class C4CodeLenseProvider {
 		return command;
 	};
 
+	public static BiFunction<Workspace, View, Command> toMermaid = (workspace, view) -> {
+		Command command = new Command("$(link-external) Show as Mermaid Diagram", "c4.show.mermaid");
+		command.setArguments(new ArrayList<Object>());
+		try {
+			command.getArguments().add(C4Generator.generateEncodedMermaid(view, new MermaidDiagramExporter()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return command;
+	};
+
 	public List<CodeLens> calcCodeLenses(C4DocumentModel c4, String renderer) {
 		
-		BiFunction<Workspace, View, Command> func = renderer.contentEquals(C4Utils.RENDERER_STRUCTURIZR) ? C4CodeLenseProvider.toStructurizr : C4CodeLenseProvider.toPlantUML;
+		BiFunction<Workspace, View, Command> func = renderFunctions.getOrDefault(renderer, toPlantUML);
 
 		if(!c4.isValid() && c4.getWorkspace() != null) {
 			return Collections.emptyList();
@@ -64,5 +84,4 @@ public class C4CodeLenseProvider {
 			return new CodeLens(range, func.apply(c4.getWorkspace(), entry.getValue()), null);				
 		}).collect(Collectors.toList());
 	}
-
 }
