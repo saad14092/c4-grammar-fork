@@ -51,13 +51,14 @@ This feature can become pretty expensive in case of large models. You can switch
 |Name | Values | Default  | Description|
 --- | --- | --- | ---
 |c4.export.plantuml.generator|<ul><li>StructurizrPlantUMLWriter</li><li>C4PlantUMLWriter</li><li>BasicPlantUMLWriter</li></ul>|StructurizrPlantUMLWriter|The flavor of the generated Plant UML
-|c4.diagram.renderer|<ul><li>plantuml</li><li>structurizr</li></ul>|plantuml|Detmerines which inline renderer (at the code lenses) is used for displaying views
+|c4.diagram.renderer|<ul><li>plantuml</li><li>structurizr</li><li>mermaid</li></ul>|plantuml|Detmerines which inline renderer (at the code lenses) is used for displaying views
 |c4.export.plantuml.dir|<i>PLANTUML_EXPORT_FOLDER</i>|./export|The folder for the exported plantuml files. Can be relative or absolute
 |c4.show.plantuml.server|<i>KROKI_SERVER_URI</i>|https://kroki.io|The server where the kroki diagram rendering service is hosted. Is used when 'plantuml' is selected as renderer (see c4.diagram.renderer)
 |c4.languageserver.connectiontype|<ul><li>auto</li><li>process-io</li><li>socket</li></ul>|auto|Determines how language client and language server are connected
 |c4.diagram.structurizr.enabled|true/false|false|If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns
 |c4.diagram.structurizr.uri|STRUCTURIZR_URI|https://structurizr.com/json|The URL to call when rendering the diagram using a Structurizr server.  Override if you want to point to a on-premise installation rather than the main Structurizr site, for example.
 |c4.diagram.plantuml.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns.
+|c4.diagram.mermaid.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns.
 |c4.decorations.enabled|<ul><li>off</li><li>onChange</li><li>onSave</li></ul>|onChange|Text decorations can take place when editing (onChange) or when file is saved (onSave). It can also be switched off.
 
 ## Pre-requisites

@@ -1,5 +1,12 @@
 # Change Log
 
+## v3.2.3
+
+Supports mermaid as inline renderer.
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/121
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/120
+
 ## v3.2.2
 
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/119
