@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.2.3",
+    "version": "3.3.0",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -195,8 +195,8 @@
         "prepare": "yarn run clean && yarn run build",
         "clean": "rimraf extension/lib extension/pack extension/server",
         "build": "tsc && webpack --mode=development",
-        "build-server": "../language-server/gradlew -p ../language-server build deployToVSCode",
-        "clean-server": "../language-server/gradlew -p ../language-server clean",
+        "build-server": "../server/c4-dsl-language-server/gradlew -p ../server/c4-dsl-language-server deploy -PcopyTo=../../../../extension/server",
+        "clean-server": "../server/c4-dsl-language-server/gradlew -p ../server/c4-dsl-language-server clean",
         "build-all": "yarn build-server && yarn build",
         "clean-all": "yarn clean-server && yarn clean",
         "watch": "tsc -w",

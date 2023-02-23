@@ -1,0 +1,3 @@
+[submodule "server/c4-dsl-language-server"]
+	path = server/c4-dsl-language-server
+	url = https://gitlab.com/systemticks/c4-dsl-language-server.git
