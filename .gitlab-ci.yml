@@ -13,15 +13,15 @@ c4-language-server:
   script:
     - cd server/c4-dsl-language-server
     - ./gradlew check
-    - ./gradlew deploy
+    - ./gradlew deploy -PcopyTo=../../../../extension/server
 
   artifacts:
     when: always
     reports:
-      junit: language-server/build/test-results/test/**/TEST-*.xml
+      junit: server/c4-dsl-language-server/build/test-results/test/**/TEST-*.xml
     paths: 
       - extension/server/c4-language-server
-      - language-server/build/reports/jacoco/test/html
+      - server/c4-dsl-language-server/build/reports/jacoco/test/html
     expire_in: 60 min
 
 c4-language-client:
@@ -37,7 +37,7 @@ c4-language-client:
     - yarn build
     - yarn global add vsce
     - vsce package
-    - cat ../language-server/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
+    - cat ../server/c4-dsl-language-server/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
 
   dependencies:
     - c4-language-server
@@ -52,7 +52,7 @@ pages:
   dependencies:
     -  c4-language-server
   script:
-    - mv language-server/build/reports/jacoco/test/html/ public/
+    - mv server/c4-dsl-language-server/build/reports/jacoco/test/html/ public/
   artifacts:
     paths:
       - public
