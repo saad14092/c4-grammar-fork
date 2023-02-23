@@ -8,17 +8,17 @@ c4-language-server:
   stage: server
 
   script:
-    - cd server/c4-dsl-language-server
+    - cd language-server
     - ./gradlew check
-    - ./gradlew deploy -PcopyTo=../../../../extension/server
+    - ./gradlew deployToVSCode
 
   artifacts:
     when: always
     reports:
-      junit: server/c4-dsl-language-server/build/test-results/test/**/TEST-*.xml
+      junit: language-server/build/test-results/test/**/TEST-*.xml
     paths: 
       - extension/server/c4-language-server
-      - server/c4-dsl-language-server/build/reports/jacoco/test/html
+      - language-server/build/reports/jacoco/test/html
     expire_in: 60 min
 
 c4-language-client:
@@ -34,7 +34,7 @@ c4-language-client:
     - yarn build
     - yarn global add vsce
     - vsce package
-    - cat ../server/c4-dsl-language-server/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
+    - cat ../language-server/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
 
   dependencies:
     - c4-language-server
@@ -49,7 +49,7 @@ pages:
   dependencies:
     -  c4-language-server
   script:
-    - mv server/c4-dsl-language-server/build/reports/jacoco/test/html/ public/
+    - mv language-server/build/reports/jacoco/test/html/ public/
   artifacts:
     paths:
       - public
