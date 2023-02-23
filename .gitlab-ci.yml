@@ -1,3 +1,6 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 stages:
   - server
   - client
@@ -8,9 +11,9 @@ c4-language-server:
   stage: server
 
   script:
-    - cd language-server
+    - cd server/c4-dsl-language-server
     - ./gradlew check
-    - ./gradlew deployToVSCode
+    - ./gradlew deploy
 
   artifacts:
     when: always
