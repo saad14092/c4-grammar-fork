@@ -1,5 +1,6 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  LANGUAGE_SERVER_DIR: server/c4-dsl-language-server
 
 stages:
   - server
@@ -11,17 +12,17 @@ c4-language-server:
   stage: server
 
   script:
-    - cd server/c4-dsl-language-server
+    - cd $LANGUAGE_SERVER_DIR
     - ./gradlew check
     - ./gradlew deploy -PcopyTo=../../../../extension/server
 
   artifacts:
     when: always
     reports:
-      junit: server/c4-dsl-language-server/build/test-results/test/**/TEST-*.xml
+      junit: $LANGUAGE_SERVER_DIR/build/test-results/test/**/TEST-*.xml
     paths: 
       - extension/server/c4-language-server
-      - server/c4-dsl-language-server/build/reports/jacoco/test/html
+      - $LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html
     expire_in: 60 min
 
 c4-language-client:
@@ -37,7 +38,7 @@ c4-language-client:
     - yarn build
     - yarn global add vsce
     - vsce package
-    - cat ../server/c4-dsl-language-server/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
+    - cat ../$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
 
   dependencies:
     - c4-language-server
@@ -52,7 +53,7 @@ pages:
   dependencies:
     -  c4-language-server
   script:
-    - mv server/c4-dsl-language-server/build/reports/jacoco/test/html/ public/
+    - mv $LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html/ public/
   artifacts:
     paths:
       - public
