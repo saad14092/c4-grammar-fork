@@ -1,5 +1,12 @@
 # Change Log
 
+## v3.3.0
+
+Java 11 or higher required
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/126
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/122
+
 ## v3.2.3
 
 Supports mermaid as inline renderer.
