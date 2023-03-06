@@ -2,9 +2,14 @@
 
 ## v3.3.0
 
-Java 11 or higher required
+From now on Java 11 or higher is required<br>
+The language server is synced to structurizr/dsl v1.28.0
 
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/129
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/128
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/126
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/124
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/123
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/122
 
 ## v3.2.3

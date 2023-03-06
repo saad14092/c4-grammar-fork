@@ -8,6 +8,16 @@ Structurizr DSL, an example of the [diagram as text](https://structurizr.com/hel
 
 Technically there is language server built on top of the origin [Structurizr DSL](https://github.com/structurizr/dsl) parser.
 
+## Pre-requisites
+
+A [Java VM](http://java.com/en/download/) is required for running the language server. Java 11 or higher is required.
+
+> :warning: In some cases the language server seems to have missing execution rights. Check `<YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-<version>\server\c4-language-server\bin` and add +x if missing to make it executable.
+
+You must open a workspace that contains your models, which need to have the file extension `.dsl` 
+
+Multiple workspaces are supported.
+
 ## Diagram Preview
 
 Every C4 view in the editor will be enriched with a code lense in order to render the corresponding view, either with a kroki.io server (if rendering type is 'plantuml' or with the structurizr.com  server (if rendering type is 'structurizr'). In either way your c4 model will be sent as a Base64-encoded string to any of the public webservices for rendering purposes. This feature is deactivated by default, in case of you have concerns making your diagrams public.
@@ -60,16 +70,6 @@ This feature can become pretty expensive in case of large models. You can switch
 |c4.diagram.plantuml.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns.
 |c4.diagram.mermaid.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns.
 |c4.decorations.enabled|<ul><li>off</li><li>onChange</li><li>onSave</li></ul>|onChange|Text decorations can take place when editing (onChange) or when file is saved (onSave). It can also be switched off.
-
-## Pre-requisites
-
-A [Java VM](http://java.com/en/download/) is required for running the language server. Java 11 or higher is required.
-
-> :warning: In some cases the language server seems to have missing execution rights. Check `<YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-1.1.0\server\c4-language-server\bin` and add +x if missing to make it executable.
-
-You must open a workspace that contains your models, which need to have the file extension `.dsl` 
-
-Multiple workspaces are supported.
 
 ## Examples
 
