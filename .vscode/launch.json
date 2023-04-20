@@ -5,11 +5,16 @@
 {
 	"version": "0.2.0",
     "configurations": [
+    
         {
             "type": "java",
-            "name": "Language Server",
+            "name": "C4 DSL Language Server",
             "request": "launch",
             "mainClass": "de.systemticks.c4dsl.ls.C4LanguageServerLauncher",
+            "vmArgs": "-javaagent:${workspaceFolder}/extension/server/c4-language-server/lib/aspectjweaver-1.9.8.jar",
+            "classPaths": [
+                "${workspaceFolder}/extension/server/c4-language-server/lib/*"
+            ],
             "args": "-c=socket -e=READY_TO_CONNECT -ir=plantuml"
         },
         {
