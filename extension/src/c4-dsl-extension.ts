@@ -16,11 +16,10 @@ import {ExtensionContext, workspace, commands, window, StatusBarAlignment, Uri, 
 import * as path from 'path';
 import * as net from 'net';
 import * as cp from 'child_process'
-import * as readline from 'readline'
+import * as readline from 'node:readline'
 
 import { LanguageClientOptions, StateChangeEvent, State } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions, StreamInfo } from 'vscode-languageclient/node';
-//import { C4PlantUMLPreview } from './c4-plantuml-preview';
 import { C4StructurizrPreview } from './c4-structurizr-preview';
 import { toTextDecorations, CommandResultTextDecorations } from './c4-decorator';
 import { C4DiagramView } from './c4-diagram-view';
@@ -142,15 +141,20 @@ export function activate(context: ExtensionContext) {
         //proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
         proc = cp.exec( '"' + serverLauncher + '" '+ ['-c=socket', '-e='+READY_ECHO, '-ir='+renderer].join(' '))
 
-        readline.createInterface({
-            input     : proc.stdout,
-            terminal  : false
-          }).on('line', function(line: string) {
-            if(line.endsWith(READY_ECHO)) {
-                languageClient.start();
-//                context.subscriptions.push(disposable);
-            }
-        });
+        if(proc.stdout) {
+            readline.createInterface({
+                input: proc.stdout,
+                terminal: false
+              }).on('line', function(line: string) {
+                if(line.endsWith(READY_ECHO)) {
+                    languageClient.start();
+                }
+            });    
+        }
+        else {
+            statusBarItem.text = "Connection to C4 DSL Socket Server could not be established"
+            statusBarItem.color = 'red'    
+        }
     }
 
     else {

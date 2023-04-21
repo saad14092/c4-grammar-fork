@@ -1,4 +1,5 @@
-import got from "got/dist/source";
+import got from "got"
+
 import { ViewColumn, WebviewPanel, window } from "vscode";
 
 export class C4DiagramView {
