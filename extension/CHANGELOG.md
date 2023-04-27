@@ -1,5 +1,12 @@
 # Change Log
 
+## v3.4.0
+
+Language Server and Client are aligned with the latest LSP specification 3.17
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/136
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/135
+
 ## v3.3.2
 
 The language server is synced to structurizr/dsl v1.30.1
