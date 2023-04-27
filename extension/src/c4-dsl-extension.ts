@@ -141,13 +141,15 @@ export function activate(context: ExtensionContext) {
         //proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
         proc = cp.exec( '"' + serverLauncher + '" '+ ['-c=socket', '-e='+READY_ECHO, '-ir='+renderer].join(' '))
 
-        if(proc.stdout) {
-            readline.createInterface({
+        if(proc.stdout) {           
+            const reader = readline.createInterface({
                 input: proc.stdout,
-                terminal: false
-              }).on('line', function(line: string) {
+                terminal: false})
+
+            reader.on('line', function(line: string) {
                 if(line.endsWith(READY_ECHO)) {
                     languageClient.start();
+                    reader.close();
                 }
             });    
         }
