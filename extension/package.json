@@ -9,7 +9,7 @@
     },
     "license": "Apache-2.0",
     "icon": "images/c4dsl.png",
-    "version": "3.4.0",
+    "version": "3.4.1",
     "engines": {
         "vscode": "^1.77.0"
     },
@@ -142,6 +142,11 @@
                     "default": "onChange",
                     "scope": "application",
                     "description": "Determines when text decoration takes place"
+                },
+                "c4.languageserver.logs.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled server logs are written into workspace folder."
                 }
             }
         }

@@ -1,5 +1,12 @@
 # Change Log
 
+## v3.4.1
+
+First draft version of an auto-formatter (pretty-print)
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/138
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/137
+
 ## v3.4.0
 
 Language Server and Client are aligned with the latest LSP specification 3.17
