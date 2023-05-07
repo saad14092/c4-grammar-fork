@@ -21,8 +21,8 @@ c4-language-server:
     reports:
       junit: $LANGUAGE_SERVER_DIR/build/test-results/test/**/TEST-*.xml
     paths: 
-      - extension/server/c4-language-server
-      - $LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html
+      - $CI_PROJECT_DIR/extension/server/c4-language-server
+      - $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html
     expire_in: 60 min
 
 c4-language-client:
@@ -45,7 +45,7 @@ c4-language-client:
 
   artifacts:
     paths:
-      - extension/*.vsix
+      - $CI_PROJECT_DIR/extension/*.vsix
     expire_in: 1 day
 
 pages:
