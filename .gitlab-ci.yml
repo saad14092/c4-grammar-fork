@@ -34,7 +34,7 @@ c4-language-client:
 
   script:
     - cd extension
-    - ls -la
+    - find . -name *.jar
     - yarn install 
     - yarn build
     - yarn global add vsce
