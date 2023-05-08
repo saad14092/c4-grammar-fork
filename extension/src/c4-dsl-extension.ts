@@ -34,6 +34,7 @@ const CONF_DIAGRAM_MERMAID_ENABLED = "c4.diagram.mermaid.enabled"
 const CONF_PLANTUML_SERVER = "c4.show.plantuml.server"
 const CONF_INLINE_RENDERER = "c4.diagram.renderer"
 const CONF_TEXT_DECORATIONS = "c4.decorations.enabled"
+const CONF_LANGUAGESERVER_LOGS_ENABLED = "c4.languageserver.logs.enabled"
 
 const decType = window.createTextEditorDecorationType({});
 
@@ -130,7 +131,6 @@ export function activate(context: ExtensionContext) {
         }
     })
 
-
     if(connectionType === "socket" || (connectionType === "auto" && process.platform !== 'win32')) {
         
         const READY_ECHO = "READY_TO_CONNECT"
@@ -138,8 +138,16 @@ export function activate(context: ExtensionContext) {
         statusBarItem.text = "C4 DSL Socket Server is starting up..."
         statusBarItem.color = 'white'
 
-        //proc = cp.spawn(path.join(serverLauncher), ['--socket', READY_ECHO], {shell: true})
-        proc = cp.exec( '"' + serverLauncher + '" '+ ['-c=socket', '-e='+READY_ECHO, '-ir='+renderer].join(' '))
+        const args = ['-c=socket', '-e='+READY_ECHO, '-ir='+renderer]
+
+        const serverLogsEnabled = workspace.getConfiguration().get(CONF_LANGUAGESERVER_LOGS_ENABLED) as boolean
+        if(serverLogsEnabled && workspace.workspaceFolders) {
+            const wsFolder = workspace.workspaceFolders[0].uri;
+            proc = cp.spawn( serverLauncher, args, { cwd: wsFolder.fsPath })
+        }
+        else {
+            proc = cp.spawn( serverLauncher, args)
+        }
 
         if(proc.stdout) {           
             const reader = readline.createInterface({
@@ -149,7 +157,6 @@ export function activate(context: ExtensionContext) {
             reader.on('line', function(line: string) {
                 if(line.endsWith(READY_ECHO)) {
                     languageClient.start();
-                    reader.close();
                 }
             });    
         }
@@ -161,16 +168,7 @@ export function activate(context: ExtensionContext) {
 
     else {
         languageClient.start();
-//        context.subscriptions.push(disposable);
     }
-
-    /*
-    commands.registerCommand("c4.goto.taggedElement", (_range: LSRange) => {
-        const range = new Range( new Position(_range.start.line, _range.start.character),
-            new Position(_range.end.line, _range.end.character))
-        window.activeTextEditor?.revealRange(range);
-    });      
-    */
     
     const structurizrPanel = new C4StructurizrPreview(logger)
     const plantUmlPreview = new C4DiagramView(workspace.getConfiguration().get(CONF_PLANTUML_SERVER) as string, "UML", "PlantUML Preview")

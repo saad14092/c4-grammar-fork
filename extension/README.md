@@ -65,6 +65,7 @@ This feature can become pretty expensive in case of large models. You can switch
 |c4.export.plantuml.dir|<i>PLANTUML_EXPORT_FOLDER</i>|./export|The folder for the exported plantuml files. Can be relative or absolute
 |c4.show.plantuml.server|<i>KROKI_SERVER_URI</i>|https://kroki.io|The server where the kroki diagram rendering service is hosted. Is used when 'plantuml' is selected as renderer (see c4.diagram.renderer)
 |c4.languageserver.connectiontype|<ul><li>auto</li><li>process-io</li><li>socket</li></ul>|auto|Determines how language client and language server are connected
+|c4.languageserver.logs.enabled|true/false|false|If enabled language server logs are written to the current workspace folder (c4-language-server.log).
 |c4.diagram.structurizr.enabled|true/false|false|If enabled you agree that the workspace of your c4 model will be sent as a Bae64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns
 |c4.diagram.structurizr.uri|STRUCTURIZR_URI|https://structurizr.com/json|The URL to call when rendering the diagram using a Structurizr server.  Override if you want to point to a on-premise installation rather than the main Structurizr site, for example.
 |c4.diagram.plantuml.enabled|true/false|false|If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns.
