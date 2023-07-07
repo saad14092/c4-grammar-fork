@@ -1,0 +1,1 @@
+export type TextDocumentChangeConfig = 'off' | 'onChange' | 'onSave'
