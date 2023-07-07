@@ -1,5 +1,9 @@
 # Change Log
 
+## v3.4.2
+
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/130
+
 ## v3.4.1
 
 First draft version of an auto-formatter (pretty-print)
