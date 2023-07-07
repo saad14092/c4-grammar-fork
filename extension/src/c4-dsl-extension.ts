@@ -41,6 +41,27 @@ var proc: cp.ChildProcess
 
 export function activate(context: ExtensionContext) {
 
+    cp.exec("java -version", (err, stdOut, stdErr) => {
+        if(err?.message.includes("'java' is not recognized") || err?.message.includes("'java' not found")) {
+            window.showErrorMessage("Java is needed to run the Language server. Please install java");
+        } else if (getJavaVersion(stdErr) < 11) {
+            window.showErrorMessage("Java 11 or higher is needed to run the Language server. Please upgrade your java version");
+        } else {
+            initExtension(context);
+        }
+    });
+}
+
+function getJavaVersion(versionDetails: string): number {
+    const matchedRegex = versionDetails.match(/version\s"\d\d/i)?.at(0);
+    if(matchedRegex) {
+        const version = parseInt(matchedRegex.slice(('version "').length, matchedRegex.length));
+        return version;
+    }
+    return 0;
+}
+
+function initExtension(context: ExtensionContext) {
     const executable = process.platform === 'win32' ? 'c4-language-server.bat' : 'c4-language-server';
     const languageServerPath =  path.join('server', 'c4-language-server', 'bin', executable);
     const serverLauncher = context.asAbsolutePath(languageServerPath);
@@ -251,7 +272,6 @@ export function activate(context: ExtensionContext) {
     }
 
     logger.appendLine("Initialized");
-    return languageClient;
 }
 
 function triggerTextDecorations(editor: TextEditor | undefined, document: TextDocument | undefined) {
@@ -289,4 +309,4 @@ export function deactivate() {
         proc.kill('SIGINT');
     }
 
-} 
+}
