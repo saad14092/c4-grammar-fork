@@ -1,1 +1,3 @@
-export type TextDocumentChangeConfig = 'off' | 'onChange' | 'onSave'
+type TextDocumentChangeConfig = "off" | "onChange" | "onSave";
+
+export { TextDocumentChangeConfig };

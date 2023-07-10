@@ -1,5 +1,7 @@
-export type PlantUmlExportOptions = {
-    uri: string;
-    outDir: string;
-    renderer: string;
-}
+type PlantUmlExportOptions = {
+  uri: string;
+  outDir: string;
+  renderer: string;
+};
+
+export { PlantUmlExportOptions };

@@ -1,21 +1,49 @@
-import { Uri, workspace } from "vscode";
-import * as path from 'path';
-import * as os from 'os';
+import * as net from "net";
+import { ServerOptions, StreamInfo } from "vscode-languageclient/node";
 
-export default class C4Utils {
-
-    static buildPath(generatedFile: string, workspaceFolder: Uri): string | undefined {
-        const folder =  workspace.workspaceFolders?.find( (folder) => { 
-            return workspaceFolder.fsPath.startsWith(folder.uri.fsPath)
-        }); 
-    
-        if(folder) {
-            const baseDir = path.join( os.homedir(), '.c4dslextension');
-            const subFolder = workspaceFolder.fsPath.replace(folder.uri.fsPath, '')
-            const fullPath = path.join(baseDir, folder.name,  subFolder, Uri.parse(generatedFile).fsPath)
-            return fullPath;
-        }
-    
-        return undefined
+class C4Utils {
+  static getJavaVersion(versionDetails: string): number {
+    const matchedRegex = versionDetails.match(/version\s"\d\d/i)?.at(0);
+    if (matchedRegex) {
+      const version = parseInt(
+        matchedRegex.slice('version "'.length, matchedRegex.length)
+      );
+      return version;
     }
+    return 0;
+  }
+
+  static getServerOptions(
+    connectionType: string,
+    serverLauncher: string,
+    renderer: string
+  ): ServerOptions {
+    if (
+      connectionType === "process-io" ||
+      (connectionType === "auto" && process.platform === "win32")
+    ) {
+      return {
+        run: {
+          command: serverLauncher,
+          args: ["-ir=" + renderer],
+        },
+        debug: {
+          command: serverLauncher,
+          args: ["-ir=" + renderer],
+        },
+      };
+    } else {
+      const serverDebugOptions = () => {
+        let socket = net.connect({ port: 5008 });
+        let result: StreamInfo = {
+          writer: socket,
+          reader: socket,
+        };
+        return Promise.resolve(result);
+      };
+      return serverDebugOptions;
+    }
+  }
 }
+
+export { C4Utils };

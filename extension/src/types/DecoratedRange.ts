@@ -1,6 +1,8 @@
-import { Range } from "vscode"
+import { Range } from "vscode";
 
-export type DecoratedRange = {
-    type: string
-    range: Range
-}
+type DecoratedRange = {
+  type: string;
+  range: Range;
+};
+
+export { DecoratedRange };

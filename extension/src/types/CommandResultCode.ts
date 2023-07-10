@@ -1,4 +1,6 @@
-export type CommandResultCode = {
-    resultcode: number;
-    message: string;
-}
+type CommandResultCode = {
+  resultcode: number;
+  message: string;
+};
+
+export { CommandResultCode };

@@ -5,4 +5,11 @@ import { DecoratedRange } from "./DecoratedRange";
 import { PlantUmlExportOptions } from "./PlantUmlExportOptions";
 import { TextDocumentChangeConfig } from "./TextDocumentChangeConfig";
 
-export { CommandResultCode, CommandResultTextDecorations, ConfigurationOptions, DecoratedRange, PlantUmlExportOptions, TextDocumentChangeConfig };
+export {
+  CommandResultCode,
+  CommandResultTextDecorations,
+  ConfigurationOptions,
+  DecoratedRange,
+  PlantUmlExportOptions,
+  TextDocumentChangeConfig,
+};

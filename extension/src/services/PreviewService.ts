@@ -1,51 +1,49 @@
 import got from "got";
 import { ViewColumn, WebviewPanel, window } from "vscode";
 
-export class PreviewService {
+class PreviewService {
+  private renderService: string;
+  private title: string;
+  private viewType: string;
+  private panel: WebviewPanel | undefined;
 
-    private renderService: string;
-    private title: string;
-    private viewType: string;
-    private panel: WebviewPanel | undefined;
+  constructor(renderService: string, viewTpe: string, title: string) {
+    this.title = title;
+    this.viewType = viewTpe;
+    this.renderService = renderService;
+  }
 
-    constructor(renderService: string, viewTpe: string, title: string) {
-        this.title = title;
-        this.viewType = viewTpe;
-        this.renderService = renderService;
+  public async updateWebView(encodedContent: string, args: string) {
+    if (!this.panel) {
+      this.panel = this.createPanel();
     }
 
-    public async updateWebView(encodedContent: string, args: string) {
+    const content = await this.getViewContent(encodedContent, args);
+    this.panel.webview.html = this.updateViewContent(content);
+  }
 
-        if (!this.panel) {
-            this.panel = this.createPanel();
-        }
+  private createPanel(): WebviewPanel {
+    const panel = window.createWebviewPanel(
+      this.viewType,
+      this.title,
+      ViewColumn.Two,
+      {
+        enableScripts: true,
+      }
+    );
 
-        const content = await this.getViewContent(encodedContent, args);
-        this.panel.webview.html = this.updateViewContent(content);
-    }
+    panel.onDidDispose(() => {
+      this.panel = undefined;
+    });
 
-    private createPanel(): WebviewPanel {
-        const panel = window.createWebviewPanel(
-            this.viewType,
-            this.title,
-            ViewColumn.Two,
-            {
-                enableScripts: true
-            }
-        );
+    return panel;
+  }
 
-        panel.onDidDispose(() => {
-            this.panel = undefined
-        })
-
-        return panel;
-    }
-
-    private async getViewContent(content: string, args: string) {
-        if(this.viewType.toLowerCase() === "uml") {
-            return await this.toSVG(this.createUri(args, content));
-        } else {
-            return `
+  private async getViewContent(content: string, args: string) {
+    if (this.viewType.toLowerCase() === "uml") {
+      return await this.toSVG(this.createUri(args, content));
+    } else {
+      return `
             <iframe id="structurizrPreview" name="structurizrPreview" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
 
             <form id="structurizrPreviewForm" method="post" action="${this.renderService}" target="structurizrPreview" style="display: none;">
@@ -60,21 +58,20 @@ export class PreviewService {
             </script>
             <script type="text/javascript" src="https://static.structurizr.com/js/structurizr-embed.js"></script>
             `;
-        }
     }
+  }
 
-    private createUri(endpoint: string, data: string): string {
-        return this.renderService.concat(endpoint).concat(data);
-    }
+  private createUri(endpoint: string, data: string): string {
+    return this.renderService.concat(endpoint).concat(data);
+  }
 
-    private async toSVG(url: string): Promise<string> {
-        const response = await got(url);
-        return response.body;
-    }
-    
-    private updateViewContent(body: string): string {
+  private async toSVG(url: string): Promise<string> {
+    const response = await got(url);
+    return response.body;
+  }
 
-        return `
+  private updateViewContent(body: string): string {
+    return `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -95,5 +92,7 @@ export class PreviewService {
         </body>
         </html>
         `;
-    }
+  }
 }
+
+export { PreviewService };
