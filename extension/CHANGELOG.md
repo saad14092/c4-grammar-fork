@@ -2,6 +2,7 @@
 
 ## v3.4.2
 
+* Closes https://gitlab.com/systemticks/c4-grammar/-/issues/139
 * Closes https://gitlab.com/systemticks/c4-grammar/-/issues/130
 
 ## v3.4.1
