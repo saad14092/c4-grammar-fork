@@ -43,7 +43,6 @@ const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator";
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir";
 const CONF_LANGUAGESERVER_CONNECTIONTYPE = "c4.languageserver.connectiontype";
 const CONF_DIAGRAM_STRUCTURIZR_ENABLED = "c4.diagram.structurizr.enabled";
-const CONF_DIAGRAM_STRUCTURZR_URI = "c4.diagram.structurizr.uri";
 const CONF_DIAGRAM_PLANTUML_ENABLED = "c4.diagram.plantuml.enabled";
 const CONF_DIAGRAM_MERMAID_ENABLED = "c4.diagram.mermaid.enabled";
 const CONF_PLANTUML_SERVER = "c4.show.plantuml.server";
@@ -181,7 +180,7 @@ function initExtension(context: ExtensionContext) {
   }
 
   const structurizrPreviewService = new PreviewService(
-    workspace.getConfiguration().get(CONF_DIAGRAM_STRUCTURZR_URI) as string,
+    "https://structurizr.com/json",
     "Structurizr Preview",
     "Structurizr Preview"
   );

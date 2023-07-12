@@ -1,217 +1,212 @@
 {
-    "name": "c4-dsl-extension",
-    "displayName": "C4 DSL Extension",
-    "description": "A DSL for C4 Models",
-    "publisher": "systemticks",
-    "repository": {
-        "type": "git",
-        "url": "https://gitlab.com/systemticks/c4-grammar"
-    },
-    "license": "Apache-2.0",
-    "icon": "images/c4dsl.png",
-    "version": "3.4.2",
-    "engines": {
-        "vscode": "^1.77.0"
-    },
-    "categories": [
-        "Programming Languages"
+  "name": "c4-dsl-extension",
+  "displayName": "C4 DSL Extension",
+  "description": "A DSL for C4 Models",
+  "publisher": "systemticks",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/systemticks/c4-grammar"
+  },
+  "license": "Apache-2.0",
+  "icon": "images/c4dsl.png",
+  "version": "3.4.2",
+  "engines": {
+    "vscode": "^1.77.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "c4",
+    "c4 model",
+    "architecture",
+    "dsl",
+    "structurizr",
+    "plantuml"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "c4.export.puml",
+        "title": "Export Views to PlantUML"
+      }
     ],
-    "keywords": [
-        "c4",
-        "c4 model",
-        "architecture",
-        "dsl",
-        "structurizr",
-        "plantuml"
-    ],
-    "contributes": {
-        "commands": [
-            {
-                "command": "c4.export.puml",
-                "title": "Export Views to PlantUML"
-            }
-        ],
-        "menus": {
-            "explorer/context": [
-                {
-                    "when": "resourceLangId == c4",
-                    "command": "c4.export.puml"
-                }
-            ],
-            "editor/context": [
-                {
-                    "when": "editorLangId == c4",
-                    "command": "c4.export.puml"
-                }
-            ]
-        },
-        "languages": [
-            {
-                "id": "c4",
-                "aliases": [
-                    "c4"
-                ],
-                "extensions": [
-                    ".dsl"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "c4",
-                "scopeName": "source.c4",
-                "path": "./syntaxes/c4.tmLanguage.json"
-            }
-        ],
-        "configuration": {
-            "title": "",
-            "properties": {
-                "c4.export.plantuml.generator": {
-                    "type": "string",
-                    "enum": [
-                        "StructurizrPlantUMLWriter",
-                        "C4PlantUMLWriter"
-                    ],
-                    "default": "StructurizrPlantUMLWriter",
-                    "scope": "application",
-                    "description": "The flavor of the generated Plant UML"
-                },
-                "c4.show.plantuml.server": {
-                    "type": "string",
-                    "default": "https://kroki.io",
-                    "description": "The server where the kroki diagram server is hosted",
-                    "scope": "application"
-                },
-                "c4.export.plantuml.dir": {
-                    "type": "string",
-                    "default": "./export",
-                    "description": "The folder for the exported plantuml files. Can be relative or absolute",
-                    "scope": "application"
-                },
-                "c4.languageserver.connectiontype": {
-                    "type": "string",
-                    "enum": [
-                        "auto",
-                        "process-io",
-                        "socket",
-                        "socket-debug"
-                    ],
-                    "default": "socket",
-                    "scope": "application",
-                    "description": "Determines how language client and language server are connected"
-                },
-                "c4.diagram.structurizr.enabled": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."
-                },
-                "c4.diagram.structurizr.uri": {
-                    "type": "string",
-                    "default": "https://structurizr.com/json",
-                    "description": "If Structurizr rendering is enabled, specify the URI that your c4 model will be sent to for rendering."
-                },
-                "c4.diagram.plantuml.enabled": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://kroki.io/ for rendering purposes. Do not enable, if you have concerns."
-                },
-                "c4.diagram.mermaid.enabled": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns."
-                },
-                "c4.diagram.renderer": {
-                    "type": "string",
-                    "enum": [
-                        "structurizr",
-                        "plantuml",
-                        "mermaid"
-                    ],
-                    "default": "plantuml",
-                    "scope": "application",
-                    "description": "Detmerines which inline renderer is used for displaying views"
-                },
-                "c4.decorations.enabled": {
-                    "type": "string",
-                    "enum": [
-                        "off",
-                        "onChange",
-                        "onSave"
-                    ],
-                    "default": "onChange",
-                    "scope": "application",
-                    "description": "Determines when text decoration takes place"
-                },
-                "c4.languageserver.logs.enabled": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled server logs are written into workspace folder."
-                }
-            }
-        }
-    },
-    "colors": [
+    "menus": {
+      "explorer/context": [
         {
-            "id": "c4.textdecoration.foreground",
-            "description": "Specifies the foreground color for the annotations",
-            "defaults": {
-                "dark": "#adbec5",
-                "light": "#797a79",
-                "highContrast": "#adbec5"
-            }
-        },
-        {
-            "id": "c4.textdecoration.background",
-            "description": "Specifies the background color for the annotations",
-            "defaults": {
-                "dark": "#1e2c31",
-                "light": "#f4f5f4",
-                "highContrast": "#1e2c31"
-            }
+          "when": "resourceLangId == c4",
+          "command": "c4.export.puml"
         }
-    ],
-    "activationEvents": [
-        "onLanguage:c4"
-    ],
-    "files": [
-        "lib",
-        "server",
-        "src",
-        "syntaxes"
-    ],
-    "main": "./pack/c4-dsl-extension",
-    "devDependencies": {
-        "@types/node": "^18.15.13",
-        "@types/vscode": "1.77.0",
-        "rimraf": "^5.0.0",
-        "source-map-loader": "^4.0.0",
-        "ts-loader": "^9.4.2",
-        "ts-node": "^10.9.1",
-        "tslint": "^6.1.3",
-        "typescript": "5.0.4",
-        "vsce": "^2.15.0",
-        "vscode-languageclient": "^8.0.0",
-        "vscode-languageserver": "^8.0.0",
-        "webpack": "^5.74.0",
-        "webpack-cli": "^5.0.1"
+      ],
+      "editor/context": [
+        {
+          "when": "editorLangId == c4",
+          "command": "c4.export.puml"
+        }
+      ]
     },
-    "scripts": {
-        "prepare": "yarn run clean && yarn run build",
-        "clean": "rimraf lib pack",
-        "build": "tsc && webpack --mode=development",
-        "build-server": "../server/c4-dsl-language-server/gradlew -p ../server/c4-dsl-language-server deploy -PcopyTo=../../../../extension/server",
-        "clean-server": "../server/c4-dsl-language-server/gradlew -p ../server/c4-dsl-language-server clean",
-        "build-all": "yarn build-server && yarn build",
-        "clean-all": "rimraf server && yarn clean-server && yarn clean",
-        "watch": "tsc -w",
-        "watch:webpack": "webpack --mode=development --watch",
-        "package": "yarn build-all && vsce package",
-        "package-client-only": "yarn clean && yarn build && vsce package",
-        "publish": "vsce publish"
-    },
-    "dependencies": {
-        "global": "^4.4.0",
-        "got": "^12.6.0"
+    "languages": [
+      {
+        "id": "c4",
+        "aliases": [
+          "c4"
+        ],
+        "extensions": [
+          ".dsl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "c4",
+        "scopeName": "source.c4",
+        "path": "./syntaxes/c4.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "",
+      "properties": {
+        "c4.export.plantuml.generator": {
+          "type": "string",
+          "enum": [
+            "StructurizrPlantUMLWriter",
+            "C4PlantUMLWriter"
+          ],
+          "default": "StructurizrPlantUMLWriter",
+          "scope": "application",
+          "description": "The flavor of the generated Plant UML"
+        },
+        "c4.show.plantuml.server": {
+          "type": "string",
+          "default": "https://kroki.io",
+          "description": "The server where the kroki diagram server is hosted",
+          "scope": "application"
+        },
+        "c4.export.plantuml.dir": {
+          "type": "string",
+          "default": "./export",
+          "description": "The folder for the exported plantuml files. Can be relative or absolute",
+          "scope": "application"
+        },
+        "c4.languageserver.connectiontype": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "process-io",
+            "socket",
+            "socket-debug"
+          ],
+          "default": "socket",
+          "scope": "application",
+          "description": "Determines how language client and language server are connected"
+        },
+        "c4.diagram.structurizr.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."
+        },
+        "c4.diagram.plantuml.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://kroki.io/ for rendering purposes. Do not enable, if you have concerns."
+        },
+        "c4.diagram.mermaid.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "If enabled you agree that the view of your c4 model will be sent as a Base64 encoded string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns."
+        },
+        "c4.diagram.renderer": {
+          "type": "string",
+          "enum": [
+            "structurizr",
+            "plantuml",
+            "mermaid"
+          ],
+          "default": "plantuml",
+          "scope": "application",
+          "description": "Detmerines which inline renderer is used for displaying views"
+        },
+        "c4.decorations.enabled": {
+          "type": "string",
+          "enum": [
+            "off",
+            "onChange",
+            "onSave"
+          ],
+          "default": "onChange",
+          "scope": "application",
+          "description": "Determines when text decoration takes place"
+        },
+        "c4.languageserver.logs.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "If enabled server logs are written into workspace folder."
+        }
+      }
     }
+  },
+  "colors": [
+    {
+      "id": "c4.textdecoration.foreground",
+      "description": "Specifies the foreground color for the annotations",
+      "defaults": {
+        "dark": "#adbec5",
+        "light": "#797a79",
+        "highContrast": "#adbec5"
+      }
+    },
+    {
+      "id": "c4.textdecoration.background",
+      "description": "Specifies the background color for the annotations",
+      "defaults": {
+        "dark": "#1e2c31",
+        "light": "#f4f5f4",
+        "highContrast": "#1e2c31"
+      }
+    }
+  ],
+  "activationEvents": [
+    "onLanguage:c4"
+  ],
+  "files": [
+    "lib",
+    "server",
+    "src",
+    "syntaxes"
+  ],
+  "main": "./pack/c4-dsl-extension",
+  "devDependencies": {
+    "@types/node": "^18.15.13",
+    "@types/vscode": "1.77.0",
+    "rimraf": "^5.0.0",
+    "source-map-loader": "^4.0.0",
+    "ts-loader": "^9.4.2",
+    "ts-node": "^10.9.1",
+    "tslint": "^6.1.3",
+    "typescript": "5.0.4",
+    "vsce": "^2.15.0",
+    "vscode-languageclient": "^8.0.0",
+    "vscode-languageserver": "^8.0.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "rimraf lib pack",
+    "build": "tsc && webpack --mode=development",
+    "build-server": "../server/c4-dsl-language-server/gradlew -p ../server/c4-dsl-language-server deploy -PcopyTo=../../../../extension/server",
+    "clean-server": "../server/c4-dsl-language-server/gradlew -p ../server/c4-dsl-language-server clean",
+    "build-all": "yarn build-server && yarn build",
+    "clean-all": "rimraf server && yarn clean-server && yarn clean",
+    "watch": "tsc -w",
+    "watch:webpack": "webpack --mode=development --watch",
+    "package": "yarn build-all && vsce package",
+    "package-client-only": "yarn clean && yarn build && vsce package",
+    "publish": "vsce publish"
+  },
+  "dependencies": {
+    "global": "^4.4.0",
+    "got": "^12.6.0"
+  }
 }
