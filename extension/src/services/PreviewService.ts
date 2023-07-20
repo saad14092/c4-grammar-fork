@@ -43,22 +43,12 @@ class PreviewService {
     if (this.viewType.toLowerCase() === "uml") {
       const diagram = await this.toSVG(this.createUri(args, content));
       return `
-        <div id="diagram" class="diagram">${diagram}</div>
+        <div id="diagram">${diagram}</div>
         <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
         <script>
           const elem = document.getElementById("diagram");
-          const windowWidth = window.innerWidth;
-          const diagramWidth = elem.offsetWidth;
-          const desiredZoom = windowWidth/diagramWidth;
-          let scale = 1;
-          let startXValue = 0;
-          if (desiredZoom < 1) {
-            scale = desiredZoom;
-          }
           const panzoom = Panzoom(elem, {
-            maxScale: 2,
-            origin: '-3% 0',
-            startScale: scale
+            maxScale: 3
           })
           elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
           elem.parentElement.addEventListener('dblclick', () => {
@@ -108,9 +98,6 @@ class PreviewService {
                 }              
                 body.vscode-dark {
                     background-color: white;
-                }            
-                .diagram {
-                  width: fit-content;
                 }
             </style>
         </head>
