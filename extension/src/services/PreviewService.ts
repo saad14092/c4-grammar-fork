@@ -1,11 +1,20 @@
 import got from "got";
-import { ViewColumn, WebviewPanel, window } from "vscode";
+import {
+  TextDocument,
+  ViewColumn,
+  WebviewPanel,
+  commands,
+  window,
+} from "vscode";
+import { CommandResultCode, RefreshOptions } from "../types";
 
 class PreviewService {
   private renderService: string;
   private title: string;
   private viewType: string;
   private panel: WebviewPanel | undefined;
+  private _currentDiagram: string;
+  private _currentDocument: TextDocument;
 
   constructor(renderService: string, viewTpe: string, title: string) {
     this.title = title;
@@ -13,12 +22,41 @@ class PreviewService {
     this.renderService = renderService;
   }
 
-  public async updateWebView(encodedContent: string, args: string) {
+  public get currentDiagram() {
+    return this._currentDiagram;
+  }
+
+  public set currentDiagram(diagram: string) {
+    this._currentDiagram = diagram;
+  }
+
+  public get currentDocument() {
+    return this._currentDocument;
+  }
+
+  public set currentDocument(document: TextDocument) {
+    this._currentDocument = document;
+  }
+
+  public triggerRefresh(savedDoc: TextDocument, renderer: string) {
+    if (this.currentDiagram && this.currentDocument === savedDoc) {
+      const refreshOptions: RefreshOptions = {
+        viewKey: this.currentDiagram,
+        document: savedDoc.uri.path,
+        renderer: renderer,
+      };
+      commands.executeCommand("c4.refresh", refreshOptions).then((callback) => {
+        const result = callback as CommandResultCode;
+        this.updateWebView(result.message);
+      });
+    }
+  }
+
+  public async updateWebView(encodedContent: string) {
     if (!this.panel) {
       this.panel = this.createPanel();
     }
-
-    const content = await this.getViewContent(encodedContent, args);
+    const content = await this.getViewContent(encodedContent);
     this.panel.webview.html = this.updateViewContent(content);
   }
 
@@ -31,17 +69,16 @@ class PreviewService {
         enableScripts: true,
       }
     );
-
     panel.onDidDispose(() => {
+      this.currentDiagram = "";
       this.panel = undefined;
     });
-
     return panel;
   }
 
-  private async getViewContent(content: string, args: string) {
+  private async getViewContent(content: string) {
     if (this.viewType.toLowerCase() === "uml") {
-      return await this.toSVG(this.createUri(args, content));
+      return await this.toSVG(this.createUri(content));
     } else {
       return `
             <iframe id="structurizrPreview" name="structurizrPreview" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
@@ -50,7 +87,7 @@ class PreviewService {
                 <input type="hidden" name="iframe" value="structurizrPreview" />
                 <input type="hidden" name="preview" value="true" />
                 <input type="hidden" name="source" value="${content}" />
-                <input type="hidden" name="diagram" value="${args}" />
+                <input type="hidden" name="diagram" value="${this.currentDiagram}" />
             </form>
     
             <script>
@@ -61,8 +98,8 @@ class PreviewService {
     }
   }
 
-  private createUri(endpoint: string, data: string): string {
-    return this.renderService.concat(endpoint).concat(data);
+  private createUri(data: string): string {
+    return this.renderService.concat(data);
   }
 
   private async toSVG(url: string): Promise<string> {

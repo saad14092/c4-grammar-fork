@@ -19,6 +19,7 @@ import {
   window,
   StatusBarAlignment,
   Uri,
+  TextDocument,
 } from "vscode";
 import * as path from "path";
 import * as cp from "child_process";
@@ -196,20 +197,23 @@ function initExtension(context: ExtensionContext) {
     } else {
       const encodedWorkspaceJson = args[0];
       const diagramKey = args[1];
+      structurizrPreviewService.currentDiagram = diagramKey;
+      structurizrPreviewService.currentDocument = window.activeTextEditor
+        ?.document as TextDocument;
 
       try {
-        await structurizrPreviewService.updateWebView(
-          encodedWorkspaceJson,
-          diagramKey
-        );
+        await structurizrPreviewService.updateWebView(encodedWorkspaceJson);
       } catch (err) {
         logger.appendLine("Error displaying preview: " + JSON.stringify(err));
       }
     }
   });
 
+  const plantumlRendererUri = workspace
+    .getConfiguration()
+    .get(CONF_PLANTUML_SERVER) as string;
   const plantumlPreviewService = new PreviewService(
-    workspace.getConfiguration().get(CONF_PLANTUML_SERVER) as string,
+    plantumlRendererUri.concat("/plantuml/svg/"),
     "UML",
     "PlantUML Preview"
   );
@@ -224,12 +228,13 @@ function initExtension(context: ExtensionContext) {
       );
     } else {
       const encodedPlantUML = args[0];
+      const diagramKey = args[1];
+      plantumlPreviewService.currentDiagram = diagramKey;
+      plantumlPreviewService.currentDocument = window.activeTextEditor
+        ?.document as TextDocument;
 
       try {
-        await plantumlPreviewService.updateWebView(
-          encodedPlantUML,
-          "/plantuml/svg/"
-        );
+        await plantumlPreviewService.updateWebView(encodedPlantUML);
       } catch (err) {
         logger.appendLine("Error displaying preview: " + JSON.stringify(err));
       }
@@ -237,7 +242,7 @@ function initExtension(context: ExtensionContext) {
   });
 
   const mermaidPreviewService = new PreviewService(
-    "https://mermaid.ink",
+    "https://mermaid.ink/svg/",
     "UML",
     "Mermaid Preview"
   );
@@ -252,9 +257,13 @@ function initExtension(context: ExtensionContext) {
       );
     } else {
       const encodedMermaid = args[0];
+      const diagramKey = args[1];
+      mermaidPreviewService.currentDiagram = diagramKey;
+      mermaidPreviewService.currentDocument = window.activeTextEditor
+        ?.document as TextDocument;
 
       try {
-        await mermaidPreviewService.updateWebView(encodedMermaid, "/svg/");
+        await mermaidPreviewService.updateWebView(encodedMermaid);
       } catch (err) {
         logger.appendLine("Error displaying preview: " + JSON.stringify(err));
       }
@@ -308,6 +317,23 @@ function initExtension(context: ExtensionContext) {
 
     decorationService.triggerDecorations(window.activeTextEditor, undefined);
   }
+
+  workspace.onDidSaveTextDocument((document: TextDocument) => {
+    switch (renderer) {
+      case "structurizr":
+        structurizrPreviewService.triggerRefresh(document, renderer);
+        break;
+      case "plantuml":
+        plantumlPreviewService.triggerRefresh(document, renderer);
+        break;
+      case "mermaid":
+        mermaidPreviewService.triggerRefresh(document, renderer);
+        break;
+      default:
+        plantumlPreviewService.triggerRefresh(document, renderer);
+        break;
+    }
+  });
 
   logger.appendLine("Initialized");
 }
