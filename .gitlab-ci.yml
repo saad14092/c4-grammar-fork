@@ -6,6 +6,7 @@ stages:
   - server
   - client
   - deploy
+  - visualize
 
 c4-language-server:
   image: gradle:jdk11
@@ -13,16 +14,17 @@ c4-language-server:
 
   script:
     - cd $LANGUAGE_SERVER_DIR
-    - ./gradlew check
+    - ./gradlew check jacocoTestReport
     - ./gradlew deploy -PcopyTo=../../../../extension/server
 
   artifacts:
     when: always
     reports:
-      junit: $LANGUAGE_SERVER_DIR/build/test-results/test/**/TEST-*.xml
-    paths: 
+      junit: $LANGUAGE_SERVER_DIR/build/test-results/**/TEST-*.xml
+    paths:
       - $CI_PROJECT_DIR/extension/server/c4-language-server
-      - $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html
+      - $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html/index.html
+      - $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/jacocoTestReport.xml
     expire_in: 60 min
 
 c4-language-client:
@@ -34,7 +36,7 @@ c4-language-client:
 
   script:
     - cd extension
-    - yarn install 
+    - yarn install
     - yarn build
     - yarn global add vsce
     - find . -name *.jar
@@ -52,7 +54,7 @@ c4-language-client:
 pages:
   stage: deploy
   dependencies:
-    -  c4-language-server
+    - c4-language-server
   script:
     - mv $LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html/ public/
   artifacts:
@@ -61,3 +63,16 @@ pages:
     expire_in: 30 days
   only:
     - master
+
+coverage-jdk11:
+  stage: visualize
+  image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
+  script:
+    # convert report from jacoco to cobertura, using relative project path
+    - python /opt/cover2cover.py $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/jacocoTestReport.xml $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/src/main/java/ > $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/cobertura.xml
+  needs: ["c4-language-server"]
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/cobertura.xml
