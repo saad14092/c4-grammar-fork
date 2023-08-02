@@ -10,7 +10,7 @@
         },
         {
             "name": "keyword.control.c4",
-            "match": "\\b(workspace|model|enterprise|views|styles|group)\\b"        
+            "match": "\\b(workspace|model|enterprise|views|styles|group|configuration)\\b"        
         },
         {
             "name": "storage.type.c4",
@@ -22,7 +22,7 @@
         },
         {
             "name": "keyword.other.c4",
-            "match": "\\b(true|false)\\b"
+            "match": "\\b(true|false|private|public)\\b"
         },
         {
             "name" : "support.type.c4",
@@ -34,7 +34,7 @@
         },
         {
 			"name": "variable.other.property.c4",
-            "match": "\\b(url|properties|perspectives|tags|instances|name|default)\\b"
+            "match": "\\b(url|properties|perspectives|tags|instances|name|default|visibility|users)\\b"
         },
         {
             "name": "constant.numeric.c4",
