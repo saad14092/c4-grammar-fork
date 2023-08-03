@@ -78,7 +78,21 @@ class PreviewService {
 
   private async getViewContent(content: string) {
     if (this.viewType.toLowerCase() === "uml") {
-      return await this.toSVG(this.createUri(content));
+      const diagram = await this.toSVG(this.createUri(content));
+      return `
+        <div id="diagram">${diagram}</div>
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+        <script>
+          const elem = document.getElementById("diagram");
+          const panzoom = Panzoom(elem, {
+            maxScale: 3
+          })
+          elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
+          elem.parentElement.addEventListener('dblclick', () => {
+            panzoom.reset();
+          });
+        </script>
+      `;
     } else {
       return `
             <iframe id="structurizrPreview" name="structurizrPreview" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
@@ -121,7 +135,7 @@ class PreviewService {
                 }              
                 body.vscode-dark {
                     background-color: white;
-                }            
+                }
             </style>
         </head>
         <body>
