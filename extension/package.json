@@ -9,7 +9,7 @@
   },
   "license": "Apache-2.0",
   "icon": "images/c4dsl.png",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "engines": {
     "vscode": "^1.77.0"
   },
