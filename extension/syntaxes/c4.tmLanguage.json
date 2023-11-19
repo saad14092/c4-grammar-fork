@@ -22,7 +22,7 @@
         },
         {
             "name": "keyword.other.c4",
-            "match": "\\b(true|false|private|public)\\b"
+            "match": "\\b(true|false|private|public|none|landscape)\\b"
         },
         {
             "name" : "support.type.c4",
@@ -34,7 +34,7 @@
         },
         {
 			"name": "variable.other.property.c4",
-            "match": "\\b(url|properties|perspectives|tags|instances|name|default|visibility|users)\\b"
+            "match": "\\b(url|properties|perspectives|tags|instances|name|default|visibility|users|scope)\\b"
         },
         {
             "name": "constant.numeric.c4",

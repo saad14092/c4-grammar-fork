@@ -3,7 +3,7 @@ image:
 
 tasks:
   - init: |
-      sdk default java 11.0.16.fx-zulu 
+      sdk default java 17.0.4.fx-zulu 
       cd extension
       yarn install
       yarn build-all
