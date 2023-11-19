@@ -8,7 +8,7 @@ stages:
   - deploy
 
 c4-language-server:
-  image: gradle:jdk11
+  image: gradle:jdk17
   stage: server
 
   script:
