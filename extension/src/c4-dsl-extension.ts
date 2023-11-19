@@ -62,9 +62,9 @@ export function activate(context: ExtensionContext) {
       window.showErrorMessage(
         "Java is needed to run the Language server. Please install java"
       );
-    } else if (C4Utils.getJavaVersion(stdErr) < 11) {
+    } else if (C4Utils.getJavaVersion(stdErr) < 17) {
       window.showErrorMessage(
-        "Java 11 or higher is needed to run the Language server. Please upgrade your java version"
+        "Java 17 or higher is needed to run the Language server. Please upgrade your java version"
       );
     } else {
       initExtension(context);

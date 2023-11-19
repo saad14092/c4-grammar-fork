@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.4.4
+
+- Bump to structurizr v1.34.0
+- Requires now Java 17 (due to corresponding changes in v1.34.0)
+- Closes https://gitlab.com/systemticks/c4-grammar/-/issues/152
+
 ## v3.4.3
 
 - Closes https://gitlab.com/systemticks/c4-grammar/-/issues/146

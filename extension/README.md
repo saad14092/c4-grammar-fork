@@ -10,7 +10,7 @@ Technically there is language server built on top of the origin [Structurizr DSL
 
 ## Pre-requisites
 
-A [Java VM](http://java.com/en/download/) is required for running the language server. Java 11 or higher is required.
+A [Java VM](http://java.com/en/download/) is required for running the language server. Java 17 or higher is required.
 
 > :warning: In some cases the language server seems to have missing execution rights. Check `<YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-<version>\server\c4-language-server\bin` and add +x if missing to make it executable.
 
