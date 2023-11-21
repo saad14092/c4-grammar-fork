@@ -70,6 +70,7 @@ This feature can become pretty expensive in case of large models. You can switch
 | c4.diagram.plantuml.enabled      | true/false                                                                                       | false                     | If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns. |
 | c4.diagram.mermaid.enabled       | true/false                                                                                       | false                     | If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns.                               |
 | c4.decorations.enabled           | <ul><li>off</li><li>onChange</li><li>onSave</li></ul>                                            | onChange                  | Text decorations can take place when editing (onChange) or when file is saved (onSave). It can also be switched off.                                                                                                   |
+| cc4.editor.autoformat.indent     | | 4 | The number of spaces per indentation, when executing format document. (The origin structurizr dsl formatter is using 4 spaces) |
 
 ## Examples
 

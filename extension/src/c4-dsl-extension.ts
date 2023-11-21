@@ -50,6 +50,7 @@ const CONF_PLANTUML_SERVER = "c4.show.plantuml.server";
 const CONF_INLINE_RENDERER = "c4.diagram.renderer";
 const CONF_TEXT_DECORATIONS = "c4.decorations.enabled";
 const CONF_LANGUAGESERVER_LOGS_ENABLED = "c4.languageserver.logs.enabled";
+const CONF_AUTO_FORMAT_INDENT = "c4.editor.autoformat.indent";
 
 var proc: cp.ChildProcess;
 
@@ -130,7 +131,7 @@ function initExtension(context: ExtensionContext) {
       case State.Running:
         statusBarItem.text = "C4 DSL Language Server is ready";
         statusBarItem.color = "white";
-        //updateServerConfiguration()
+        updateServerConfigurationIndent();
         break;
       case State.Stopped:
         statusBarItem.text = "C4 Language Server has stopped";
@@ -335,7 +336,18 @@ function initExtension(context: ExtensionContext) {
     }
   });
 
+  workspace.onDidChangeConfiguration(event => {
+    if (event.affectsConfiguration(CONF_AUTO_FORMAT_INDENT)) {
+      updateServerConfigurationIndent()
+    }
+  });
+
   logger.appendLine("Initialized");
+}
+
+function updateServerConfigurationIndent() {
+  const spaces = workspace.getConfiguration().get(CONF_AUTO_FORMAT_INDENT) as number
+  commands.executeCommand("c4-server.autoformat.indent", { indent: spaces } )
 }
 
 export function updateServerConfiguration() {
