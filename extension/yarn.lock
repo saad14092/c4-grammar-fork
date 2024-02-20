@@ -841,6 +841,14 @@ fill-range@^7.0.1:
   dependencies:
     to-regex-range "^5.0.1"
 
+find-java-home@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/find-java-home/-/find-java-home-2.0.0.tgz#9073a14df6f74b951f4f7c2af88cf005bc059737"
+  integrity sha512-m4Cf5WM5Y9UupofsLgcJuY5oFXVfVnfHx43pg3HJoVdtY2PN4Wfs7ex9svf7W7eLTP+6wmyBToaqGOCffHBHVA==
+  dependencies:
+    which "~1.0.5"
+    winreg "~1.2.2"
+
 find-up@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/find-up/-/find-up-4.1.0.tgz#97afe7d6cdc0bc5928584b7c8d7b16e8a9aa5d19"
@@ -2089,10 +2097,20 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
+which@~1.0.5:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/which/-/which-1.0.9.tgz#460c1da0f810103d0321a9b633af9e575e64486f"
+  integrity sha512-E87fdQ/eRJr9W1X4wTPejNy9zTW3FI2vpCZSJ/HAY+TkjKVC0TUm1jk6vn2Z7qay0DQy0+RBGdXxj+RmmiGZKQ==
+
 wildcard@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/wildcard/-/wildcard-2.0.0.tgz#a77d20e5200c6faaac979e4b3aadc7b3dd7f8fec"
   integrity sha512-JcKqAHLPxcdb9KM49dufGXn2x3ssnfjbcaQdLlfZsL9rH9wgDQjUtDxbo8NE0F6SFvydeu1VhZe7hZuHsB2/pw==
+
+winreg@~1.2.2:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/winreg/-/winreg-1.2.5.tgz#b650383e89278952494b5d113ba049a5a4fa96d8"
+  integrity sha512-uf7tHf+tw0B1y+x+mKTLHkykBgK2KMs3g+KlzmyMbLvICSHQyB/xOFjTT8qZ3oeTFyU7Bbj4FzXitGG6jvKhYw==
 
 wrap-ansi@^7.0.0:
   version "7.0.0"

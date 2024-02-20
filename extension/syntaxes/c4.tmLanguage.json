@@ -10,7 +10,7 @@
         },
         {
             "name": "keyword.control.c4",
-            "match": "\\b(workspace|model|enterprise|views|styles|group|configuration)\\b"        
+            "match": "\\b(workspace|model|views|styles|group|configuration)\\b"        
         },
         {
             "name": "storage.type.c4",

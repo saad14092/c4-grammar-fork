@@ -1,5 +1,9 @@
 # Change Log
 
+## 3.6.0
+
+- Bump to structurizr v1.35.0
+
 ## 3.5.0
 
 - Bump to structurizr v1.34.0

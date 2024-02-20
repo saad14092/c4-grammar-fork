@@ -22,8 +22,9 @@ import {
   TextDocument,
 } from "vscode";
 import * as path from "path";
-import * as cp from "child_process";
+import * as cp from "child_process"; 
 import * as readline from "node:readline";
+import * as findJavaHome from "find-java-home";
 
 import {
   LanguageClientOptions,
@@ -51,11 +52,39 @@ const CONF_INLINE_RENDERER = "c4.diagram.renderer";
 const CONF_TEXT_DECORATIONS = "c4.decorations.enabled";
 const CONF_LANGUAGESERVER_LOGS_ENABLED = "c4.languageserver.logs.enabled";
 const CONF_AUTO_FORMAT_INDENT = "c4.editor.autoformat.indent";
+const CONF_LANGUAGESERVER_JAVA = "c4.languageserver.java"
 
 var proc: cp.ChildProcess;
 
+function getJavaPath() {
+
+  let javaPath = workspace.getConfiguration().get(CONF_LANGUAGESERVER_JAVA) as string;
+
+  // Check if a path is provided, if not, use JAVA_HOME or find a default
+  if (!javaPath || javaPath.trim() === '') {
+    javaPath = process.env.JAVA_HOME ?? '';
+      if (!javaPath) {
+          findJavaHome((err, home) => {
+               if (err) {
+                   console.error('Java home not found automatically.');
+                   return;
+               }
+               javaPath = home;
+          });
+          console.log('No custom JDK path set. Attempting to use JAVA_HOME or system default.');
+      }
+  }
+
+  return javaPath;
+}
+
 export function activate(context: ExtensionContext) {
-  cp.exec("java -version", (err, stdOut, stdErr) => {
+
+  const javaPath = getJavaPath();
+  const javaBinPath = path.join(javaPath, 'bin');
+  const env = { ...process.env, PATH: `${javaBinPath}${path.delimiter}${process.env.PATH}` };
+
+  cp.exec("java -version", {env}, (err, stdOut, stdErr) => {
     if (
       err?.message.includes("'java' is not recognized") ||
       err?.message.includes("'java' not found")
