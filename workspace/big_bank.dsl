@@ -2,7 +2,7 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
     model {
 
-        enterprise "Big Bank plc" {
+        group "Big Bank plc" {
             supportStaff = person "Customer Service Staff" "Customer service staff within the bank." "Bank Staff"
             backoffice = person "Back Office Staff" "Administration and support staff within the bank."
 
@@ -24,8 +24,8 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
                 }
                 database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
             }
-
         }
+
         customer = person "Personal" "A customer of the bank, with personal bank accounts."
 
         # relationships between people and software systems
@@ -125,7 +125,6 @@ workspace "Big Bank plc" "This is an example workspace to illustrate the key fea
 
          primaryDatabaseServer -> secondaryDatabaseServer "Replicates data to"
         }
-
     }
 
     views {

@@ -9,7 +9,7 @@
   },
   "license": "Apache-2.0",
   "icon": "images/c4dsl.png",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "engines": {
     "vscode": "^1.77.0"
   },
@@ -144,9 +144,14 @@
           "description": "If enabled server logs are written into workspace folder."
         },
         "c4.editor.autoformat.indent": {
-          "type" :  "integer",
-          "default" : 4,
+          "type": "integer",
+          "default": 4,
           "description": "The number of spaces per indentation, when calling format document"
+        },
+        "c4.languageserver.java": {
+          "type": "string",
+          "default": "",
+          "description": "Java Path (JDK or JRE) for executing c4 language server. If set, this setting is prefered over OS path setting"
         }
       }
     }
@@ -211,6 +216,7 @@
     "publish": "vsce publish"
   },
   "dependencies": {
+    "find-java-home": "^2.0.0",
     "global": "^4.4.0",
     "got": "^12.6.0"
   }
