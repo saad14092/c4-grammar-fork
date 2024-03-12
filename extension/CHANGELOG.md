@@ -3,6 +3,8 @@
 ## 3.6.0
 
 - Bump to structurizr v1.35.0
+- Closes https://gitlab.com/systemticks/c4-grammar/-/issues/160
+- Closes https://gitlab.com/systemticks/c4-grammar/-/issues/159
 
 ## 3.5.0
 

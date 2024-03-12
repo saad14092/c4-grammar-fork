@@ -12,6 +12,8 @@ Technically there is language server built on top of the origin [Structurizr DSL
 
 A [Java VM](http://java.com/en/download/) is required for running the language server. Java 17 or higher is required.
 
+Since some users seem to encounter occasional issues with VS Code automatically finding the correct Java installation, starting from version 3.6.0, there is the option to explicitly set the path to the Java installation via the setting 'c4.languageserver.java'. The extension will first search for the corresponding Java installation in this path. If nothing is found here, it will fall back to the JAVA_HOME environment variable.
+
 > :warning: In some cases the language server seems to have missing execution rights. Check `<YOUR_HOME>\.vscode\extensions\systemticks.c4-dsl-extension-<version>\server\c4-language-server\bin` and add +x if missing to make it executable.
 
 You must open a workspace that contains your models, which need to have the file extension `.dsl`
@@ -70,8 +72,9 @@ This feature can become pretty expensive in case of large models. You can switch
 | c4.diagram.plantuml.enabled      | true/false                                                                                       | false                     | If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns. |
 | c4.diagram.mermaid.enabled       | true/false                                                                                       | false                     | If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns.                               |
 | c4.decorations.enabled           | <ul><li>off</li><li>onChange</li><li>onSave</li></ul>                                            | onChange                  | Text decorations can take place when editing (onChange) or when file is saved (onSave). It can also be switched off.                                                                                                   |
-| cc4.editor.autoformat.indent     | | 4 | The number of spaces per indentation, when executing format document. (The origin structurizr dsl formatter is using 4 spaces) |
-
+| c4.editor.autoformat.indent     | | 4 | The number of spaces per indentation, when executing format document. (The origin structurizr dsl formatter is using 4 spaces) |
+| c4.languageserver.java  | JRE/JDK PATH | | Java Path (JDK or JRE) for executing c4 language server. If set, this setting is prefered over OS path setting |
+ 
 ## Examples
 
 The architecture (i.e. its diagrams) of this extension is modeled with - guess what - the C4 DSL itself.
