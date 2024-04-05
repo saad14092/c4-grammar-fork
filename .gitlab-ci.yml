@@ -41,6 +41,8 @@ c4-language-client:
     - vsce package
     - cat ../$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
 
+  coverage: '/Total.*?([0-9]{1,3})%/'
+
   dependencies:
     - c4-language-server
 
