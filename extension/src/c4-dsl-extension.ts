@@ -22,7 +22,7 @@ import {
   TextDocument,
 } from "vscode";
 import * as path from "path";
-import * as cp from "child_process"; 
+import * as cp from "child_process";
 import * as readline from "node:readline";
 import * as findJavaHome from "find-java-home";
 
@@ -39,7 +39,7 @@ import {
   TextDocumentChangeConfig,
 } from "./types";
 import { DecorationService, PreviewService } from "./services";
-import { C4Utils } from "./utils";
+import { C4Utils, substituteVariable } from "./utils";
 
 const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator";
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir";
@@ -52,39 +52,44 @@ const CONF_INLINE_RENDERER = "c4.diagram.renderer";
 const CONF_TEXT_DECORATIONS = "c4.decorations.enabled";
 const CONF_LANGUAGESERVER_LOGS_ENABLED = "c4.languageserver.logs.enabled";
 const CONF_AUTO_FORMAT_INDENT = "c4.editor.autoformat.indent";
-const CONF_LANGUAGESERVER_JAVA = "c4.languageserver.java"
+const CONF_LANGUAGESERVER_JAVA = "c4.languageserver.java";
 
 var proc: cp.ChildProcess;
 
 function getJavaPath() {
-
-  let javaPath = workspace.getConfiguration().get(CONF_LANGUAGESERVER_JAVA) as string;
+  let javaPath = workspace
+    .getConfiguration()
+    .get(CONF_LANGUAGESERVER_JAVA) as string;
 
   // Check if a path is provided, if not, use JAVA_HOME or find a default
-  if (!javaPath || javaPath.trim() === '') {
-    javaPath = process.env.JAVA_HOME ?? '';
-      if (!javaPath) {
-          findJavaHome((err, home) => {
-               if (err) {
-                   console.error('Java home not found automatically.');
-                   return;
-               }
-               javaPath = home;
-          });
-          console.log('No custom JDK path set. Attempting to use JAVA_HOME or system default.');
-      }
+  if (!javaPath || javaPath.trim() === "") {
+    javaPath = process.env.JAVA_HOME ?? "";
+    if (!javaPath) {
+      findJavaHome((err, home) => {
+        if (err) {
+          console.error("Java home not found automatically.");
+          return;
+        }
+        javaPath = home;
+      });
+      console.log(
+        "No custom JDK path set. Attempting to use JAVA_HOME or system default."
+      );
+    }
   }
 
   return javaPath;
 }
 
 export function activate(context: ExtensionContext) {
-
   const javaPath = getJavaPath();
-  const javaBinPath = path.join(javaPath, 'bin');
-  const env = { ...process.env, PATH: `${javaBinPath}${path.delimiter}${process.env.PATH}` };
+  const javaBinPath = path.join(javaPath, "bin");
+  const env = {
+    ...process.env,
+    PATH: `${javaBinPath}${path.delimiter}${process.env.PATH}`,
+  };
 
-  cp.exec("java -version", {env}, (err, stdOut, stdErr) => {
+  cp.exec("java -version", { env }, (err, stdOut, stdErr) => {
     if (
       err?.message.includes("'java' is not recognized") ||
       err?.message.includes("'java' not found")
@@ -304,9 +309,7 @@ function initExtension(context: ExtensionContext) {
     const renderer = workspace
       .getConfiguration()
       .get(CONF_PLANTUML_GENERATOR) as string;
-    const exportDir = workspace
-      .getConfiguration()
-      .get(CONF_PLANTUML_EXPORT_DIR) as string;
+    const exportDir = getExportDir();
 
     const exportOptions: PlantUmlExportOptions = {
       uri: uri.path,
@@ -365,18 +368,42 @@ function initExtension(context: ExtensionContext) {
     }
   });
 
-  workspace.onDidChangeConfiguration(event => {
+  workspace.onDidChangeConfiguration((event) => {
     if (event.affectsConfiguration(CONF_AUTO_FORMAT_INDENT)) {
-      updateServerConfigurationIndent()
+      updateServerConfigurationIndent();
     }
   });
 
   logger.appendLine("Initialized");
 }
 
+function getExportDir() {
+  const exportDir = workspace
+    .getConfiguration()
+    .get(CONF_PLANTUML_EXPORT_DIR) as string;
+  if (exportDir.includes("${")) return parseExportDir(exportDir);
+  return exportDir;
+}
+
+function parseExportDir(exportDir: string) {
+  const paths = exportDir.split("/");
+  const parsedPath: Array<string> = [];
+  for (let path of paths) {
+    const pathValue = substituteVariable(path);
+    if (!pathValue) {
+      window.showErrorMessage("Incorrect path");
+      return "";
+    }
+    parsedPath.push(pathValue);
+  }
+  return parsedPath.join("/");
+}
+
 function updateServerConfigurationIndent() {
-  const spaces = workspace.getConfiguration().get(CONF_AUTO_FORMAT_INDENT) as number
-  commands.executeCommand("c4-server.autoformat.indent", { indent: spaces } )
+  const spaces = workspace
+    .getConfiguration()
+    .get(CONF_AUTO_FORMAT_INDENT) as number;
+  commands.executeCommand("c4-server.autoformat.indent", { indent: spaces });
 }
 
 export function updateServerConfiguration() {
