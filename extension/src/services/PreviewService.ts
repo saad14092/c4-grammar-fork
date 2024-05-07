@@ -1,4 +1,4 @@
-import got from "got";
+import axios from "axios";
 import {
   TextDocument,
   ViewColumn,
@@ -6,7 +6,8 @@ import {
   commands,
   window,
 } from "vscode";
-import { CommandResultCode, RefreshOptions } from "../types";
+import { RefreshOptions } from "../types/RefreshOptions";
+import { CommandResultCode } from "../types/CommandResultCode";
 
 class PreviewService {
   private renderService: string;
@@ -117,8 +118,8 @@ class PreviewService {
   }
 
   private async toSVG(url: string): Promise<string> {
-    const response = await got(url);
-    return response.body;
+    const response = await axios.get(url);
+    return response.data;
   }
 
   private updateViewContent(body: string): string {

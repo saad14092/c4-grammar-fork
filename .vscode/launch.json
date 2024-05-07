@@ -3,34 +3,43 @@
 // Hover to view descriptions of existing attributes.
 // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
-	"version": "0.2.0",
-    "configurations": [
-    
-        {
-            "type": "java",
-            "name": "C4 DSL Language Server",
-            "request": "launch",
-            "mainClass": "de.systemticks.c4dsl.ls.C4LanguageServerLauncher",
-            "vmArgs": "-javaagent:${workspaceFolder}/extension/server/c4-language-server/lib/aspectjweaver-1.9.8.jar",
-            "classPaths": [
-                "${workspaceFolder}/extension/server/c4-language-server/lib/*"
-            ],
-            "args": "-c=socket -e=READY_TO_CONNECT -ir=plantuml"
-        },
-        {
-            "preLaunchTask": "npm: build - extension",
-            "name": "C4 DSL Extension",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "${workspaceFolder}/workspace",
-                "--extensionDevelopmentPath=${workspaceFolder}/extension"
-            ],
-            "outFiles": [
-                "${workspaceFolder}/extension/pack/*.js"
-            ],
-            "sourceMaps": true
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "C4 DSL Language Server",
+      "request": "launch",
+      "mainClass": "de.systemticks.c4dsl.ls.C4LanguageServerLauncher",
+      "vmArgs": "-javaagent:${workspaceFolder}/extension/server/c4-language-server/lib/aspectjweaver-1.9.8.jar",
+      "classPaths": [
+        "${workspaceFolder}/extension/server/c4-language-server/lib/*"
+      ],
+      "args": "-c=socket -e=READY_TO_CONNECT -ir=plantuml"
+    },
+    {
+      "preLaunchTask": "npm: build - extension",
+      "name": "C4 DSL Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "${workspaceFolder}/workspace",
+        "--extensionDevelopmentPath=${workspaceFolder}/extension"
+      ],
+      "outFiles": ["${workspaceFolder}/extension/pack/*.js"],
+      "sourceMaps": true
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/extension",
+        "--extensionTestsPath=${workspaceFolder}/extension/lib/test/suite/index"
+      ],
+      "outFiles": ["${workspaceFolder}/extension/lib/test/**/*.js"],
+      "preLaunchTask": "npm: build - extension"
+    }
+  ]
 }

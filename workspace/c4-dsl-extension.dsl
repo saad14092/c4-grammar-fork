@@ -80,7 +80,6 @@ workspace "C4 DSL Extension Workspace" {
 
         container c4DslExtension {
             include *
-            autoLayout
             title "C4 DSL Extension Context View"
         }
 

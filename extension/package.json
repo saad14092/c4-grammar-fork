@@ -9,9 +9,9 @@
   },
   "license": "Apache-2.0",
   "icon": "images/c4dsl.png",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "engines": {
-    "vscode": "^1.77.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Programming Languages"
@@ -187,9 +187,19 @@
   ],
   "main": "./pack/c4-dsl-extension",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/chai": "^4.3.5",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.13",
-    "@types/vscode": "1.77.0",
+    "@types/sinon": "^10.0.15",
+    "@types/vscode": "^1.80.0",
+    "@vscode/test-electron": "^2.3.9",
+    "chai": "^4.3.7",
+    "glob": "^8.1.0",
+    "mocha": "^10.4.0",
     "rimraf": "^5.0.0",
+    "sinon": "^15.2.0",
     "source-map-loader": "^4.0.0",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
@@ -213,11 +223,15 @@
     "watch:webpack": "webpack --mode=development --watch",
     "package": "yarn build-all && vsce package",
     "package-client-only": "yarn clean && yarn build && vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish",
+    "compile": "tsc -p ./",
+    "test": "node ./lib/test/runTests"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "find-java-home": "^2.0.0",
     "global": "^4.4.0",
-    "got": "^12.6.0"
+    "got": "^12.6.0",
+    "nyc": "^15.1.0"
   }
 }
