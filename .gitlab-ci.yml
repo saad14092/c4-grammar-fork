@@ -70,7 +70,7 @@ pages:
   dependencies:
     - c4-language-server
   script:
-    - mv $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html/ public/
+    - mv $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html public
   artifacts:
     paths:
       - public
