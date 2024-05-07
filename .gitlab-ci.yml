@@ -68,7 +68,7 @@ c4-language-client:
 pages:
   stage: deploy
   dependencies:
-    - c4-language-server
+    - c4-server-test
   script:
     - mv $CI_PROJECT_DIR/$LANGUAGE_SERVER_DIR/build/reports/jacoco/test/html public
   artifacts:
