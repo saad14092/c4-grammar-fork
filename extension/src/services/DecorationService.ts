@@ -6,7 +6,8 @@ import {
   commands,
   window,
 } from "vscode";
-import { CommandResultTextDecorations, DecoratedRange } from "../types";
+import { CommandResultTextDecorations } from "../types/CommandResultTextDecorations";
+import { DecoratedRange } from "../types/DecoratedRange";
 
 class DecorationService {
   private decorationType: TextEditorDecorationType;

@@ -76,6 +76,8 @@ function getJavaPath() {
         "No custom JDK path set. Attempting to use JAVA_HOME or system default."
       );
     }
+  } else if (javaPath.includes("${")) {
+    javaPath = parseDir(javaPath);
   }
 
   return javaPath;
@@ -381,12 +383,13 @@ function getExportDir() {
   const exportDir = workspace
     .getConfiguration()
     .get(CONF_PLANTUML_EXPORT_DIR) as string;
-  if (exportDir.includes("${")) return parseExportDir(exportDir);
+  if (exportDir.includes("${")) return parseDir(exportDir);
   return exportDir;
 }
 
-function parseExportDir(exportDir: string) {
-  const paths = exportDir.split("/");
+function parseDir(dir: string) {
+  const separator = substituteVariable("${/}") as string;
+  const paths = dir.split(separator);
   const parsedPath: Array<string> = [];
   for (let path of paths) {
     const pathValue = substituteVariable(path);
@@ -396,7 +399,7 @@ function parseExportDir(exportDir: string) {
     }
     parsedPath.push(pathValue);
   }
-  return parsedPath.join("/");
+  return parsedPath.join(separator);
 }
 
 function updateServerConfigurationIndent() {

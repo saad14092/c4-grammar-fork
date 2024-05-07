@@ -64,7 +64,7 @@ This feature can become pretty expensive in case of large models. You can switch
 | -------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | c4.export.plantuml.generator     | <ul><li>StructurizrPlantUMLWriter</li><li>C4PlantUMLWriter</li><li>BasicPlantUMLWriter</li></ul> | StructurizrPlantUMLWriter | The flavor of the generated Plant UML                                                                                                                                                                                  |
 | c4.diagram.renderer              | <ul><li>plantuml</li><li>structurizr</li><li>mermaid</li></ul>                                   | plantuml                  | Detmerines which inline renderer (at the code lenses) is used for displaying views                                                                                                                                     |
-| c4.export.plantuml.dir           | <i>PLANTUML_EXPORT_FOLDER</i>                                                                    | ./export                  | The folder for the exported plantuml files. Can be relative or absolute                                                                                                                                                |
+| c4.export.plantuml.dir           | <i>PLANTUML_EXPORT_FOLDER</i>                                                                    | ./export                  | The folder for the exported plantuml files. Can be relative([VS Code Variables](#vs-code-variables)) or absolute                                                                                                       |
 | c4.show.plantuml.server          | <i>KROKI_SERVER_URI</i>                                                                          | https://kroki.io          | The server where the kroki diagram rendering service is hosted. Is used when 'plantuml' is selected as renderer (see c4.diagram.renderer)                                                                              |
 | c4.languageserver.connectiontype | <ul><li>auto</li><li>process-io</li><li>socket</li></ul>                                         | auto                      | Determines how language client and language server are connected                                                                                                                                                       |
 | c4.languageserver.logs.enabled   | true/false                                                                                       | false                     | If enabled language server logs are written to the current workspace folder (c4-language-server.log).                                                                                                                  |
@@ -72,9 +72,33 @@ This feature can become pretty expensive in case of large models. You can switch
 | c4.diagram.plantuml.enabled      | true/false                                                                                       | false                     | If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to the server specified in 'c4.show.plantuml.server' for rendering purposes. Do not enable, if you have concerns. |
 | c4.diagram.mermaid.enabled       | true/false                                                                                       | false                     | If enabled you agree that the view of your c4 model will be sent as a Base64 encoded PlantUML string to https://mermaid.ink for rendering purposes. Do not enable, if you have concerns.                               |
 | c4.decorations.enabled           | <ul><li>off</li><li>onChange</li><li>onSave</li></ul>                                            | onChange                  | Text decorations can take place when editing (onChange) or when file is saved (onSave). It can also be switched off.                                                                                                   |
-| c4.editor.autoformat.indent     | | 4 | The number of spaces per indentation, when executing format document. (The origin structurizr dsl formatter is using 4 spaces) |
-| c4.languageserver.java  | JRE/JDK PATH | | Java Path (JDK or JRE) for executing c4 language server. If set, this setting is prefered over OS path setting |
- 
+| c4.editor.autoformat.indent      |                                                                                                  | 4                         | The number of spaces per indentation, when executing format document. (The origin structurizr dsl formatter is using 4 spaces)                                                                                         |
+| c4.languageserver.java           | JRE/JDK PATH                                                                                     |                           | Java Path (JDK or JRE) for executing c4 language server. If set, this setting is prefered over OS path setting. Can be relative([VS Code Variables](#vs-code-variables)) or absolute                                   |
+
+## VS Code Variables
+
+The following VS Code Variables are available in the extension configuration. The table is taken from [predefined VS Code variables](https://code.visualstudio.com/docs/editor/variables-reference#_predefined-variables).
+
+**_Note: Not all VS Code Variables are supported!_**
+
+| Name                         | Description                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| `${userHome}`                | The path of the user's home folder                                              |
+| `${workspaceFolder}`         | The path of the folder opened in VS Code                                        |
+| `${workspaceFolderBasename}` | The name of the folder opened in VS Code without any slashes (/)                |
+| `${file}`                    | The current opened file                                                         |
+| `${fileWorkspaceFolder}`     | The current opened file's workspace folder                                      |
+| `${relativeFile}`            | The current opened file relative to workspaceFolder                             |
+| `${relativeFileDirname}`     | The current opened file's dirname relative to workspaceFolder                   |
+| `${fileBasename}`            | The current opened file's basename                                              |
+| `${fileBasenameNoExtension}` | The current opened file's basename with no file extension                       |
+| `${fileExtname}`             | The current opened file's extension                                             |
+| `${fileDirname}`             | The current opened file's folder path                                           |
+| `${fileDirnameBasename}`     | The current opened file's folder name                                           |
+| `${cwd}`                     | The task runner's current working directory upon the startup of VS Code         |
+| `${pathSeparator}`           | The character used by the operating system to separate components in file paths |
+| `${/}`                       | Shorthand for ${pathSeparator}                                                  |
+
 ## Examples
 
 The architecture (i.e. its diagrams) of this extension is modeled with - guess what - the C4 DSL itself.
