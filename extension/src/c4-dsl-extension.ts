@@ -192,9 +192,9 @@ function initExtension(context: ExtensionContext) {
       .get(CONF_LANGUAGESERVER_LOGS_ENABLED) as boolean;
     if (serverLogsEnabled && workspace.workspaceFolders) {
       const wsFolder = workspace.workspaceFolders[0].uri;
-      proc = cp.spawn(serverLauncher, args, { cwd: wsFolder.fsPath });
+      proc = cp.spawn(serverLauncher, args, { cwd: wsFolder.fsPath, shell: true });
     } else {
-      proc = cp.spawn(serverLauncher, args);
+      proc = cp.spawn(serverLauncher, args, { shell: true});
     }
 
     if (proc.stdout) {
