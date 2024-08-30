@@ -24,10 +24,12 @@ suite("Utils tests", () => {
       const options = {
         run: {
           command: serverLauncher,
+          options: {shell: true},
           args: ["-ir=" + renderer],
         },
         debug: {
           command: serverLauncher,
+          options: {shell: true},
           args: ["-ir=" + renderer],
         },
       };
