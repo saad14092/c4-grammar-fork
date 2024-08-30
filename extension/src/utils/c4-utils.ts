@@ -25,10 +25,12 @@ class C4Utils {
       return {
         run: {
           command: serverLauncher,
+          options: {shell: true},
           args: ["-ir=" + renderer],
         },
         debug: {
           command: serverLauncher,
+          options: {shell: true},
           args: ["-ir=" + renderer],
         },
       };
