@@ -2,6 +2,9 @@
 
 ## 3.7.0
 
+- Bump to structurizr v2.2.0
+- Closes https://gitlab.com/systemticks/c4-grammar/-/issues/170
+- Closes https://gitlab.com/systemticks/c4-grammar/-/issues/169
 - Closes https://gitlab.com/systemticks/c4-grammar/-/issues/163
 - Closes https://gitlab.com/systemticks/c4-grammar/-/issues/158
 - Closes https://gitlab.com/systemticks/c4-grammar/-/issues/145
