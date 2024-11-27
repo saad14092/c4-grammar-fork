@@ -104,7 +104,17 @@
         "c4.diagram.structurizr.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com for rendering purposes. Do not enable, if you have concerns."
+          "description": "If enabled you agree that the workspace of your c4 model will be sent as a Base64 encoded string to https://structurizr.com  or to the URL defined in c4.structurizr.renderer.url for rendering purposes. Do not enable, if you have concerns."
+        },
+        "c4.structurizr.render.url": {
+          "type": "string",
+          "default": "https://structurizr.com/json",
+          "description": "the URL of the rendering service to be used for Structurizr."
+        },
+        "c4.structurizr.render.staticurl": {
+          "type": "string",
+          "default": "https://static.structurizr.com",
+          "description": "the base URL for getting static resources."
         },
         "c4.diagram.plantuml.enabled": {
           "type": "boolean",

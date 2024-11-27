@@ -45,6 +45,8 @@ const CONF_PLANTUML_GENERATOR = "c4.export.plantuml.generator";
 const CONF_PLANTUML_EXPORT_DIR = "c4.export.plantuml.dir";
 const CONF_LANGUAGESERVER_CONNECTIONTYPE = "c4.languageserver.connectiontype";
 const CONF_DIAGRAM_STRUCTURIZR_ENABLED = "c4.diagram.structurizr.enabled";
+const CONF_DIAGRAM_STRUCTURIZR_RENDER_URL = "c4.structurizr.render.url";
+const CONF_DIAGRAM_STRUCTURIZR_RENDER_STATIC_URL = "c4.structurizr.render.staticurl";
 const CONF_DIAGRAM_PLANTUML_ENABLED = "c4.diagram.plantuml.enabled";
 const CONF_DIAGRAM_MERMAID_ENABLED = "c4.diagram.mermaid.enabled";
 const CONF_PLANTUML_SERVER = "c4.show.plantuml.server";
@@ -217,10 +219,19 @@ function initExtension(context: ExtensionContext) {
     languageClient.start();
   }
 
+  const renderService = workspace
+      .getConfiguration()
+      .get(CONF_DIAGRAM_STRUCTURIZR_RENDER_URL) as string;
+  
+  const staticResources = workspace
+      .getConfiguration()
+      .get(CONF_DIAGRAM_STRUCTURIZR_RENDER_STATIC_URL) as string;
+
   const structurizrPreviewService = new PreviewService(
-    "https://structurizr.com/json",
+    renderService,
     "Structurizr Preview",
-    "Structurizr Preview"
+    "Structurizr Preview",
+    staticResources
   );
   commands.registerCommand("c4.show.diagram", async (...args: string[]) => {
     const diagramEnabled = workspace

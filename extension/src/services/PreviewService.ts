@@ -11,16 +11,18 @@ import { CommandResultCode } from "../types/CommandResultCode";
 
 class PreviewService {
   private renderService: string;
+  private staticResources: string;
   private title: string;
   private viewType: string;
   private panel: WebviewPanel | undefined;
   private _currentDiagram: string;
   private _currentDocument: TextDocument;
 
-  constructor(renderService: string, viewTpe: string, title: string) {
+  constructor(renderService: string, viewTpe: string, title: string, staticResources?: string) {
     this.title = title;
     this.viewType = viewTpe;
     this.renderService = renderService;
+    this.staticResources = staticResources ?? "";
   }
 
   public get currentDiagram() {
@@ -108,7 +110,7 @@ class PreviewService {
             <script>
                 document.getElementById("structurizrPreviewForm").submit();
             </script>
-            <script type="text/javascript" src="https://static.structurizr.com/js/structurizr-embed.js"></script>
+            <script type="text/javascript" src="${this.staticResources}/js/structurizr-embed.js"></script>
             `;
     }
   }
