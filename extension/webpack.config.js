@@ -21,10 +21,6 @@ const config = {
     resolve: {
         extensions: ['.ts', '.js']
     },
-	stats: {
-      errorDetails: true,
-      children: true
-	},
     module: {
         rules: [
             {
@@ -46,7 +42,6 @@ const config = {
             }
         ]
     },
-	ignoreWarnings: [/Failed to parse source map/],
 }
 
 module.exports = config;
